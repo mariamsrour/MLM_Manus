@@ -1,0 +1,70 @@
+﻿@Html.AntiForgeryToken()
+
+<button id="export-to-excel-@Model" data-view="@Model" class="btn btn-primary">
+    Export to Excel
+</button>
+
+<script>
+    $(document).ready(function () {
+        function getTableData(viewName) {
+            // Find the DataTable instance by viewName or ID
+            var table = $('#' + viewName).DataTable();
+
+            // Get all rows of the DataTable
+            var data = table.rows({ search: 'applied' }).data();
+
+            // Convert the DataTable data object to a plain array
+            return Array.from(data, item => item);
+        }
+
+        function getTableColumns(viewName) {
+            // Find the DataTable instance by viewName or ID
+            var table = $('#' + viewName).DataTable();
+
+            // Retrieve the column titles
+            var columns = table.columns().header();
+
+            // Extract the text content of each column header
+            return Array.from(columns, header => $(header).text().trim());
+        }
+
+
+        var viewName = "@Model"; // Dynamically populated from the Razor model
+        var buttonSelector = `#export-to-excel-${viewName}`;
+        var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+        $(buttonSelector).click(function () {
+            var data = getTableData(viewName); // Implement this function to retrieve DataTable data
+            var columns = getTableColumns(viewName); // Implement this function to retrieve DataTable columns
+            console.log('Export data:', data);
+            console.log('Export columns:', columns);
+            $.ajax({
+                url: '@Url.Action("ExportToExcel", "ExportToExcel")',
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken
+                },
+                data: JSON.stringify({
+                    viewName: viewName, // Replace with dynamic view name
+                    data: data, // Ensure this function returns valid data
+                    columns: columns // Ensure this function returns valid columns
+                }),
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (blob) {
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = viewName + '.xlsx';
+                    link.click();
+                },
+                error: function (xhr) {
+                    console.log('Export:', xhr);
+
+                    console.error('Export failed:', xhr.responseText);
+                }
+            });
+        });
+    });
+</script>

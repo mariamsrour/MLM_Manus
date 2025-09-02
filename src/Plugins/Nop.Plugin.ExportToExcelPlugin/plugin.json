@@ -1,0 +1,10 @@
+{
+  "Group": "Export",
+  "FriendlyName": "DataTable Export to Excel",
+  "SystemName": "ExportToExcelPlugin",
+  "Version": "1.0",
+  "SupportedVersions": [ "4.70" ],
+  "Author": "MariamYehia",
+  "DisplayOrder": 1,
+  "FileName": "ExportToExcelPlugin.dll"
+}
