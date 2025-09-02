@@ -1,0 +1,252 @@
+﻿@model Nop.Web.Models.Catalog.VendorModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@inject IWorkContext workContext
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/myAds.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/myAds.css");
+
+    }
+}
+@{
+
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var counter = 1;
+}
+
+@{
+    Layout = "_ColumnsTwoCustom";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Wishlist").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-wishlist-page");
+
+
+}
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Ads })
+}
+
+<section class="container-wrapper page">
+    <div class="container3">
+        <div class="container-child"></div>
+        <div class="container-item"></div>
+        <div class="container-inner"></div>
+        <div class="login-benefits">
+            <div class="login-benefits-container">
+                <div class="login-benefit-details">
+                    <div class="benefit-description">
+                        <div class="strong-login">
+                            <h3 class="strong-login1">My Ads</h3>
+                        </div>
+
+                      
+                    </div>
+                </div>
+                <div class="select-wrap">
+                  
+                    @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
+
+                </div>
+
+            </div>
+
+         @{
+                var catalogProductsViewData = new ViewDataDictionary(ViewData)
+            {
+                ["fetchUrl"] = Html.Raw(Url.ActionLink("GetAdsProducts", "Catalog", new { vendorId = Model.Id }))
+            };
+            }
+            @await Html.PartialAsync("_myAdsProducts", Model.CatalogProductsModel, catalogProductsViewData)
+          
+
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirm-title">Confirm Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmText">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmActionBtn" class="btn pause-btn">Yes, Confirm</button>
+                <button type="button" class="btn pause-btn-rev" onclick="closeConfirm()" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="rejectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reject-title">Rejection Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="rejectionText">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn pause-btn" id="editAdBtn" href="#">Edit Request</a>
+                <button class="btn pause-btn-rev action-button" id="deleteAdBtn" data-action="delete" data-id="">Remove Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <div class="component-333">
+                    <img class="check-icon"
+                         loading="lazy"
+                         alt=""
+                         src="images/check.png" />
+
+                    <div class="success-shape"></div>
+                </div>
+                <p class="fw-bold">Action completed successfully!</p>
+                <button type="button" class="btn pause-btn mt-2 " onclick="location.reload()" style="width: -webkit-fill-available;" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    let currentAction = '';
+    let currentId = 0;
+
+
+              const modalElement1 = document.getElementById('confirmModal');
+            const modal1 = new bootstrap.Modal(modalElement1);
+
+             const modalElement2 = document.getElementById('successModal');
+            const modal2 = new bootstrap.Modal(modalElement2);
+
+               const modalElement4 = document.getElementById('rejectionModal');
+            const modal4 = new bootstrap.Modal(modalElement4);
+
+            function closeConfirm(){
+
+                modal1.hide();
+            }
+
+            function close(){
+
+                modal2.hide();
+
+            }
+
+$(document).ready(function () {
+
+
+
+
+    
+
+    $('.action-button').on('click', function () {
+        currentAction = $(this).data('action');
+        currentId = $(this).data('id');
+        rejected = $(this).data('rejected');
+        const messageMap = {
+            'delete': 'Are you sure you want to delete this ad?',
+            'pause': 'Are you sure you want to pause this ad?',
+            'reactivate': 'Are you sure you want to reactivate this ad?',
+            'rejected': rejected
+        };
+            modal4.hide()
+;        $('#confirmText').text(messageMap[currentAction]);
+         const modalElement = document.getElementById('confirmModal');
+         const modal = new bootstrap.Modal(modalElement);
+         modal1.show();
+         if(currentAction === 'rejected'){
+            // $('#confirm-title').text("Rejection Reason");
+         }
+        // var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        // modal.show();
+    });
+
+    $('.rejection-btn').on('click', function () {
+        debugger;
+        // currentAction = $(this).data('action');
+        // currentId = $(this).data('id');
+        // rejected = $(this).data('rejected');
+        // $('#rejectionText').text(rejected);
+       const adId = $(this).data('id');
+        const rejected = $(this).data('rejected');
+        const editUrl = $(this).data('edit-url');
+
+        $('#rejectionText').text(rejected);
+        $('#deleteAdBtn').attr('data-id', adId);
+        $('#editAdBtn').attr('href', editUrl);
+
+         // const modalElement3 = document.getElementById('rejectionModal');
+         // const modal3 = new bootstrap.Modal(modalElement3);
+         modal4.show();
+        // var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        // modal.show();
+    });
+
+
+
+    $('#confirmActionBtn').click(function () {
+        const urlMap = {
+            'delete': '/PostAd/DeleteAd',
+            'pause': '/PostAd/PauseAd',
+            'reactivate': '/PostAd/ReActiveAd'
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: urlMap[currentAction],
+            data: { id: currentId },
+            success: function () {
+               const modalElement1 = document.getElementById('confirmModal');
+            const modal1 = new bootstrap.Modal(modalElement1);
+     modal1.hide();
+                const modalElement2 = document.getElementById('successModal');
+            const modal2 = new bootstrap.Modal(modalElement2);
+     modal2.show();
+
+
+            //    location.reload();
+            },
+            error: function () {
+                alert('Something went wrong. Please try again.');
+            }
+        });
+    });
+
+    });
+  
+
+    
+</script>
+

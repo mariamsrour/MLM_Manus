@@ -1,0 +1,579 @@
+﻿@model VendorModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Seo
+@using Nop.Core.Domain.Vendors
+
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+@using Nop.Services.Customers;
+
+@inject IWorkContext workContext
+@inject ICustomerService customerService
+
+@{
+
+    var isLoggedIn = await customerService.IsRegisteredAsync(await workContext.GetCurrentCustomerAsync());
+
+}
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-vendor-page");
+
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var vendorUrl = Url.RouteUrl<Vendor>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        NopHtml.AddCanonicalUrlParts(vendorUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+}
+
+@{
+    var reviews = Context.Request.Query["reviews"].ToString();
+}
+
+<div class="page vendor-page">
+    <div class="root2" >
+        <div class="advertiser-details">
+            <img class="profile-picture-icon" loading="lazy" alt="images/default-avatar.jpg" 
+                 src="@(string.IsNullOrEmpty(Model.PictureModel.ImageUrl) ? "images/default-avatar.jpg" : Model.PictureModel.ImageUrl)">
+
+            <div class="profile-info">
+                <div class="salem-elmosalamani">@Model.Name</div>
+                <div class="review-container">
+                    <div class="rating-container">
+                        <div class="product-reviews-overview">
+
+                            <div class="empty-rating"> @(double.Parse(Model.ApprovedRatingSum.ToString(), System.Globalization.CultureInfo.InvariantCulture))</div>
+                            <div class="rating-stars">
+                                <div class="rating-box">
+                                    <div class="rating-icons">
+                                        @{
+                                            decimal ratingPercent = 0;
+                                            if (Model.ApprovedTotalReviews != 0)
+                                            {
+                                                ratingPercent = (@Model.ApprovedRatingSum * 100)  / 5;
+                                            }
+                                        }
+                                        <div class="rating" style="width: @(ratingPercent)%">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*  <a class="reviews" href="@(Url.RouteUrl<Vendor>(new { SeName = Model.SeName }))">
+                                        @Model.ApprovedTotalReviews @T("Reviews.Overview.Reviews")
+                                    </a> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="response-info">
+                <div class="response-details">
+                    <div class="response-elements">
+                        @*                                             <div class="hrs">@Model.VendorModel.AvgReply</div>
+ *@                                            <div class="hrs">@(string.IsNullOrEmpty(Model.AvgReply) ? 0 : Model.AvgReply) Hrs</div>
+
+                        <a class="avg-reply">avg reply</a>
+                    </div>
+                    <div class="response-elements1"></div>
+                    <div class="response-elements2">
+                        <div class="div">@(string.IsNullOrEmpty(Model.AvgReplyRate) ? 0 : Model.AvgReplyRate)%</div>
+                        <div class="reply-rate">reply rate</div>
+                    </div>
+                    <div class="response-elements1"></div>
+                    <div class="response-elements4">
+                        <div class="years">@(Model.CreatedOnUtc.RelativeFormat())</div>
+                        <div class="member-since">member since</div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
+        </div>
+        <div class="listing-link">
+            <div class="link-content @(reviews == "1" ? "selected" : "")">
+                <div class="view-13-listing">
+                    <a href="@(Url.RouteUrl<Vendor>(new { SeName = Model.SeName, reviews = 1 }))">
+                        View @Model.Name Ads
+                    </a>
+
+                </div>
+                <div class="vuesaxlinearlocation-wrapper">
+                    @if (reviews == "1")
+                    {
+                        <img class="link-icon-container-child" alt="" src="images/calendar-next.png">
+
+                    } else {
+                        <img class="link-icon-container-child" alt="" src="images/vector-25.svg">
+
+                    }
+
+
+                </div>
+            </div>
+
+            <div class="link-content @(reviews == "2" ? "selected" : "")">
+                <div class="view-13-listing">
+                    <a href="@(Url.RouteUrl<Vendor>(new { SeName = Model.SeName, reviews = 2 }))">
+                        @T("Reviews.Overview.Reviews")
+                    </a>
+
+                </div>
+                <div class="vuesaxlinearlocation-wrapper">
+                    @if (reviews == "2")
+                    {
+                        <img class="link-icon-container-child" alt="" src="images/calendar-next.png">
+
+                    }
+                    else
+                    {
+                        <img class="link-icon-container-child" alt="" src="images/vector-25.svg">
+
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="page-body  @(reviews == "2" ? "hideVendorProduct" : "") " >
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.VendorDetailsTop, additionalData = Model })
+
+        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
+        @{
+            var catalogProductsViewData = new ViewDataDictionary(ViewData)
+            {
+                ["fetchUrl"] = Html.Raw(Url.RouteUrl("GetVendorProducts", new { vendorId = Model.Id }))
+            };
+        }
+        @await Html.PartialAsync("_CatalogProducts", Model.CatalogProductsModel, catalogProductsViewData)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.VendorDetailsBottom, additionalData = Model })
+    </div>
+
+    <div class="page-body  @(reviews == "1" ? "hideVendorReviews" : "") ">
+        @*         @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
+ *@
+
+        <div class="root3">
+            <header class="user-content">
+                <div class="container8">
+                    <div class="summery">Summery</div>
+                    <div class="ratings-and-reviews">
+                        <div class="rating-stars1">
+                            <div class="div3"> @(double.Parse(Model.ApprovedRatingSum.ToString(), System.Globalization.CultureInfo.InvariantCulture))</div>
+                            <div class="reviews2">@Model.ApprovedTotalReviews reviews</div>
+                        </div>
+                        <div class="rating-stars">
+                            <div class="rating-box">
+                                <div class="rating-icons">
+                                    @{
+                                        ratingPercent = 0;
+                                        if (Model.ApprovedTotalReviews != 0)
+                                        {
+                                            ratingPercent = (@Model.ApprovedRatingSum * 100) / 5;
+                                        }
+                                    }
+                                    <div class="rating" style="width: @(ratingPercent)%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @{
+
+                    var count1 = Model.VendorReviews.Where(r => r.Rating == 1).Count();
+                    var count1pr = Model.ApprovedTotalReviews <= 0 ? 0 : count1 * 100 / Model.ApprovedTotalReviews;
+
+                    var count2 = Model.VendorReviews.Where(r => r.Rating == 2).Count();
+                    var count2pr = Model.ApprovedTotalReviews <= 0 ? 0  : count2 * 100 / Model.ApprovedTotalReviews;
+
+                    var count3 = Model.VendorReviews.Where(r => r.Rating == 3).Count();
+                    var count3pr = Model.ApprovedTotalReviews <= 0 ? 0 :count3 * 100 / Model.ApprovedTotalReviews;
+
+                    var count4 = Model.VendorReviews.Where(r => r.Rating == 4).Count();
+                    var count4pr = Model.ApprovedTotalReviews <= 0 ? 0 :count4 * 100 / Model.ApprovedTotalReviews;
+
+                    var count5 = Model.VendorReviews.Where(r => r.Rating == 5).Count();
+                    var count5pr = Model.ApprovedTotalReviews <= 0 ? 0 :count5 * 100 / Model.ApprovedTotalReviews;
+
+                }
+                <div class="image-gallery">
+                    <div class="gallery-images" data-acc-group="">
+                        <div class="image-row-one" data-acc-item="" data-acc-header="" data-acc-original="">
+                            <div class="image-one">
+                                <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                <div class="spacer">5.0</div>
+                            </div>
+                            <div class="image-row-two">
+                                <div class="image-two">
+                                    <div class="outer">
+                                        <div class="inner" style="width:@count5pr%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="padding">@count5</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item-mock" data-acc-item="" data-acc-open="">
+                            <div class="frame-1918723415-open" data-acc-header="">
+                                <div class="image-one">
+                                    <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                    <div class="spacer">5.0</div>
+                                </div>
+                                <div class="image-row-two">
+                                    <div class="image-two">
+                                        <div class="outer">
+                                            <div class="inner" style="width:@count5pr%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="padding">@count5</div>
+                                </div>
+                                <div class="accordion-content"></div>
+                            </div>
+                            <div class="accordion-content1" data-acc-content="">
+                                <div class="accordion-content-wrap">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                                    eget.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="image-navigation" data-acc-item="" data-acc-header="" data-acc-original="">
+                            <div class="image-one">
+                                <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                <div class="spacer">4.0</div>
+                            </div>
+                            <div class="image-row-two">
+                                <div class="image-two">
+                                    <div class="outer">
+                                        <div class="inner" style="width:@count4pr%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="padding">@count4</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item-mock" data-acc-item="" data-acc-open="">
+                            <div class="frame-1918723415-open" data-acc-header="">
+                                <div class="image-one">
+                                    <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                    <div class="spacer">4.0</div>
+                                </div>
+                                <div class="image-row-two">
+                                    <div class="image-two">
+                                        <div class="outer">
+                                            <div class="inner" style="width:@count4pr%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="padding">@count4</div>
+                                </div>
+                                <div class="accordion-content"></div>
+                            </div>
+                            <div class="accordion-content1" data-acc-content="">
+                                <div class="accordion-content-wrap">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                                    eget.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="image-row-one" data-acc-item="" data-acc-header="" data-acc-original="">
+                            <div class="image-one">
+                                <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                <div class="spacer">3.0</div>
+                            </div>
+                            <div class="image-row-two">
+                                <div class="image-two">
+                                    <div class="outer">
+                                        <div class="inner" style="width:@count3pr%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="padding">@count3</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item-mock" data-acc-item="" data-acc-open="">
+                            <div class="frame-1918723415-open" data-acc-header="">
+                                <div class="image-one">
+                                    <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                    <div class="spacer">3.0</div>
+                                </div>
+                                <div class="image-row-two">
+                                    <div class="image-two">
+                                        <div class="outer">
+                                            <div class="inner" style="width:@count3pr%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="padding">@count3</div>
+                                </div>
+                                <div class="accordion-content"></div>
+                            </div>
+                            <div class="accordion-content1" data-acc-content="">
+                                <div class="accordion-content-wrap">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                                    eget.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="image-row-one" data-acc-item="" data-acc-header="" data-acc-original="">
+                            <div class="image-one">
+                                <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                <div class="spacer">2.0</div>
+                            </div>
+                            <div class="image-row-two">
+                                <div class="image-two">
+                                    <div class="outer">
+                                        <div class="inner" style="width:@count2pr%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="padding">@count2</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item-mock" data-acc-item="" data-acc-open="">
+                            <div class="frame-1918723415-open" data-acc-header="">
+                                <div class="image-one">
+                                    <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                    <div class="spacer">2.0</div>
+                                </div>
+                                <div class="image-row-two">
+                                    <div class="image-two">
+                                        <div class="outer">
+                                            <div class="inner" style="width:@count2pr%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="padding">@count2</div>
+                                </div>
+                                <div class="accordion-content"></div>
+                            </div>
+                            <div class="accordion-content1" data-acc-content="">
+                                <div class="accordion-content-wrap">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                                    eget.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="image-row-one" data-acc-item="" data-acc-header="" data-acc-original="">
+                            <div class="image-one">
+                                <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                <div class="spacer">1.0</div>
+                            </div>
+                            <div class="image-row-two">
+                                <div class="image-two">
+                                    <div class="outer">
+                                        <div class="inner" style="width:@count1pr%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="padding">@count1</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item-mock" data-acc-item="" data-acc-open="">
+                            <div class="frame-1918723415-open" data-acc-header="">
+                                <div class="image-one">
+                                    <img class="image-one-child" loading="lazy" alt="" src="images/star-5-1.svg">
+
+                                    <div class="spacer">1.0</div>
+                                </div>
+                                <div class="image-row-two">
+                                    <div class="image-two">
+                                        <div class="outer">
+                                            <div class="inner" style="width:@count1pr%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="padding">@count1</div>
+                                </div>
+                                <div class="accordion-content"></div>
+                            </div>
+                            <div class="accordion-content1" data-acc-content="">
+                                <div class="accordion-content-wrap">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                                    eget.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="line-parent">
+                <div class="line-div"></div>
+                <section class="top-feedback-parent">
+                    <div class="feed-container">
+                        <div class="top-feedback">Top Feedback</div>
+                        @if (isLoggedIn)
+                        {
+                            <button class="give-rev" id="write-review-btn">
+                                <div class="">
+                                    <span class="showed-up-on">Give your review  </span>
+                                    <img class="vuesaxlineartick-circle-icon" alt="" src="images/arrow-right.png">
+
+                                </div>
+                            </button>
+                        }
+                       
+                    </div>
+                    <div class="feedback-tags">   
+                        @foreach(var tag in Model.VendorTopTags){
+                            <button class="quick-responses-wrapper">
+                                <div class="quick-responses">
+                                    <span class="span">@tag.Count</span>
+                                    <span class="showed-up-on"> @tag.Tag</span>
+                                </div>
+                            </button>
+                        }
+
+                    </div>
+                </section>
+
+
+                <div class="line-div"></div>
+                <section class="review-list">
+                    @foreach(var vr in Model.VendorReviews)
+                    {
+                        <div class="review-items">
+                            <div class="reviews3">@Model.ApprovedTotalReviews reviews</div>
+                            <div class="review-cards">
+                                <div class="review-content">
+                                    <div class="reviewer-details">
+                                        <div class="review-header">
+                                            <img class="profile-image-placeholders" loading="lazy" alt="" src="@(string.IsNullOrEmpty(vr.CustomerPicture) ? "images/default-avatar.jpg" : vr.CustomerPicture)">
+
+                                            <div class="reviewer-name-and-date">
+                                                <h3 class="marwan-sayed">@vr.CustomerName</h3>
+                                                <div class="timestamp-container">
+                                                    <div class="timestamp-placeholder">@(double.Parse( vr.Rating.ToString()))</div>
+                                                    <div class="rating-stars">
+                                                        <div class="rating-box">
+                                                            <div class="rating-icons">
+                                                                @{
+                                                                    decimal rp = 0;
+
+                                                                    rp = (vr.Rating * 100) / 5;
+
+                                                                }
+                                                                <div class="rating" style="width: @(rp)%">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="weeks-ago">@vr.CreatedOnUtc.RelativeFormat()</div>
+                                    </div>
+                                    <div class="review-bodies">
+                                        <div class="lorem-ipsum-is-simply">
+                                            @vr.ReviewText
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review-feedback">
+                                    <div class="feedback-items">
+                                        @foreach(var tg in vr.Tags)
+                                        {
+                                            <button class="feedback-item-details">
+                                                <img class="vuesaxlineartick-circle-icon" alt="" src="images/vuesaxlineartickcircle.svg">
+
+                                                <div class="friendly2">@tg</div>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-items1"></div>
+                    }
+                   
+                    
+                </section>
+            </main>
+            <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Content loaded via AJAX -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<script>
+        $(document).ready(function () {
+        // Open modal
+        $('#write-review-btn').on('click', function () {
+            $.ajax({
+                url: '@Url.Action("SubmitVendorReviewPopup", "Catalog")',
+                type: 'GET',
+                data: { vendorId: @Model.Id },
+                success: function (response) {
+
+                    $('#reviewModal .modal-body').html(response);
+                         const modalElement = document.getElementById('reviewModal');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+                   // $('#reviewModal').modal('toggle');
+                }
+            });
+        });
+
+        // Form submission
+        $(document).on('submit', '#vendor-review-form', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        //$('#reviewModal').modal('hide');
+                        location.reload(); // Refresh reviews list
+                    } else {
+                        $('#reviewModal .modal-body').html(response.html);
+                    }
+                }
+            });
+        });
+    });
+</script>
+

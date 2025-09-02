@@ -1,0 +1,282 @@
+﻿@model PrivateMessageThreadModel
+@using Nop.Core.Domain.Vendors
+@using Nop.Web.Models.Catalog;
+@using Nop.Core
+@using Nop.Web.Models.Vendors;
+@using System;
+@inject IWorkContext workContext
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.ViewPM").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-private-messages");
+    NopHtml.AppendPageCssClassParts("html-private-message-view-page");
+    var currentCustomer = await workContext.GetCurrentCustomerAsync();
+
+    var tab = ViewBag.Tab;
+    var vendorModel = new VendorInfoModel();
+    vendorModel = ViewBag.vendor;
+
+}
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/viewpm.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/viewpm.css");
+
+    }
+}
+
+
+<div class="conversation-wrap">
+    <div class="container">
+        <div class="header">
+            <a href="@Url.RouteUrl("CustomerMessages")">
+                <div class="back-icon"><img src="/images/arrow-left.png" /></div>
+                <h3 class="header-title">  Back To My Messages</h3>
+            </a>
+        </div>
+
+        <div class="main-content">
+            <section class="property-section">
+                <img src="@Model.AdPictureUrl" class="property-image" alt="Property">
+                <div class="property-info">
+                    <h2 class="property-title">@Model.Subject</h2>
+                    <div class="property-user">
+                        <img src="@Model.FromCustomerPictureUrl" class="user-avatar" alt="Mohamed Salem">
+                        <span class="user-name">@Model.CustomerFromName</span>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="profile-card">
+                <div class="profile-header">
+                    <img src="@vendorModel.PictureUrl" class="profile-avatar" alt="Salem Elmosalamani">
+                    <div class="profile-info">
+                        <h3 class="profile-name">@Model.CustomerToName</h3>
+                        <div class="rating-section">
+                            <div class="rating-container">
+                                <span class="rating-number">@vendorModel.ApprovedRatingSum</span>
+                                <div class="rating-stars">
+                                    <div class="rating-box">
+                                        <div class="rating-icons">
+                                            @{
+                                                decimal ratingPercent = 0;
+                                                if (vendorModel.ApprovedTotalReviews != 0)
+                                                {
+                                                    ratingPercent = (@vendorModel.ApprovedRatingSum * 100) / 5;
+                                                }
+                                            }
+                                            <div class="rating" style="width: @(ratingPercent)%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @* <div class="stars-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/d53df5d6e0b34d2bb3a4bd50f1df9970/5ca2028af378ddac185df17f3921e0c0ec675c00?placeholderIfAbsent=true" class="star" alt="Star">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/d53df5d6e0b34d2bb3a4bd50f1df9970/5ca2028af378ddac185df17f3921e0c0ec675c00?placeholderIfAbsent=true" class="star" alt="Star">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/d53df5d6e0b34d2bb3a4bd50f1df9970/5ca2028af378ddac185df17f3921e0c0ec675c00?placeholderIfAbsent=true" class="star" alt="Star">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/d53df5d6e0b34d2bb3a4bd50f1df9970/5ca2028af378ddac185df17f3921e0c0ec675c00?placeholderIfAbsent=true" class="star" alt="Star">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/d53df5d6e0b34d2bb3a4bd50f1df9970/5ca2028af378ddac185df17f3921e0c0ec675c00?placeholderIfAbsent=true" class="star" alt="Star">
+                                </div> *@
+                            </div>
+                            <a class="reviews-link" href="@(Url.RouteUrl<Vendor>(new { SeName = vendorModel.SeName, reviews = 2 }))">
+                                @vendorModel.ApprovedTotalReviews @T("Reviews.Overview.Reviews")
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-value">@(string.IsNullOrEmpty(vendorModel.AvgReply) ? 0 : vendorModel.AvgReply) Hrs</div>
+                        <div class="stat-label">avg reply</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">@(string.IsNullOrEmpty(vendorModel.AvgReplyRate) ? 0 : vendorModel.AvgReplyRate) %</div>
+                        <div class="stat-label">reply rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            @(vendorModel.CreatedOnUtc.RelativeFormat())
+                        </div>
+                        <div class="stat-label">member since</div>
+                    </div>
+                </div>
+                <button class="block-button" data-id="@Model.AdId" data-toId="@Model.ToCustomerId" data-fromId="@Model.FromCustomerId">Block</button>
+            </aside>
+        </div>
+
+        <hr class="divider">
+
+        <section class="messages-section">
+            <div class="message-container" id="messagesContainer">
+                @foreach (var msg in Model.Messages)
+                {
+                    if (msg.FromCustomerId == currentCustomer.Id)
+                    {
+                        <div class="message-bubble to">
+                            @msg.Message
+                        </div>
+                    } else
+                    {
+                        <div class="message-bubble from">
+                            @msg.Message
+                        </div>
+                    }
+
+
+                }
+            </div>
+            @if(Model.Messages.Count > 0)
+            {
+                <time class="message-timestamp @(Model.Messages.LastOrDefault().FromCustomerId == currentCustomer.Id ? "to":"from") ">
+                    @if (Model.Messages.LastOrDefault().CreatedOn < DateTime.Now && Model.Messages.LastOrDefault().CreatedOn > DateTime.Now.AddMinutes(-1))
+                    {
+                     <span>
+                            Just now
+                     </span>   
+                    } else {
+                        <span>
+                            @Model.Messages.LastOrDefault().CreatedOn.RelativeFormat() ago
+
+                        </span>
+
+                    }
+                    </time>
+            }
+        </section>
+        @{
+            var sendPmModel = new SendPrivateMessageModel
+            {
+                ToCustomerId = Model.ToCustomerId,
+                
+                Subject = Model.Subject,
+                PictureId = Model.AdPictureId,
+                AdId = Model.AdId,
+                Message = string.Empty
+            };
+        }
+       
+                    @await Html.PartialAsync("SendPm", sendPmModel)
+
+           @*  <input type="text"
+                   class="message-input"
+                   placeholder="Type your message......"
+                   id="messageInput"
+                    />
+            <button class="send-button" type="submit" aria-label="Send message">
+                <img src="/images/send.png" />
+            </button> *@
+      
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmText">Are you sure you want to block this user?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmActionBtn" class="btn pause-btn">Yes, Block</button>
+                <button type="button" class="btn pause-btn-rev" onclick="closeConfirm()" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <p class="text-success fw-bold">User Blocked successfully!</p>
+                <button type="button" class="btn pause-btn mt-2 " onclick="close()" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+     var adId = 0;
+    var toId = 0;
+    var fromId = 0;
+
+               function closeConfirm(){
+                   const modalElement = document.getElementById('confirmModal');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.hide();
+
+
+    }
+
+        function close(){
+                    const modalElement = document.getElementById('successModel');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.hide();
+
+    }
+
+    $(document).ready(function () {
+
+
+           function closeConfirm(){
+                   const modalElement = document.getElementById('confirmModal');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.hide();
+
+
+    }
+
+        function close(){
+                    const modalElement = document.getElementById('successModel');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.hide();
+
+    }
+        $('.block-button').on('click', function () {
+        debugger;
+        adId = $(this).data('id');
+        toId = $(this).data('toid');
+        fromId = $(this).data('fromid');
+        //$('#confirmText').text('Are you sure you want to delete this thread?');
+        const modalElement = document.getElementById('confirmModal');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    });
+
+
+
+    $('#confirmActionBtn').click(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: '/PrivateMessages/BlockPM?adId='+adId+'&to='+toId+'&from='+fromId,
+            success: function () {
+               // location.reload();
+               window.location = '@Url.RouteUrl("CustomerMessages")';
+            },
+            error: function () {
+                alert('Something went wrong. Please try again.');
+            }
+        });
+    });
+
+    });
+</script>

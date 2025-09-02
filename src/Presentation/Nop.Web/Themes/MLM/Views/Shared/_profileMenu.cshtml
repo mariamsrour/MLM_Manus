@@ -1,0 +1,159 @@
+﻿@model Nop.Core.Domain.Customers.Customer
+
+
+<style>
+    .frame-child68 {
+        width: 68px;
+        height: 68px;
+        position: relative;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .marwan-sayed7 {
+        margin: 0;
+        align-self: stretch;
+        position: relative;
+        font-size: inherit;
+        line-height: var(--font-size-base);
+        font-weight: 600;
+        font-family: inherit;
+    }
+
+    .ellipse-parent6 {
+        width: max-content;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--gap-base);
+    }
+
+    .vuesaxlinearlayer-icon {
+        height: 18px;
+        width: 18px;
+        position: relative;
+    }
+
+    .sign-in1 {
+        position: relative;
+    }
+
+    .component-152,
+    .component-152-wrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .component-152 {
+        width: 295px;
+        background-color: var(--color-white);
+        align-items: flex-start;
+        padding: var(--padding-3xs);
+        box-sizing: border-box;
+        gap: var(--gap-3xs);
+    }
+
+    .component-152-wrapper {
+        height: 41px;
+    }
+
+    .component-152-wrapper,
+    .component-154,
+    .frame-parent74 {
+        align-self: stretch;
+        align-items: flex-start;
+    }
+
+    .component-154 {
+        background-color: var(--color-white);
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: var(--padding-3xs);
+        gap: var(--gap-3xs);
+    }
+
+    .frame-parent74 {
+        flex: 1;
+        flex-direction: column;
+        font-size: var(--font-size-sm);
+        color: var(--Primary-600);
+    }
+
+    .frame-parent73,
+    .frame-parent74,
+    .root10 {
+        display: flex;
+        justify-content:center;
+    }
+
+    .frame-parent73 {
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--gap-base);
+        text-align: left;
+        font-size: var(--font-size-5xl);
+        color: var(--Primary-400);
+        font-family: var(--font-poppins);
+    }
+
+    .root10 {
+        width: 295px;
+        border-radius: var(--br-mini);
+        background-color: var(--color-white);
+        border: 0.5px solid var(--Neutral-300);
+        box-sizing: border-box;
+        overflow: hidden;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 10px;
+        line-height: normal;
+        letter-spacing: normal;
+    }
+
+</style>
+
+
+<div class="root10">
+    <section class="frame-parent73">
+        <div class="ellipse-parent6">
+            <img class="frame-child68"
+                 loading="lazy"
+                 alt=""
+                 src="@Model.AdminComment" />
+
+            <h2 class="marwan-sayed7">@Model.FirstName @Model.LastName</h2>
+        </div>
+        <div class="frame-parent74">
+            <div class="component-152-wrapper">
+                <div class="component-152">
+                    <img class="vuesaxlinearlayer-icon"
+                         loading="lazy"
+                         alt=""
+                         src="images/prof-menu/vuesaxlinearlayer.svg" />
+
+                    <a href="/" class="sign-in1">My Ads</a>
+                </div>
+            </div>
+            <div class="component-154">
+                <img class="vuesaxlinearlayer-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/prof-menu/vuesaxlinearsetting2.svg" />
+
+                <a href="/customer-info" class="sign-in1">Account Settings</a>
+            </div>
+            <div class="component-154">
+                <img class="vuesaxlinearlayer-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/prof-menu/vuesaxlinearlogout.svg" />
+
+                <a href="/logout" class="sign-in1">Logout</a>
+            </div>
+        </div>
+    </section>
+</div>

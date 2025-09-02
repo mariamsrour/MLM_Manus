@@ -1,0 +1,187 @@
+﻿@model string // optional, if you pass anything to customize (e.g., ID prefix)
+       
+
+
+<input id="mapSearchInput" value="@Model" class="map-search-box form-control" type="text" placeholder="Search location..." />
+        <div id="map" style="height: 400px;"></div>
+        <input type="hidden" id="Latitude" name="Latitude" />
+        <input type="hidden" id="Longitude" name="Longitude" />
+        <input type="hidden" id="SelectedAddress" name="SelectedAddress" />
+        <input type="hidden" id="Coordinates" name="Coordinates" />
+
+
+    @using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/locationpicker.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/locationpicker.css");
+
+    }
+}
+
+
+
+
+<script>
+
+        let map, marker, geocoder;
+        function loadGoogleMapsScript() {
+    if (typeof google !== 'undefined' && google.maps) {
+        waitForMapContainerThenInit();
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyB5FFqO7vdYzlxL9sTU15G-O7BnU2Or7Ak&libraries=places&callback=initMap";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+
+    // Declare global callback
+    window.waitForMapContainerThenInit = function () {
+        const checkExist = setInterval(function () {
+            if (document.getElementById("map")) {
+                clearInterval(checkExist);
+                initMap();
+            }
+        }, 100); // Check every 100ms
+    };
+    }
+
+
+    // Ensure initMap is global
+    window.initMap = function () {
+        geocoder = new google.maps.Geocoder();
+        var slat = sessionStorage.getItem("Latitude");
+        var slng = sessionStorage.getItem("Longitude");
+        var fallbackLocation2 = { lat: 24.7136, lng: 46.6753 };
+        if(slat && slng){
+         fallbackLocation2 = { lat: parseFloat(slat), lng: parseFloat(slng) }; // Riyadh
+
+        } else {
+         fallbackLocation2 = { lat: 24.7136, lng: 46.6753 }; // Riyadh
+
+        }
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: fallbackLocation2,
+            zoom: 6
+        });
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    const currentLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    map.setCenter(currentLocation);
+                    map.setZoom(14);
+                    setMarkerAndSave(currentLocation);
+                },
+                function () {
+                    map.setCenter(fallbackLocation2);
+                    map.setZoom(10);
+                    setMarkerAndSave(fallbackLocation2);
+                }
+            );
+        } else {
+            map.setCenter(fallbackLocation2);
+            map.setZoom(10);
+            setMarkerAndSave(fallbackLocation2);
+        }
+
+        const input = document.getElementById("mapSearchInput");
+        const autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo("bounds", map);
+
+        autocomplete.addListener("place_changed", function () {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+
+            map.setCenter(place.geometry.location);
+            map.setZoom(16);
+            setMarkerAndSave(place.geometry.location);
+        });
+
+        map.addListener("click", function (e) {
+            setMarkerAndSave(e.latLng);
+        });
+    }
+
+        function setMarkerAndSave(latlng) {
+        // Ensure latlng is a google.maps.LatLng object
+        if (!(latlng instanceof google.maps.LatLng)) {
+            latlng = new google.maps.LatLng(latlng.lat, latlng.lng);
+        }
+
+        // Set or update marker
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                draggable: true
+            });
+        } else {
+            marker.setPosition(latlng);
+        }
+
+        map.panTo(latlng);
+
+        // Save coordinates to hidden fields
+        $('#Latitude').val(latlng.lat());
+        $('#Longitude').val(latlng.lng());
+        $('#Coordinates').val(latlng.lat() +','+ latlng.lng());
+
+        // Reverse geocode to get address
+        geocoder.geocode({ location: latlng }, function (results, status) {
+            if (status === "OK" && results[0]) {
+                $('#SelectedAddress').val(results[0].formatted_address); 
+                $('#selected-location-string').html(results[0].formatted_address);
+            } else {
+                $('#SelectedAddress').val('');
+                $('#selected-location-string').html('');
+            }
+        });
+    }
+
+
+    // Call when DOM ready
+    $(document).ready(function () {
+       
+        loadGoogleMapsScript();
+        var sadd2 = sessionStorage.getItem("Address");
+        if(sadd2){
+        $('#selected-location-string').html(sadd2);
+
+        }
+
+        $('.cityselect').on('change', function () {
+        const selectedCity = $(this).val();
+        if (!selectedCity || !geocoder || !map) return;
+
+        geocoder.geocode({ address: selectedCity }, function (results, status) {
+            if (status === "OK" && results[0]) {
+                const cityLocation = results[0].geometry.location;
+                map.setCenter(cityLocation);
+                map.setZoom(14);
+                setMarkerAndSave(cityLocation);
+            } else {
+                console.warn("Could not locate city:", status);
+            }
+        });
+    });
+
+    });  
+</script>
+

@@ -1,0 +1,227 @@
+﻿@model CategoryNavigationModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Services.Configuration
+
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var CatalogPageLayout = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.CatalogPageLayout", "two-columns", storeId, true);
+    var departments = Model.Categories.Where(c => c.Parent == 0).ToList();
+}
+
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/categoryNavigation.rtl.css");
+
+    }
+    
+}
+
+@if (Model.Categories.Count > 0)
+{
+
+
+    <div class="filtersPanel">
+
+        <div class="block filter-block dropdown-block">
+            <div class="filtersGroupPanel filtersDropDownPanel">
+                <label class="toggleControl">By @T("Department")</label>
+                <select id="departmentDropdown" class="form-control">
+                    <option value="">@T("All")</option>
+                    @foreach (var department in departments)
+                    {
+                        <option value="@department.Id" selected="@(Model.CurrentDepartmentId == department.Id ? "selected" : "")" > @department.Name</option>
+
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="block filter-block dropdown-block">
+            <div class="filtersGroupPanel filtersDropDownPanel">
+                <label class="toggleControl">By @T("Category")</label>
+                <select id="categoryDropdown" class="form-control" >
+                    <option value="">@T("All")</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="block filter-block dropdown-block">
+            <div class="filtersGroupPanel filtersDropDownPanel">
+                <label class="toggleControl">By @T("Subcategory")</label>
+                <select id="subcategoryDropdown" class="form-control" >
+                    <option value="">@T("All")</option>
+                </select>
+            </div>
+        </div>
+
+        @* Pre-fill hidden fields for selected path *@
+        <input type="hidden" id="currentDepartmentId" value="@Model.CurrentDepartmentId" />
+        <input type="hidden" id="currentCategoryId" value="@Model.CurrentCategoryId" />
+        <input type="hidden" id="currentSubCategoryId" value="@Model.CurrentSubCategoryId" />
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+@*         const deptChoices = initChoicesIfNeeded('select#departmentDropdown');
+        const catChoices = initChoicesIfNeeded('select#categoryDropdown');
+        const subcatChoices = initChoicesIfNeeded('select#subcategoryDropdown'); *@
+
+           const deptChoices = window.choicesInstances['departmentDropdown'];
+           const catChoices = window.choicesInstances['categoryDropdown'];
+                   const subcatChoices =window.choicesInstances['subcategoryDropdown'];
+
+
+
+            const allCategories = @Html.Raw(Json.Serialize(Model.Categories));
+                    console.log(allCategories);
+            const selectedDeptId = $('#currentDepartmentId').val();
+            const selectedCatId = $('#currentCategoryId').val();
+            const selectedSubCatId = $('#currentSubCategoryId').val();
+                    console.log({ deptChoices, catChoices, subcatChoices });
+
+@*             function populateCategories(departmentId, selectedCategoryId) {
+                const dept = allCategories.find(c => c.Id == departmentId);
+                const categories = dept?.SubCategories || [];
+
+                $('#categoryDropdown').empty().append('<option value="">@T("All")</option>').prop('disabled', categories.length === 0);
+                categories.forEach(cat => {
+                    $('#categoryDropdown').append(`
+                    <option value="${cat.Id}" data-url="/Category/${cat.SeName}">${cat.Name}</option>
+                    `);
+                });
+              
+                if (selectedCategoryId) {
+                    $('#categoryDropdown').val(selectedCategoryId);
+                    populateSubCategories(selectedCategoryId, selectedSubCatId);
+                }
+            } *@
+
+        function initChoicesIfNeeded(selector, options = {}) {
+          const el = document.querySelector(selector);
+          if (!el) return null;
+
+          if (el.Choices) return el.Choices;
+
+          const instance = new Choices(el, {
+            searchEnabled: false,
+            itemSelectText: '',
+            shouldSort: false,
+            ...options
+          });
+
+          el.Choices = instance;
+          return instance;
+        }
+
+
+        function populateCategories(departmentId, selectedCategoryId) {
+          const dept = allCategories.find(c => c.Id == departmentId);
+          const categories = dept?.SubCategories || [];
+
+          catChoices.clearChoices();
+          catChoices.setChoices([ ...categories.map(cat => ({
+            value: cat.Id,
+            label: cat.Name,
+            selected: selectedCategoryId == cat.Id,
+            customProperties: { url: `/Category/${cat.SeName}` }
+          }))], 'value', 'label', true);
+
+          if (selectedCategoryId) {
+            populateSubCategories(selectedCategoryId, selectedSubCatId);
+          }
+        }
+
+          @*   function populateSubCategories(categoryId, selectedSubCategoryId) {
+                const deptId = $('#departmentDropdown').val();
+                const dept = allCategories.find(c => c.Id == deptId);
+                const cat = dept?.SubCategories.find(c => c.Id == categoryId);
+                const subcategories = cat?.SubCategories || [];
+
+                $('#subcategoryDropdown').empty().append('<option value="">@T("All")</option>').prop('disabled', subcategories.length === 0);
+                subcategories.forEach(sub => {
+                    $('#subcategoryDropdown').append(`<option value="${sub.Id}" data-url="/Category/${sub.SeName}">${sub.Name}</option>`);
+                });
+                
+                if (selectedSubCategoryId) {
+                    $('#subcategoryDropdown').val(selectedSubCategoryId);
+                }
+            } *@
+
+        function populateSubCategories(categoryId, selectedSubCategoryId) {
+          const deptId = $('#departmentDropdown').val();
+          const dept = allCategories.find(c => c.Id == deptId);
+          const cat = dept?.SubCategories.find(c => c.Id == categoryId);
+          const subcategories = cat?.SubCategories || [];
+
+          subcatChoices.clearChoices();
+          subcatChoices.setChoices([ ...subcategories.map(sub => ({
+            value: sub.Id,
+            label: sub.Name,
+            selected: selectedSubCategoryId == sub.Id,
+            customProperties: { url: `/Category/${sub.SeName}` }
+          }))], 'value', 'label', true);
+        }
+
+
+            $('#departmentDropdown').on('change', function () {
+            
+          const selected = deptChoices.getValue(true); // selected ID
+          const selectedOption = deptChoices.getValue()[0]; // full object
+
+          subcatChoices.clearChoices(); // Clear subcategories on department change
+
+          if (selected) {
+            populateCategories(selected, null);
+
+            const deptName = $(this).find('option:selected').text().trim();
+            const url = `/Category/${deptName}`;
+             console.log(`Redirecting to: ${url}`); // Debugging log
+             @* window.location.href = url; *@
+          }
+            });
+
+            $('#categoryDropdown').on('change', function () {
+            
+          const selected = catChoices.getValue(true);
+          const selectedOption = catChoices.getValue();
+                  console.log(selectedOption); // Debugging log
+          subcatChoices.clearChoices();
+
+          if (selected) {
+            populateSubCategories(selected, null);
+
+                            const url = selectedOption.customProperties?.url;
+                   console.log(`Redirecting to: ${url}`); // Debugging log
+
+            window.location.href = url;
+          }
+            });
+
+            $('#subcategoryDropdown').on('change', function () {
+                       const selectedOption = subcatChoices.getValue();
+                   const subcatName = $(this).find('option:selected').text().trim();
+                                    const url = selectedOption.customProperties?.url;
+                               console.log(`Redirecting to: ${url}`); // Debugging log
+
+           window.location.href = url;
+            });
+
+            // Preselect path if values exist
+            if (selectedDeptId) {
+          deptChoices.setChoiceByValue(selectedDeptId);
+          populateCategories(parseInt(selectedDeptId), selectedCatId);
+            }
+        });
+    </script>
+}

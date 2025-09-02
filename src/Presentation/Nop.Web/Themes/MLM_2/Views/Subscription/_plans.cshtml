@@ -1,0 +1,220 @@
+﻿@using Nop.Web.Models.Subscriptions
+
+@model List<Plan>
+@inject Nop.Core.IWebHelper webHelper
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/plans.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/plans.css");
+
+    }
+}
+
+
+
+<div class="plans-wrapper">
+    @foreach (var p in Model)
+    {
+        <div class="plan-card @(p.IsPopular? "featured":"")">
+            <img class="plan-icon" src="~/images/@(p.Id)_plan_icon.png" />
+
+            <div class="plan-name">
+                @p.Name
+            </div>
+            @foreach (var pc in p.Packages)
+            {
+                bool isFirst = p.Packages.FirstOrDefault() == pc;
+
+                <div class="package-container">
+                    <div class="acc-header">
+                        <div class="pc-name-wrapper">
+                            @if (isFirst)
+                            {
+                                <input id="package_@pc.Id"
+                                       type="radio"
+                                       name="package"
+                                       value="@pc.Id"
+                                       data-target="toggle-pack-container-@pc.Id"
+                                       class="package-radio" checked="checked" />
+                            }
+                            else
+                            {
+                                <input id="package_@pc.Id"
+                                       type="radio"
+                                       name="package"
+                                       value="@pc.Id"
+                                       data-target="toggle-pack-container-@pc.Id"
+                                       class="package-radio" />
+                            }
+
+                            <label for="package_@pc.Id">
+                                @pc.Name
+                            </label>
+                           
+                        </div>
+                        <div class="pc-price-wrapper">
+                            <div class="price">
+                                @pc.Price.ToString("C")
+                            </div>
+                            <button type="button" class="toggle-pack-btn" data-target="toggle-pack-container-@pc.Id">
+                                @if (p.IsPopular)
+                                {
+                                    <img class="arrow" src="~/images/arrow_down_w.png" />
+
+                                }
+                                else
+                                {
+                                    <img class="arrow" src="~/images/arrow_down.png" />
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                  
+                    <div class="expand @(isFirst? "active" : "")" id="toggle-pack-container-@pc.Id">
+                        <div class="price-large">
+                            @pc.Price.ToString("C")
+                        </div>
+                        <div class="pc-desc">
+                            @p.Description
+                        </div>
+
+                        <div class="pc-features">
+                            <ul>
+                                @foreach (var f in p.Features)
+                                {
+                                    <li>
+                                        @if (p.IsPopular)
+                                        {
+                                            <img class="check-f" src="~/images/check-circle-w.png" />
+
+                                        }
+                                        else
+                                        {
+                                            <img class="check-f" src="~/images/check-circle.png" />
+                                        }
+                                        @f
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="plan-card-footer">
+                <a href="@Url.Action("Checkout", "Subscription", new {packageId = p.Packages.FirstOrDefault().Id , adId = ViewBag.adId, catId = ViewBag.catId})" class="btn  select-plan-link" data-base-url="@Url.Action("Checkout", "Subscription", new {  adId = ViewBag.adId, catId = ViewBag.catId })">Select Plan</a>
+            </div>
+        </div>
+    }
+
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Handle radio button changes
+        document.querySelectorAll('.package-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Get the parent plan card
+                const planCard = this.closest('.plan-card');
+
+                // Collapse all expands in THIS PLAN CARD ONLY
+                planCard.querySelectorAll('.expand').forEach(div => {
+                    div.classList.remove('active');
+                });
+
+                if(this.checked) {
+                    // Expand only the target in THIS PLAN
+                    const target = planCard.querySelector(`#${this.dataset.target}`);
+                    if(target) {
+                        target.classList.add('active');
+                    }
+
+                    // Update select plan link IN THIS PLAN CARD
+                    const packageId = this.value;
+                    const baseUrl = planCard.querySelector('.select-plan-link').dataset.baseUrl;
+                    const link = `${baseUrl}&packageId=${packageId}`;
+
+                    planCard.querySelector('.select-plan-link').href = link;
+                }
+            });
+        });
+
+        // Keep the button click handler as is
+        document.querySelectorAll('.toggle-pack-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const radio = document.querySelector(`#package_${targetId.split('-').pop()}`);
+                if(radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Initialize first radio per plan card
+        // document.querySelectorAll('.plan-card').forEach(card => {
+        //     if(!card.querySelector('.package-radio:checked')) {
+        //         const firstRadio = card.querySelector('.package-radio');
+        //         if(firstRadio) {
+        //             firstRadio.checked = true;
+        //             firstRadio.dispatchEvent(new Event('change'));
+        //         }
+        //     }
+        // });
+    });
+</script>
+@* <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle radio button changes
+        document.querySelectorAll('.package-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const allExpands = document.querySelectorAll('.expand');
+                allExpands.forEach(div => div.classList.remove('active'));
+
+                if(this.checked) {
+                    const target = document.getElementById(this.dataset.target);
+                    target.classList.add('active');
+
+                    // Update select plan link
+                    const packageId = this.value;
+                    const baseUrl = this.closest('.plan-card')
+                        .querySelector('.select-plan-link').dataset.baseUrl;
+                    const link = `${baseUrl}?packageId=${packageId}`;
+
+                    this.closest('.plan-card')
+                        .querySelector('.select-plan-link').href = link;
+                }
+            });
+        });
+
+        // Handle button clicks to toggle
+        document.querySelectorAll('.toggle-pack-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const radio = document.querySelector(`#package_${targetId.split('-').pop()}`);
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            });
+        });
+
+        // Initialize first radio as checked if none are selected
+        // document.querySelectorAll('.plan-card').forEach(card => {
+        //     if(!card.querySelector('.package-radio:checked')) {
+        //         const firstRadio = card.querySelector('.package-radio');
+        //         if(firstRadio) {
+        //             firstRadio.checked = true;
+        //             firstRadio.dispatchEvent(new Event('change'));
+        //         }
+        //     }
+        // });
+    });
+</script> *@

@@ -1,0 +1,331 @@
+﻿@model FooterModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Tax
+@using Nop.Core.Domain.Topics
+@using Nop.Services.Configuration
+
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject IThemeContext themeContext
+@inject IWorkContext workContext
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var removeCopyright = await settingService.GetSettingByKeyAsync("avenuethemesettings.removecopyright", false, storeId, true);
+    var removeDesignedBy = await settingService.GetSettingByKeyAsync("avenuethemesettings.removedesignedby", false, storeId, true);
+    var footerLogo = await Component.InvokeAsync("Widget", new { widgetZone = "avenue_footer_logo" });
+}
+
+@* <div class="footer">
+    <div class="footer-upper">
+        @await Component.InvokeAsync(typeof(NewsletterBoxViewComponent))
+    </div>
+    <div class="footer-middle">
+        <div class="footer-text">
+            <div class="footer-logo">
+                @if (!String.IsNullOrEmpty(await footerLogo.RenderHtmlContentAsync()))
+                {
+                    <img src="@footerLogo" alt="" title="" />
+                }
+                else {
+                    <img src="@Url.Content($"~/Themes/{await themeContext.GetWorkingThemeNameAsync()}/Content/img/logo_inverted.png")" alt="" title="">
+                }
+            </div>
+            <p class="text">@T("SevenSpikes.Themes.Avenue.FooterText")</p>
+            <a class="read-more" href="#">@T("SevenSpikes.Themes.Avenue.FooterButton")</a>
+        </div>
+        <div class="footer-block-wrapper">
+            <div class="footer-block information">
+                <div class="title">
+                    <strong>@T("Footer.Information")</strong>
+                </div>
+                <ul class="list">
+                    @if (Model.SitemapEnabled && Model.DisplaySitemapFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("Sitemap")">@T("Sitemap")</a></li>
+                    }
+                    @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn1).ToList())
+                    {
+                        <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
+                    }
+                    @if (Model.DisplayContactUsFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
+                    }
+                </ul>
+            </div> *@
+@*             <div class="footer-block customer-service">
+                <div class="title">
+                    <strong>@T("Footer.CustomerService")</strong>
+                </div>
+                <ul class="list">
+                	@if (Model.SearchEnabled && Model.DisplayProductSearchFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("ProductSearch")">@T("Search")</a> </li>
+                    }
+                    @if (Model.NewsEnabled && Model.DisplayNewsFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("NewsArchive")">@T("News")</a></li>
+                    }
+                    @if (Model.BlogEnabled && Model.DisplayBlogFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("Blog")">@T("Blog")</a></li>
+                    }
+                    @if (Model.ForumEnabled && Model.DisplayForumsFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("Boards")">@T("Forum.Forums")</a></li>
+                    }
+                   
+                    @if (Model.CompareProductsEnabled && Model.DisplayCompareProductsFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CompareProducts")">@T("Products.Compare.List")</a></li>
+                    }
+                   
+                    @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn2).ToList())
+                    {
+                        <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
+                    }
+                    @if (Model.AllowCustomersToCheckGiftCardBalance)
+                    {
+                        <li><a href="@Url.RouteUrl("CheckGiftCardBalance")">@T("CheckGiftCardBalance")</a></li>
+                    }
+                </ul>
+            </div>
+ *@           @*  <div class="footer-block my-account">
+                <div class="title">
+                    <strong>@T("Footer.MyAccount")</strong>
+                </div>
+                <ul class="list">
+                    @if (Model.DisplayCustomerInfoFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
+                    }
+                    @if (Model.DisplayCustomerOrdersFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerOrders")">@T("Account.CustomerOrders")</a></li>
+                    }
+                    @if (Model.DisplayCustomerAddressesFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerAddresses")">@T("Account.CustomerAddresses")</a></li>
+                    }
+                    @if (Model.ShoppingCartEnabled && Model.DisplayShoppingCartFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("ShoppingCart")">@T("ShoppingCart")</a></li>
+                    }
+                    @if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("Wishlist")">@T("Wishlist")</a></li>
+                    }
+                    @if (Model.RecentlyViewedProductsEnabled && Model.DisplayRecentlyViewedProductsFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("RecentlyViewedProducts")">@T("Products.RecentlyViewedProducts")</a></li>
+                    }
+                    @if (Model.NewProductsEnabled && Model.DisplayNewProductsFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("NewProducts")">@T("Products.NewProducts")</a></li>
+                    } *@
+                    @* @if (Model.AllowCustomersToApplyForVendorAccount && Model.DisplayApplyVendorAccountFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("ApplyVendorAccount")">@T("Vendors.ApplyAccount")</a></li>
+                    }
+                    @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn3).ToList())
+                    {
+                        <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
+                    } *@
+               @*  </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-lower">
+        <div class="footer-lower-block footer-social-buttons">
+            @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
+        </div>
+        <div class="footer-lower-block footer-site-info">
+            @if (!removeCopyright)
+            {
+                <div class="info footer-powered-by">
+                    Powered by <a href="#" target="_blank" @(Model.IsHomePage ? string.Empty : "rel=nofollow")>United Diamond Technology</a>
+                </div>
+            } *@
+           @*  @if (!removeDesignedBy)
+            {
+                <div class="info footer-designed-by">
+                    Designed by <a href="https://www.nop-templates.com/" target="_blank">Nop-Templates.com</a>
+                </div>
+            } *@
+         @*    <div class="info footer-disclaimer">
+                @T("Content.CopyrightNotice", DateTime.Now.Year, "Valoos")
+            </div>
+            @if (Model.DisplayTaxShippingInfoFooter)
+            {
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                <div class="info footer-tax-shipping">
+                    @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteTopicUrl("shippinginfo"))
+                </div>
+            }
+        </div>
+        <div class="footer-lower-block footer-payment-methods">
+            <ul>
+                <li class="method1"></li>
+                <li class="method2"></li>
+                <li class="method3"></li> *@
+              @*   <li class="method4"></li>
+                <li class="method5"></li> *@
+           @*  </ul>
+        </div>
+    </div> *@
+    @await Component.InvokeAsync(typeof(StoreThemeSelectorViewComponent))
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.Footer, additionalData = Model })
+@* </div> *@
+
+
+                  <div class="footer-unsigned-in">
+        <div class="footer-content">
+          <img
+            class="logo-wb-2-11"
+            alt=""
+            src="images/0000302-logo-wb-2-1-1@2x.png"
+          />
+
+          <div class="footer-content-inner">
+            <div class="information-content-parent">
+              <div class="information-content">
+                <div class="information-header">
+                  <div class="information-title">
+                    <b class="strong-information">Information</b>
+                    <div class="list">
+                      <div class="link-items">
+                        <div class="item-link">
+                          <div class="contact-us" id="contactUsText">
+                            Contact us
+                          </div>
+                        </div>
+                        <div class="item-link1" id="itemLink1">
+                          <div class="about-us">About us</div>
+                        </div>
+                        <div class="item-link2" id="itemLink2">
+                          <a class="privacy-policy">Privacy policy</a>
+                        </div>
+                        <div class="item-link3" id="itemLink3">
+                          <a class="terms-conditions">Terms & Conditions</a>
+                        </div>
+                        <div class="item-link4" id="itemLink4">
+                          <div class="marketing-policies">
+                            Marketing Policies
+                          </div>
+                        </div>
+                        <div class="item-link5" id="itemLink5">
+                          <a class="support">Support</a>
+                        </div>
+                        <div class="item-link6" id="itemLink6">
+                          <div class="marketing-policies">Copyrights</div>
+                        </div>
+                        <div class="item-link7" id="itemLink7"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="newsletter-content-parent">
+                  <div class="newsletter-content">
+                    <div class="newsletter-header">
+                      <div class="strong-newsletter">Newsletter</div>
+                      <div class="get-all-the">
+                        Get all the latest information on events, sales and
+                        offers. Sign up for newsletter:
+                      </div>
+                    </div>
+                  </div>
+                  <div class="signup-form">
+                    <div class="input-sign-up-for-our-newsle">
+                      <input
+                        class="container"
+                        placeholder="Enter your email here..."
+                        type="text"
+                      />
+                    </div>
+                    <button class="component-2831">
+                      <img
+                        class="vuesaxlinearsearch-normal-icon1"
+                        alt=""
+                        src="images/vuesaxlinearsearchnormal1.svg"
+                      />
+
+                      <b class="post-ad1">Subscribe</b>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="socials-wrapper">
+                <div class="socials">
+                  <div class="follow">
+                    <b class="strong-follow">Follow us</b>
+                     <a href="#">
+                                             <img class="list-icon1" alt="" src="images/list-1.svg" />
+
+          </a>
+                  </div>
+                  <div class="container1">
+                    <div class="linkmargin">
+                      <div class="link">
+                        <img
+                          class="app-storejpg-icon"
+                          alt=""
+                          src="images/appstorejpg@2x.png"
+                        />
+                      </div>
+                    </div>
+                    <div class="linkmargin1">
+                      <div class="link1">
+                        <img
+                          class="app-storejpg-icon"
+                          alt=""
+                          src="images/googleplayjpg@2x.png"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="background1">
+          <div class="footer-content1">
+            <div class="container2">
+              <div class="copyright-2024">
+                Copyright © 2024 MLM. All rights reserved.
+              </div>
+              <div class="link2"></div>
+              <div class="link3"></div>
+            </div>
+          </div>
+           <div class="powered-by-ud-tech">Powered by UD-Tech KSA</div>
+         
+           <img
+            class="list-item-0000199-payment-"
+            loading="lazy"
+            alt=""
+            src="images/list--item--0000199-payment-logopng@2x.png"
+          />
+        </footer>
+
+    <script>
+        $(document).ready(function() {
+            $('.vuesaxlineareye-icon').on('click', function() {
+                // Find the associated password input
+                const passwordField = $(this).closest('.component-67').find('.frame-input');
+                const currentType = passwordField.attr('type');
+                const newType = currentType === 'password' ? 'text' : 'password';
+
+                // Toggle input type
+                passwordField.attr('type', newType);
+
+                // Optional: Change eye icon appearance
+                const iconSrc = newType === 'password' ?
+                    'images/vuesaxlineareye.svg' :
+                    'images/vuesaxlineareye.svg'; // Add your closed eye icon
+                $(this).attr('src', iconSrc);
+            });
+        });
+    </script>

@@ -1,0 +1,14 @@
+
+.send-msg {
+  position: relative;
+  left: 20px;
+  text-align: center;
+  display: block;
+  min-width: 136px;
+  padding: 13px 6px;
+  background-color: #383375;
+  color: #fff;
+  border-radius: 30px;
+  max-height: 42px;
+  float: left;
+}

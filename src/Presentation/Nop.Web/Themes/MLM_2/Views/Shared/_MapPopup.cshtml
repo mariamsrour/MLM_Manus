@@ -1,0 +1,48 @@
+﻿@model (double Latitude, double Longitude)
+
+<div id="mapModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Location</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="height: 400px;">
+                <div id="map_show" style="height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let mapshow, markershow;
+
+    function initMapModal(lat, lng) {
+        const mapContainer = document.getElementById("map_show");
+        const location = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+        mapshow = new google.maps.Map(mapContainer, {
+            zoom: 14,
+            center: location
+        });
+
+        markershow = new google.maps.Marker({
+            position: location,
+            map: mapshow
+        });
+    }
+
+    $(document).on("click", ".map-link", function () {
+        const lat = $(this).data("lat");
+        const lng = $(this).data("lng");
+
+
+        const modalElement = document.getElementById('mapModal');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+      //  $("#").modal("show");
+
+        // Wait for modal to show before rendering the map
+        setTimeout(() => initMapModal(lat, lng), 500);
+    });
+</script>

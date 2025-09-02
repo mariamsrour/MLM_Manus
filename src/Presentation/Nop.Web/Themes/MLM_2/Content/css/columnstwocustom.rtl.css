@@ -1,0 +1,39 @@
+
+.side-2 {
+  width: 100% !important;
+  float: none;
+  margin: 0 auto 40px !important;
+  flex-direction: row;
+}
+
+.customer-pages-body .center-2, .center-2 {
+  width: 100% !important;
+  float: none;
+  margin: 0 auto !important;
+}
+
+.list-customer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0px;
+}
+
+  .list-customer li:hover, .list-customer li.active, .list-customer li a:hover, .list-customer li.active a {
+    background: transparent;
+    color: #383375;
+  }
+
+
+  .list-customer li {
+    width: max-content !important;
+    min-width: max-content;
+    padding: 14px 13px !important;
+    background-color: transparent;
+  }
+
+.block.block-account-navigation {
+  max-width: 100%;
+}
+

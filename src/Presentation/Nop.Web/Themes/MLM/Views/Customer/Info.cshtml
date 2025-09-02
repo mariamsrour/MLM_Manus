@@ -1,0 +1,508 @@
+﻿@using Nop.Core
+@model CustomerInfoModel
+@inject Nop.Core.IWebHelper webHelper
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-account-page");
+    NopHtml.AppendPageCssClassParts("html-customer-info-page");
+}
+
+<style>
+    .date-picker-wrapper select {
+        border: 1px solid #6f6f6f !important;
+        border-radius:10px;
+    }
+
+    .date-of-birth label {
+        margin-bottom:25px;
+    }
+</style>
+
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Info })
+}
+<form asp-route="CustomerInfo" method="post">
+
+<div class="page account-page customer-info-page">
+   @*  <div class="page-title">
+        <h1>@T("Account.MyAccount") - @T("Account.CustomerInfo")</h1>
+    </div> *@
+    <div class="page-body login-custom custom-register">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerInfoTop, additionalData = Model })
+            <h3 class="strong-login1">
+                @T("Account.CustomerInfo")
+                </h3>
+            
+            <div class="fieldset">
+             
+                <div class="form-fields">
+                    @if (Model.GenderEnabled)
+                    {
+                        <div class="inputs">
+                            <label for="gender">@T("Account.Fields.Gender"):</label>
+                            <div id="gender" class="gender">
+                                <span class="male">
+                                    <input type="radio" asp-for="Gender" value="M" checked="@(Model.Gender == "M")" id="gender-male" />
+                                    <label class="forcheckbox" for="gender-male">@T("Account.Fields.Gender.Male")</label>
+                                </span>
+                                <span class="female">
+                                    <input type="radio" asp-for="Gender" value="F" checked="@(Model.Gender == "F")" id="gender-female" />
+                                    <label class="forcheckbox" for="gender-female">@T("Account.Fields.Gender.Female")</label>
+                                </span>
+                                @if (Model.NeutralGenderEnabled)
+                                {
+                                    <span class="Neutral">
+                                        <input type="radio" asp-for="Gender" value="N" checked="@(Model.Gender == "N")" id="gender-neutral" />
+                                        <label class="forcheckbox" for="gender-neutral">@T("Account.Fields.Gender.Neutral")</label>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    @if (Model.FirstNameEnabled)
+                    {
+                        <div class="inputs">
+                            <div class="email-field">
+                                <div class="email-label-container">
+                                    <label class="label-email" asp-for="FirstName"></label>
+                                </div>
+                                <div class="component-66">
+                                    <div class="vuesaxlinearuser-parent">
+
+                                        <input asp-for="FirstName" class="email-placeholder" placeholder="Enter First Name" type="text" />
+                                    </div>
+                                </div>
+                                <span asp-validation-for="FirstName"></span>
+
+                            </div>
+                        </div>
+                    }
+                    @if (Model.LastNameEnabled)
+                    {
+                        <div class="inputs">
+                            <div class="email-field">
+                                <div class="email-label-container">
+                                    <label class="label-email" asp-for="LastName"></label>
+                                </div>
+                                <div class="component-66">
+                                    <div class="vuesaxlinearuser-parent">
+
+                                        <input asp-for="LastName" class="email-placeholder" placeholder="Enter Last Name" type="text" />
+                                    </div>
+                                </div>
+                                <span asp-validation-for="LastName"></span>
+
+                            </div>
+                        </div>
+                    }
+                    @if (Model.DateOfBirthEnabled)
+                    {
+                        <div class="inputs date-of-birth">
+                            <label>@T("Account.Fields.DateOfBirth"):</label>
+                            <nop-date-picker asp-day-name="@Html.NameFor(x => x.DateOfBirthDay)"
+                                             asp-month-name="@Html.NameFor(x => x.DateOfBirthMonth)"
+                                             asp-year-name="@Html.NameFor(x => x.DateOfBirthYear)"
+                                             asp-begin-year="@(DateTime.Now.AddYears(-110))"
+                                             asp-end-year="@(DateTime.UtcNow)"
+                                             asp-selected-date="@Model.ParseDateOfBirth()" />
+
+                            @if (Model.DateOfBirthRequired)
+                            {
+                                
+                            }
+                            <span asp-validation-for="DateOfBirthDay"></span>
+                            <span asp-validation-for="DateOfBirthMonth"></span>
+                            <span asp-validation-for="DateOfBirthYear"></span>
+                        </div>
+                    }
+                    <div class="inputs">
+
+                        <div class="email-field">
+                            <div class="email-label-container">
+                                <label class="label-email" asp-for="Email"></label>
+                            </div>
+                            <div class="component-66">
+                                <div class="vuesaxlinearuser-parent">
+
+                                    <input asp-for="Email" readonly class="email-placeholder" type="email" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="Email"></span>
+
+                        </div>
+                        
+                        
+                    </div>
+                   @*  @if (Model.EnteringEmailTwice)
+                    {
+                        <div class="inputs">
+                            <label asp-for="ConfirmEmail" ></label>
+                            <input asp-for="ConfirmEmail" />
+                            
+                            <span asp-validation-for="ConfirmEmail"></span>
+                        </div>
+                    } *@
+                    @if (Model.UsernamesEnabled)
+                    {
+                        <div class="inputs">
+                            <label asp-for="Username" ></label>
+                            <input asp-for="Username" />
+                            
+                            <span asp-validation-for="Username"></span>
+                            @if (Model.CheckUsernameAvailabilityEnabled)
+                            {
+                                @await Html.PartialAsync("_CheckUsernameAvailability")
+                            }
+                        </div>
+
+                    }
+                </div>
+            </div>
+            @if (Model.CompanyEnabled || Model.DisplayVatNumber)
+            {
+                <div class="fieldset">
+                 
+                    <div class="form-fields">
+                        @if (Model.CompanyEnabled)
+                        {
+
+                            <div class="inputs">
+                                <div class="email-field">
+                                    <div class="email-label-container">
+                                        <label class="label-email" asp-for="Company"></label>
+                                    </div>
+                                    <div class="component-66">
+                                        <div class="vuesaxlinearuser-parent">
+
+                                            <input asp-for="Company" class="email-placeholder" placeholder="Enter Company" type="text" />
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Company"></span>
+
+                                </div>
+                            </div>
+                           
+                        }
+                        @* @if (Model.DisplayVatNumber)
+                        {
+                            <div class="inputs">
+                                <label asp-for="VatNumber" ></label>
+                                <input asp-for="VatNumber" />
+                                <span class="vat-note"><em>@T("Account.Fields.VatNumber.Note")</em></span>
+                            </div>
+                        } *@
+                    </div>
+                </div>
+            }
+            @if (Model.StreetAddressEnabled ||
+            Model.StreetAddress2Enabled ||
+            Model.ZipPostalCodeEnabled ||
+            Model.CityEnabled ||
+            Model.CountyEnabled ||
+            Model.CountryEnabled)
+            {
+                <div class="fieldset">
+                
+                    <div class="form-fields">
+                        @if (Model.StreetAddressEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="StreetAddress" ></label>
+                                <input asp-for="StreetAddress" />
+                                @if (Model.StreetAddressRequired)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="StreetAddress"></span>
+                            </div>
+                        }
+                        @if (Model.StreetAddress2Enabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="StreetAddress2" ></label>
+                                <input asp-for="StreetAddress2" />
+                                @if (Model.StreetAddress2Required)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="StreetAddress2"></span>
+                            </div>
+                        }
+                        @if (Model.ZipPostalCodeEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="ZipPostalCode" ></label>
+                                <input asp-for="ZipPostalCode" />
+                                @if (Model.ZipPostalCodeRequired)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="ZipPostalCode"></span>
+                            </div>
+                        }
+                        @if (Model.CountyEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="County" ></label>
+                                <input asp-for="County" />
+                                @if (Model.CountyRequired)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="County"></span>
+                            </div>
+                        }
+                        @if (Model.CityEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="City" ></label>
+                                <input asp-for="City" />
+                                @if (Model.CityRequired)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="City"></span>
+                            </div>
+                        }
+                        @if (Model.CountryEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="CountryId" ></label>
+                                <select asp-for="CountryId" asp-items="Model.AvailableCountries"
+                                        data-trigger="country-select"
+                                        data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                                        data-stateprovince="#@Html.IdFor(model => model.StateProvinceId)"
+                                        data-loading="#states-loading-progress"></select>
+                                @if (Model.CountryRequired)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="CountryId"></span>
+                            </div>
+                        }
+                        @if (Model.CountryEnabled && Model.StateProvinceEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="StateProvinceId" ></label>
+                                <select asp-for="StateProvinceId" asp-items="Model.AvailableStates"></select>
+                                @if (Model.StateProvinceRequired)
+                                {
+                                    
+                                }
+                                <span id="states-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
+                                <span asp-validation-for="StateProvinceId"></span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.PhoneEnabled || Model.FaxEnabled)
+            {
+                <div class="fieldset">
+                
+                    <div class="form-fields">
+                        @if (Model.PhoneEnabled)
+                        {
+                            <div class="inputs">
+                                <div class="email-field">
+                                    <div class="email-label-container">
+                                        <label class="label-email" asp-for="Phone"></label>
+                                    </div>
+                                    <div class="component-66">
+                                        <div class="vuesaxlinearuser-parent">
+
+                                            <input asp-for="Phone" class="email-placeholder" placeholder="Enter Phone" type="tel" />
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Phone"></span>
+
+                                </div>
+                            </div>
+                            <div class="inputs">
+                                <div class="email-field">
+                                    <div class="email-label-container">
+                                        <label class="label-email" asp-for="WhatsappLink"></label>
+                                    </div>
+                                    <div class="component-66">
+                                        <div class="vuesaxlinearuser-parent">
+
+                                            <input asp-for="WhatsappLink" class="email-placeholder" placeholder="Enter Whatsapp Link" type="tel" />
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="WhatsappLink"></span>
+
+                                </div>
+                            </div>
+                           
+                        }
+                        @if (Model.FaxEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="Fax" ></label>
+                                <input asp-for="Fax" />
+                                @if (Model.FaxRequired)
+                                {
+                                    
+                                }
+                                <span asp-validation-for="Fax"></span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.NewsletterEnabled || Model.CustomerAttributes.Count > 0)
+            {
+                <div class="fieldset">
+                 
+                    <div class="form-fields">
+                        @if (Model.NewsletterEnabled)
+                        {
+                            <div class="inputs" style="margin-left: 20px;">
+                                <input asp-for="Newsletter" />
+                                <label asp-for="Newsletter" ></label>
+                                <span asp-validation-for="Newsletter"></span>
+                            </div>
+                        }
+                        @if (Model.CustomerAttributes.Count > 0)
+                        {
+                            @await Html.PartialAsync("_CustomerAttributes", Model.CustomerAttributes)
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.AllowCustomersToSetTimeZone)
+            {
+                <div class="fieldset">
+                 
+                    <div class="form-fields">
+                        <div class="inputs">
+                            <label asp-for="TimeZoneId" ></label>
+                            <select asp-for="TimeZoneId" asp-items="Model.AvailableTimeZones"></select>
+                            <span asp-validation-for="TimeZoneId"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+         @*    <div class="fieldset">
+
+                
+                <div class="input-fields">
+                    <div class="email-field">
+                        <div class="email-label-container">
+                            <label class="label-email" asp-for="Password"></label>
+                        </div>
+                        <div class="component-67">
+                            <div class="vuesaxlinearuser-parent">
+
+                                <input asp-for="Password" class="frame-input" placeholder="Enter Password" type="password" />
+                            </div>
+                            <img class="vuesaxlineareye-icon" alt="" src="images/vuesaxlineareye.svg">
+                        </div>
+                        <span asp-validation-for="Password"></span>
+
+                    </div>
+                    <div class="email-field">
+                        <div class="email-label-container">
+                            <label class="label-email" asp-for="ConfirmPassword"></label>
+                        </div>
+                        <div class="component-67">
+                            <div class="vuesaxlinearuser-parent">
+
+                                <input asp-for="ConfirmPassword" class="frame-input" placeholder="Enter Password" type="password" />
+                            </div>
+                            <img class="vuesaxlineareye-icon" alt="" src="images/vuesaxlineareye.svg">
+                        </div>
+                        <span asp-validation-for="ConfirmPassword"></span>
+
+                    </div>
+                  
+                </div>
+            </div> *@
+
+
+            <button class="register-button" type="submit" name="register-button" id="register-button">
+                <div class="register-wrapper">
+                    <b class="register">@T("Common.save")</b>
+                </div>
+            </button>
+
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerInfoBottom, additionalData = Model })
+    </div>
+</div>
+    <div class="page account-page customer-info-page" style="margin-top: 20px;">
+        <div class="page-body login-custom custom-register">
+            <h3 class="strong-login1">
+                Prefrences
+            </h3>
+
+            <div class="fieldset">
+
+
+                <div class="prefs" style="margin-left: 20px;">
+                    <input asp-for="HideVisits" />
+                    <label for="HideVisits">
+                        Hide the visit counter on my ads ( you will be
+                        able to see the
+                        visits
+                        number using my ads )
+                    </label>
+                      
+                </div>
+                <div class="prefs" style="margin-left: 20px;">
+                    <input asp-for="ContactMe" />
+                    <label for="ContactMe">
+                        Yes, i would like MLM and its corporate family members to
+                        contact
+                        me about events, news, features, and other promotional
+                        information
+                    </label>
+                    </div>
+                <div class="prefs" style="margin-left: 20px;">
+                    <input asp-for="SendEmails" />
+                    <label for="SendEmails">
+                        Send me Bumb up and other feature notification emails.
+
+                    </label>
+                    </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+
+
+
+<script asp-location="Footer">
+    function removeexternalassociation(itemId) {
+        if (confirm('@T("Common.AreYouSure")')) {
+            var postData = {
+                id: itemId
+            };
+            addAntiForgeryToken(postData);
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "@Url.RouteUrl("CustomerRemoveExternalAssociation")",
+                data: postData,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    location.href = data.redirect;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Failed to delete');
+                }
+            });
+        }
+        return false;
+    }
+</script>

@@ -1,0 +1,337 @@
+﻿@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+}
+
+
+<style>
+    .html-subscription-checkout-page .master-wrapper-content {
+        padding-top: 0px;
+    }
+
+    .title-page {
+        width: 104%;
+        margin-left: -2%;
+        height: 104px;
+        background-color: #efefef;
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 28px;
+        line-height: 34px;
+        color: #1C193A;
+        vertical-align: middle;
+        margin-bottom: 25px;
+        padding: 27px;
+    }
+
+        .title-page img {
+            vertical-align: middle !important;
+        }
+    .plan-details-icon,
+    .select-plan {
+        align-self: stretch;
+        position: relative;
+    }
+
+    .plan-details-icon {
+        flex: 1;
+        max-width: 100%;
+        overflow: hidden;
+        max-height: 100%;
+    }
+
+    .select-plan {
+        letter-spacing: -0.17px;
+        line-height: 26.1px;
+    }
+
+    .plan-options {
+        width: 101px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--gap-base);
+        text-align: left;
+    }
+
+    .plan-options-child {
+        align-self: stretch;
+        height: 1.5px;
+        position: relative;
+        border-top: 1.5px solid var(--Neutral-200);
+        box-sizing: border-box;
+    }
+
+    .plan-options1 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: var(--padding-38xl) 0 0;
+        box-sizing: border-box;
+        min-width: 92px;
+    }
+
+    .plan-options2 {
+        width: 101px;
+        align-items: flex-start;
+        gap: var(--gap-base);
+        z-index: 2;
+    }
+
+    .plan-options2,
+    .plan-options3,
+    .plan-options4 {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .plan-options3 {
+        width: 141px;
+        align-items: flex-start;
+        padding: var(--padding-38xl) 0 0;
+        box-sizing: border-box;
+    }
+
+    .plan-options4 {
+        width: 101px;
+        align-items: center;
+        gap: var(--gap-base);
+        z-index: 3;
+    }
+
+    .checkout-process,
+    .plan-selection {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        max-width: 100%;
+    }
+
+    .checkout-process {
+        flex: 1;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        gap: var(--gap-13xl);
+    }
+
+    .plan-selection {
+        align-self: stretch;
+        justify-content: flex-end;
+        padding: 0 var(--padding-lg) 0 var(--padding-lgi);
+        box-sizing: border-box;
+        text-align: center;
+        font-size: var(--font-size-mid-4);
+        color: var(--Primary-600);
+        font-family: var(--font-montserrat);
+    }
+
+    .check-icon {
+        position: absolute;
+        top: calc(50% + 16.9px);
+        left: calc(50% - 15.6px);
+        transform: rotate(-90deg);
+        transform-origin: 0 0;
+        opacity: 0;
+        animation: fadeInIcon 1s forwards;
+        animation-delay: 1.5s; /* Wait for success-shape to finish fading */
+    }
+
+    .success-shape {
+        position: absolute;
+        top: calc(50% + 16.9px);
+        left: calc(50% - 15.6px);
+        border-radius: 50%;
+        background-color: var(--Primary-400);
+        width: 32.5px;
+        height: 32.5px;
+        transform: rotate(-90deg);
+        transform-origin: 0 0;
+        z-index: 1;
+        opacity: 1;
+        animation: fadeOutShape 1.5s forwards;
+    }
+
+    .component-333 {
+        height: 325px;
+        width: 325px;
+        position: relative;
+        max-width: 100%;
+    }
+
+    .success-message,
+    .your-ad-has {
+        align-self: stretch;
+        display: flex;
+        justify-content: center;
+    }
+
+    .success-message {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 0 var(--padding-2xl) 0 var(--padding-xl);
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .your-ad-has {
+        margin: 0;
+        flex: 1;
+        position: relative;
+        font-size: inherit;
+        line-height: 38px;
+        font-weight: 400;
+        font-family: inherit;
+        align-items: center;
+    }
+
+    .vuesaxlinearsearch-normal-icon {
+        width: 24px;
+        position: relative;
+        height: 24px;
+        display: none;
+    }
+
+    .post-ad {
+        position: relative;
+        letter-spacing: -0.35px;
+        line-height: var(--font-size-xl);
+        text-transform: capitalize;
+    }
+
+    .component-284 {
+        width: 546px;
+        height: 62px;
+        border-radius: var(--br-31xl);
+        background-color: var(--Primary-400);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: var(--padding-mini) var(--padding-12xl);
+        box-sizing: border-box;
+        gap: var(--gap-9xs);
+        font-size: var(--Body-size);
+        color: var(--color-white);
+        font-family: var(--font-montserrat);
+    }
+
+    .ad-placement,
+    .confirmation,
+    .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .ad-placement {
+        align-self: stretch;
+        align-items: center;
+        gap: var(--gap-8xl);
+    }
+
+    .confirmation,
+    .main {
+        max-width: 100%;
+    }
+
+    .confirmation {
+        align-self: stretch;
+        align-items: flex-start;
+        gap: var(--gap-13xl);
+        text-align: center;
+        font-size: 28px;
+        color: var(--Neutral-600);
+        font-family: var(--font-poppins);
+    }
+
+    .main {
+        width: 750px;
+        align-items: flex-end;
+        gap: 64px;
+        line-height: normal;
+        letter-spacing: normal;
+        margin:auto;
+    }
+  
+  
+</style>
+
+<div class="title-page">
+    <img src="~/images/arrow-left.png" />
+    <span>
+        Checkout
+
+    </span>
+</div>
+
+<div class="main">
+    <section class="plan-selection">
+        <div class="checkout-process">
+            <div class="plan-options">
+                <img class="plan-details-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/frame-1918723851.svg" />
+
+                <b class="select-plan">Select Plan</b>
+            </div>
+            <div class="plan-options1">
+                <div class="plan-options-child"></div>
+            </div>
+            <div class="plan-options2">
+                <img class="plan-details-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/frame-1918723853.svg" />
+
+                <b class="select-plan">Checkout</b>
+            </div>
+            <div class="plan-options3">
+                <div class="plan-options-child"></div>
+            </div>
+            <div class="plan-options4">
+                <img class="plan-details-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/frame-1918723854.svg" />
+
+                <b class="select-plan">Complete</b>
+            </div>
+        </div>
+    </section>
+    <section class="confirmation">
+        <div class="success-message">
+            <div class="component-333">
+                <img class="check-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/check.png" />
+
+                <div class="success-shape"></div>
+            </div>
+        </div>
+        <div class="ad-placement">
+            <h2 class="your-ad-has">
+                Your ad has been placed successfully, your ad in under review and
+                you will be notified when it is accepted
+            </h2>
+            <div class="component-284">
+                <img class="vuesaxlinearsearch-normal-icon"
+                     alt=""
+                     src="images/vuesaxlinearsearchnormal.svg" />
+
+                <b class="post-ad">View ad</b>
+            </div>
+        </div>
+    </section>
+</div>

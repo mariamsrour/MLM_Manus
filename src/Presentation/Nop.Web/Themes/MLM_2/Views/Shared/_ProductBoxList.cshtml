@@ -1,0 +1,158 @@
+﻿@model ProductOverviewModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@using Nop.Services.Configuration
+@using Nop.Services.Catalog
+
+@inject CatalogSettings catalogSettings
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject IViewComponentSelector viewComponentSelector
+@inject IWorkContext workContext
+
+@{
+    //prepare "Add to cart" AJAX link
+    var addtocartlink = "";
+    var shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart;
+    var quantity = 1;
+    if (Model.ProductPrice.ForceRedirectionAfterAddingToCart)
+    {
+        addtocartlink = Url.RouteUrl("AddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = shoppingCartTypeId, quantity = quantity, forceredirection = Model.ProductPrice.ForceRedirectionAfterAddingToCart });
+    }
+    else
+    {
+        addtocartlink = Url.RouteUrl("AddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = shoppingCartTypeId, quantity = quantity });
+    }
+
+    var addtowishlistlink = Url.RouteUrl("AddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = (int)ShoppingCartType.Wishlist, quantity = quantity });
+    var addtocomparelink = Url.RouteUrl("AddProductToCompare", new { productId = Model.Id });
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var lazyLoadImages = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.LazyLoadImages", false, storeId, true);
+}
+
+<div class="product-item" data-productid="@Model.Id">
+    <div class="picture">
+        @if (Model.PictureModels.Count > 1)
+        {
+            <div class="swiper" id="swiper-@Model.Id" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())">
+                <div class="swiper-wrapper">
+                    @foreach (var picture in Model.PictureModels)
+                    {
+                        <a class="swiper-slide" href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture.Title">
+                            @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                            {
+                                @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                                                  {
+                    ("src", picture.ImageUrl),
+                    ("alt", picture.AlternateText),
+                    ("title", picture.Title)
+                                                  })
+                            }
+                            else
+                            {
+                                <img class="picture-img" alt="@picture.AlternateText" src="@picture.ImageUrl" title="@picture.Title" />
+                            }
+                        </a>
+                    }
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <script asp-location="Footer">
+                new Swiper('#swiper-@(Model.Id)', {
+                pagination: {
+                clickable: true,
+                el: '.swiper-pagination',
+                },
+                });
+            </script>
+        }
+        else
+        {
+            var picture = Model.PictureModels.FirstOrDefault();
+            <a href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture?.Title">
+                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                {
+                    @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                                      {
+            ("src", picture.ImageUrl),
+            ("alt", picture.AlternateText),
+            ("title", picture.Title)
+                                      })
+                }
+                else
+                {
+                    <img class="picture-img" alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" />
+                }
+            </a>
+        }
+    </div>
+    <div class="product-box-info">
+        <div class="city">
+            <div class="highlight-product-category-nam">
+                <div class="clothes">@Model.ProductType</div>
+            </div>
+
+            <button type="button" class="button-2 add-to-wishlist-button" title="@T("ShoppingCart.AddToWishlist")" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;"></button>
+
+        </div>
+
+        <div class="highlight-product-category">
+            <div class="highlight-product-name">
+                <div class="vans-sneakers-for">
+                    <a class="price" title="@Model.Name" href="@(Url.RouteUrl<Product>(new {SeName = Model.SeName }))">@Model.ProductPrice.Price </a>
+                </div>
+            </div>
+            <div class="highlight-product-name">
+                <div class="vans-sneakers-for">
+                    <a class="custom-title" title="@Model.Name" href="@(Url.RouteUrl<Product>(new {SeName = Model.SeName }))">@Model.Name</a>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="hittin-riyadh">
+                <img src="images/vuesaxlinearlocation1.svg">
+                <span>
+                    @Model.City - @Model.Country
+
+                </span>
+            </div>
+        </div>
+
+        <div class="highlight-product-time">
+            <div class="min-ago">@Model.CreatedOn.ToString("d MMM yyyy") - @Model.CreatedOn.RelativeFormat()</div>
+
+        </div>
+
+        <div class="button-wrapper">
+
+            <a class="contact-btn btn-dark">
+                <img src="images/vuesaxlinearcall.svg" />
+
+                <span>
+                    Call @Model.VendorModel.Phone
+                </span>
+            </a>
+            @if (!string.IsNullOrEmpty(Model.VendorModel.WhatsappLink))
+            {
+
+                <a href="@Model.VendorModel.WhatsappLink" class="contact-btn  btn-light ">
+                    <img src="images/riwhatsappfill.svg" />
+
+
+                    <span>
+                        Whats app Me
+                    </span>
+                </a>
+            }
+
+</div>
+
+
+    </div>
+
+
+</div>

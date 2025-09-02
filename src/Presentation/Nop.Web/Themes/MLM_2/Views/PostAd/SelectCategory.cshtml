@@ -1,0 +1,189 @@
+﻿@model Nop.Web.Models.Catalog.TopMenuModel
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/selectCategory.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/selectCategory.css");
+
+    }
+}
+
+ 
+
+<section class="welcome-banner">
+    <div class="background5">
+        <h2 class="heading-1">Post Ad</h2>
+    </div>
+    <div class="categories-and-sign-in">
+        <div class="heading-1-welcome-please-si-parent">
+            <h2 class="heading-11">Select a category</h2>
+            <div class="component-242" data-acc-group>
+
+                <div class="menu-wrapper">
+                    <div class="highlight-box"></div>
+                    <ul class="menu">
+                        @foreach (var cat in Model.Categories.FirstOrDefault().SubCategories)
+                        {
+                            <li class="menu-item" >
+                                @if (cat.HaveSubCategories)
+                                {
+                                    <span class="menu-label" id="@cat.Id">
+                                        @cat.Name
+                                        <span class="close-btn">×</span>
+
+                                        <img class="vuesaxlinearsearch-normal-icon2 arro-down"
+                                        alt=""
+                                        src="images/arrow-down-light.png" />
+
+                                    </span>
+                                    @await Html.PartialAsync("_subCatMenu", cat.SubCategories)
+                                } else
+                                {
+                                    if (cat.Id == 34)
+                                    {
+                                        <a href="@Url.RouteUrl("RealstateLiscence", new {categoryId = cat.Id})">
+                                            @cat.Name
+                                        </a>
+
+                                    }//realstate
+                                    else
+                                    {
+                                        <a href="@Url.RouteUrl("PostAd", new {categoryId = cat.Id})">
+                                            @cat.Name
+                                        </a>
+                                    }
+                                }
+                            </li>
+                }
+                            </ul>
+                </div>
+
+       
+               
+            </div>
+        </div>
+        <div class="component-208">
+            <div class="next-button-wrapper" id="nextButtonWrapper">
+                <div class="next-button-inner-wrapper">
+                    <a class="next-wrapper" id="nextBtn"  href="@Url.RouteUrl("PostAd")">
+                        <b class="next">Next</b>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <div class="flat-color-iconsidea-parent">
+            <img class="flat-color-iconsidea"
+                 loading="lazy"
+                 alt=""
+                 src="images/flat-color-icons_idea.png" />
+
+            <div class="descriptive-titles-are">
+                Descriptive titles are the best fuel for high performing ads!
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function() {
+      const $highlight = $('.highlight-box');
+
+      function moveHighlight($item) {
+        const offsetTop = $item.position().top;
+        $highlight.css('top', offsetTop);
+      }
+
+      function resetSiblings($item) {
+        const $siblings = $item.parent().children('.menu-item').not($item);
+        $siblings.hide();
+        $siblings.find('.sub-menu').slideUp(200);
+        $siblings.find('.close-btn').hide();
+        $siblings.find('.arro-down').show();
+
+      }
+
+      function markLastSub() {
+        $('.menu-item').removeClass('last-sub');
+         $('.sub-menu:visible').each(function() {
+          $(this).removeClass('last-sub');          
+        });
+
+        $('.sub-menu:visible').last().addClass('last-sub');   
+        // .each(function() {
+        //   const $visibleSubs = $(this).children('.menu-item');
+        //   if ($visibleSubs.length > 0) {
+        //     $visibleSubs.last().addClass('last-sub');
+        //   }
+        // });
+      }
+
+      $(document).on('click', '.menu-label', function(e) {
+        e.stopPropagation();
+        const $clickedLabel = $(this);
+        const $menuItem = $clickedLabel.closest('.menu-item');
+
+        moveHighlight($menuItem);
+        resetSiblings($menuItem);
+
+        const $submenu = $menuItem.children('.sub-menu');
+        const $closeBtn = $clickedLabel.children('.close-btn');
+        const $arro = $clickedLabel.children('.arro-down');
+
+        if ($submenu.length > 0 && !$clickedLabel.hasClass('active')) {
+          $submenu.slideDown(200, function() {
+            markLastSub();
+          });
+          $closeBtn.show();
+          $arro.hide();
+          $clickedLabel.addClass('active');
+        
+          $menuItem.addClass('trans');
+          debugger;
+          console.log($clickedLabel[0].id);
+       var catId = $clickedLabel[0].id; 
+       const baseUrl = $('#nextBtn').attr('href'); 
+       const link = `${baseUrl}?categoryId=${catId}`;
+       $('#nextBtn').attr('href', link); 
+        }
+      });
+
+      $(document).on('click', '.close-btn', function(e) {
+        e.stopPropagation();
+        const $label = $(this).closest('.menu-label');
+        const $parentItem = $label.closest('.menu-item');
+        const $subMenu = $parentItem.children('.sub-menu');
+        const $arro = $label.children('.arro-down');
+
+        $subMenu.slideUp(200, function() {
+          markLastSub();
+        });
+        $label.removeClass('active');
+        $parentItem.removeClass('trans');
+        $parentItem.siblings('.menu-item').show();
+        $(this).hide();
+        $arro.show();
+      });
+
+      moveHighlight($('.menu > .menu-item:first'));
+    });
+</script>

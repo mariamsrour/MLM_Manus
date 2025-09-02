@@ -1,0 +1,78 @@
+﻿@model SendPrivateMessageModel
+@* @{    
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.SendPM").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-private-messages");
+    NopHtml.AppendPageCssClassParts("html-private-message-send-page");
+} *@
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/sendpm.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/sendpm.css");
+
+    }
+}
+
+
+<form asp-route="SendPM" method="post">
+ 
+            <input type="hidden" asp-for="ToCustomerId" />
+            <input type="hidden" asp-for="ReplyToMessageId"/>
+            <input type="hidden" asp-for="Subject" />
+            <input type="hidden" asp-for="PictureId" />
+            <input type="hidden" asp-for="AdId" />
+
+    <div class="input-section">
+            <input type="text"
+                   class="message-input"
+                   placeholder="Type your message......"
+               asp-for="Message" />
+            <button class="send-button" type="submit" aria-label="Send message">
+                <img src="/images/send.png" />
+            </button>
+            </div>
+            
+        @*     <div class="fieldset">
+                <div class="form-fields">
+                    <div class="inputs">
+                        <label>@T("PrivateMessages.Send.To")</label>
+                        @if (Model.AllowViewingToProfile)
+                        {
+                            <a href="@Url.RouteUrl("CustomerProfile", new {id = Model.ToCustomerId})">@(Model.CustomerToName)</a>
+                        }
+                        else
+                        {
+                            <span>@Model.CustomerToName</span>
+                        }
+                    </div>
+                    <div class="inputs">
+                        <label>@T("PrivateMessages.Send.Subject")</label>
+                        <input asp-for="Subject" class="pm-title-text" />
+                        <span asp-validation-for="Subject"></span>
+                    </div>
+                    <div class="inputs message">
+                        <label>@T("PrivateMessages.Send.Message")</label>
+                        <nop-bb-code-editor asp-for="Message" />
+                        <textarea asp-for="Message" class="bb-editor-text" ></textarea>
+                        <span asp-validation-for="Message"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="button-1 send-pm-button">@T("PrivateMessages.Send.SendButton")</button>
+                <button type="button" class="button-2 cancel-pm-button" onclick="setLocation('@Url.RouteUrl("PrivateMessages")')">@T("PrivateMessages.Send.CancelButton")</button>*@
+       
+</form>

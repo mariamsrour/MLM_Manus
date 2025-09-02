@@ -1,0 +1,78 @@
+﻿@model NewsItemListModel
+
+@using Nop.Core.Domain.News
+
+@{
+    Layout = "_ColumnsTwoCustom";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Notifications").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-private-messages");
+    NopHtml.AppendPageCssClassParts("html-private-messages-page");
+
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/notification.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/notification.css");
+
+    }
+}
+
+
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Notifications })
+}
+
+<div class="page wishlist-page">
+
+    <div class="page-body login-custom custom-register">
+        <h3 class="strong-login1">
+            Notifications
+        </h3>
+        @if(Model.NewsItems.Count > 0)
+        {
+            @foreach (var item in Model.NewsItems)
+            {
+                <div class="rectangle-parent2">
+                   <div class="notification-icon">
+                       <img class="notiicon" src="~/images/notification.png" />
+                   </div>
+
+                   <div class="notification-details">
+                       <div class="noti-title">
+                           @item.Title
+                           </div>
+                           <div class="noti-text">
+                               @item.Short
+                               </div>
+                   </div>
+
+                    <div class="notification-date">
+                        @item.CreatedOn.RelativeFormat() ago
+                    </div>
+                </div>
+            }
+        } else
+        {
+            <div class="no-data">
+                <img src="~/images/nonoti.png" alt="@T("Wishlist.CartIsEmpty")" />
+
+                <div class="no-data">
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,177 @@
+﻿@* @model CategoryNavigationModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Services.Configuration
+
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var CatalogPageLayout = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.CatalogPageLayout", "two-columns", storeId, true);
+}
+
+@if (Model.Categories.Count > 0)
+{
+    if (ViewBag.isCategoryNavigationList)
+    {
+        <div class="block block-category-navigation">
+            <div class="title">
+                <strong>@T("Categories")</strong>
+            </div>
+            <select>
+                @foreach (var category in Model.Categories)
+                {
+                    var categoryLineModel = new CategoryNavigationModel.CategoryLineModel
+                        {
+                            CurrentCategoryId = Model.CurrentCategoryId,
+                            Category = category
+                        };
+                    <option>@await Html.PartialAsync("_CategoryLine.Navigation", categoryLineModel)</option>
+                }
+            </select>         
+        </div>
+    }
+    else if (CatalogPageLayout == "one-column")
+    {
+        <div class="product-select-block add category-navigation">
+            <select>
+                @foreach (var category in Model.Categories)
+                {
+                    var categoryLineModel = new CategoryNavigationModel.CategoryLineModel
+                    {
+                        CurrentCategoryId = Model.CurrentCategoryId,
+                        Category = category
+                    };
+                    <option>@await Html.PartialAsync("_CategoryLine.Navigation", categoryLineModel)</option>
+                }
+            </select>
+        </div>
+    }
+} *@
+
+
+                @model CategoryNavigationModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Services.Configuration
+
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var CatalogPageLayout = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.CatalogPageLayout", "two-columns", storeId, true);
+
+    var departments = Model.Categories.Where(c => c.Parent == 0).ToList();
+}
+
+@if (Model.Categories.Count > 0)
+{
+
+    <div class="filter-header">
+        Filters
+    </div>
+    <div class="filtersPanel">
+        <div class="block filter-block dropdown-block">
+            <div class="title">
+                <label class="toggleControl">@T("Department")</label>
+
+            </div>
+
+            <div class="filtersGroupPanel filtersDropDownPanel">
+                <select id="departmentDropdown" class="form-control">
+                    <option value="">@T("All")</option>
+                    @foreach (var department in departments)
+                    {
+                        <option value="@department.Id">@department.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="block filter-block dropdown-block">
+            <div class="title">
+                <label class="toggleControl">@T("Category")</label>
+
+            </div>
+
+            <div class="filtersGroupPanel filtersDropDownPanel">
+                <select id="categoryDropdown" class="form-control" disabled>
+                    <option value="">@T("All")</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="block filter-block dropdown-block">
+            <div class="title">
+                <label class="toggleControl">@T("Subcategory")</label>
+
+            </div>
+
+            <div class="filtersGroupPanel filtersDropDownPanel">
+                <select id="subcategoryDropdown" class="form-control" disabled>
+                    <option value="">@T("All")</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+ 
+    <script>
+        $(document).ready(function () {
+            const allCategories = @Html.Raw(Json.Serialize(Model.Categories));
+
+            $('#departmentDropdown').on('change', function () {
+                const departmentId = $(this).val();
+                console.log("Department changed: " + departmentId);  // Debugging log
+                $('#categoryDropdown').empty().append('<option value="">@T("Select Category")</option>').prop('disabled', !departmentId);
+                $('#subcategoryDropdown').empty().append('<option value="">@T("Select Subcategory")</option>').prop('disabled', true);
+
+                if (departmentId) {
+                    const selectedCat = allCategories.filter(c => c.Id == departmentId);
+                    console.log(selectedCat[0].SubCategories);
+                    const filteredCategories = selectedCat[0].SubCategories;
+                    console.log(allCategories);
+                    console.log(filteredCategories);  // Debugging log
+
+                    filteredCategories.forEach(function (category) {
+                        $('#categoryDropdown').append(`<option value="${category.Id}">
+                                 <a href="/Category/${category.SeName}">
+                <span class="name">${category.Name}</span>
+        </a>
+                        </option>`);
+                    });
+                }
+            });
+
+            $('#categoryDropdown').on('change', function () {
+                const categoryId = $(this).val();
+                console.log("Category changed: " + categoryId);  // Debugging log
+                $('#subcategoryDropdown').empty().append('<option value="">@T("Select Subcategory")</option>').prop('disabled', !categoryId);
+
+                if (categoryId) {
+                    var dept = $('#departmentDropdown').val();
+                    const selectedCat = allCategories.filter(c => c.Id == dept);
+                    const filteredCategories = selectedCat[0].SubCategories.filter(c => c.Id == categoryId);
+                    const filteredSubCategories = filteredCategories[0].SubCategories;
+                     console.log(selectedCat);
+                    console.log(filteredCategories);
+                    console.log(dept);
+                    console.log(filteredSubCategories);
+
+                    filteredSubCategories.forEach(function (category) {
+                        $('#subcategoryDropdown').append(`<option value="${category.Id}">
+                                 <a href="/Category/${category.SeName}">
+                <span class="name">${category.Name}</span>
+        </a>
+                        </option>`);
+                    });
+                }
+            });
+        });
+    </script>
+
+}

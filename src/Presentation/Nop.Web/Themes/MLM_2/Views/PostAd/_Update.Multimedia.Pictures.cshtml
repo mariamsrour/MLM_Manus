@@ -1,0 +1,85 @@
+@model Nop.Web.Areas.Admin.Models.Catalog.ProductModel
+
+
+<div id="imagePreviewGrid" class="row mt-3">
+    @if (Model.ProductPictureModels != null && Model.ProductPictureModels.Any())
+    {
+        foreach (var image in Model.ProductPictureModels)
+        {
+            <div class="component-263" data-id="@image.Id">
+                <img src="@image.PictureUrl" alt="Preview" />
+                <button type="button" class="delete-image">&times;</button>
+            </div>
+        }
+    })
+
+</div>
+
+
+
+<div class="form-group">
+    <input type="file" id="tempImageUpload" name="files" multiple multiple class="form-control select-image-container" />
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        // function loadTempImages() {
+        //     $.get('/PostAd/GetTempProductImages', function (images) {
+        //         const container = $('#imagePreviewGrid');
+        //         container.empty();
+
+        //         images.forEach(image => {
+        //             const imageHtml = `
+        //                 <div class="component-263" data-id="${image.id}">
+        //                     <img src="${image.url}" alt="Preview" />
+        //                     <button type="button" class="delete-image">&times;</button>
+        //                 </div>`;
+        //             container.append(imageHtml);
+        //         });
+        //     });
+        // }
+
+        $('#tempImageUpload').on('change', function () {
+
+            const files = this.files;
+            if (files.length === 0) return;
+
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append("files", files[i]); // "files" matches IFormFileCollection param name
+            }
+
+            $.ajax({
+                url: '/PostAd/UploadTempProductImage',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    loadTempImages(); // Refresh image gallery
+                },
+                error: function (xhr) {
+                    alert('Upload failed: ' + xhr.responseText);
+                }
+            });
+
+        });
+
+        $('#imagePreviewGrid').on('click', '.delete-image', function () {
+            const imageBox = $(this).closest('.component-263');
+            const imageId = imageBox.data('id');
+            const proid = '@Model.Id'; // Assuming Model.Id is the product ID
+            $.post('/PostAd/DeleteProductImage', { id: imageId, prodId:proid }, function () {
+                loadTempImages();
+                imageBox.hide();
+            });
+        });
+
+        // Initial load
+        loadTempImages();
+    });
+</script>
+

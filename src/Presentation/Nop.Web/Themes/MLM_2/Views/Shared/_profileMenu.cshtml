@@ -1,0 +1,62 @@
+﻿@model Nop.Core.Domain.Customers.Customer
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/profilemenu.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/profilemenu.css");
+
+    }
+}
+
+
+
+
+<div class="root10">
+    <section class="frame-parent73">
+        <div class="ellipse-parent6">
+            <img class="frame-child68"
+                 loading="lazy"
+                 alt=""
+                 src="@Model.AdminComment" />
+
+            <h2 class="marwan-sayed7">@Model.FirstName @Model.LastName</h2>
+        </div>
+        <div class="frame-parent74">
+            <div class="component-152-wrapper">
+                <div class="component-152">
+                    <img class="vuesaxlinearlayer-icon"
+                         loading="lazy"
+                         alt=""
+                         src="images/prof-menu/vuesaxlinearlayer.svg" />
+
+                    <a href="/Customer-Ads" class="sign-in1">My Ads</a>
+                </div>
+            </div>
+            <div class="component-154">
+                <img class="vuesaxlinearlayer-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/prof-menu/vuesaxlinearsetting2.svg" />
+
+                <a href="/customer-info" class="sign-in1">Account Settings</a>
+            </div>
+            <div class="component-154">
+                <img class="vuesaxlinearlayer-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/prof-menu/vuesaxlinearlogout.svg" />
+
+                <a href="/logout" class="sign-in1">Logout</a>
+            </div>
+        </div>
+    </section>
+</div>

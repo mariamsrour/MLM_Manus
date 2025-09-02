@@ -1,0 +1,90 @@
+﻿@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/sharebutton.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/sharebutton.css");
+
+    }
+}
+
+
+
+
+@model string
+
+
+
+<div id="shareModal" class="share-modal-overlay" style="display:none;">
+    <div class="share-modal product-share">
+        <span class="close-share-modal">&times;</span>
+
+        <label>@T("SevenSpikes.Themes.Avenue.ProductShareLabel")</label>
+        <ul class="product-share-list">
+            <li class="url-container">
+                <input type="text" id="shareUrl" value="@Model" readonly>
+                <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+            </li>
+            <li class="share-item facebook">
+                <a class="share-link" href="javascript:openShareWindow('https://www.facebook.com/sharer.php?u=@Model')"></a>
+            </li>
+
+            <li class="share-item twitter">
+                <a class="share-link " href="javascript:openShareWindow('https://twitter.com/share?url=@Model')"></a>
+            </li>
+
+            <li class="share-item pinterest">
+                <a class="share-link" href="javascript:void((function(){var e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','https://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)})());"></a>
+            </li>
+
+            <li class="share-item rss">
+                <a class="share-link" href="#"></a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<script asp-location="Footer">
+    $(document).ready(function () {
+        // Open modal
+        $("#open-share-modal").on("click", function () {
+            $("#shareModal").fadeIn();
+        });
+
+        // Close modal
+        $(".close-share-modal, .share-modal-overlay").on("click", function (e) {
+            if ($(e.target).is(".share-modal-overlay, .close-share-modal")) {
+                $("#shareModal").fadeOut();
+            }
+        });
+    });
+
+    function openShareWindow(url) {
+        var winWidth = 520;
+        var winHeight = 400;
+        var winTop = (screen.height / 2) - (winHeight / 2);
+        var winLeft = (screen.width / 2) - (winWidth / 2);
+
+            window.open(url, '_blank'); // Opens the URL in a new tab
+
+        // window.open(url, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+    }
+
+    function copyToClipboard() {
+        var copyText = document.getElementById("shareUrl");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+        document.execCommand("copy");
+        alert("Copied: " + copyText.value);
+    }
+</script>
+

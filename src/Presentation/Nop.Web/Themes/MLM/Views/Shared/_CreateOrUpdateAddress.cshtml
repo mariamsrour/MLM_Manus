@@ -1,0 +1,255 @@
+﻿@model AddressModel
+
+<input class="address-id" asp-for="Id" type="hidden"/>
+<div class="fieldset ">
+    <div class="form-fields">
+        <div class="inputs">
+            <div class="email-field">
+                <div class="email-label-container">
+                    <label class="label-email" asp-for="FirstName"></label>
+                </div>
+                <div class="component-66">
+                    <div class="vuesaxlinearuser-parent">
+
+                        <input asp-for="FirstName" class="email-placeholder" placeholder="Enter First Name" type="text" />
+                    </div>
+                </div>
+                <span asp-validation-for="FirstName"></span>
+
+            </div>
+        </div>
+
+        <div class="inputs">
+            <div class="email-field">
+                <div class="email-label-container">
+                    <label class="label-email" asp-for="LastName"></label>
+                </div>
+                <div class="component-66">
+                    <div class="vuesaxlinearuser-parent">
+
+                        <input asp-for="LastName" class="email-placeholder" placeholder="Enter Last Name" type="text" />
+                    </div>
+                </div>
+                <span asp-validation-for="LastName"></span>
+
+            </div>
+        </div>
+        <div class="inputs">
+            <div class="email-field">
+                <div class="email-label-container">
+                    <label class="label-email" asp-for="Email"></label>
+                </div>
+                <div class="component-66">
+                    <div class="vuesaxlinearuser-parent">
+
+                        <input asp-for="Email" class="email-placeholder" placeholder="Enter Email" type="text" />
+                    </div>
+                </div>
+                <span asp-validation-for="Email"></span>
+
+            </div>
+        </div>
+       
+        @if (Model.CompanyEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="Company"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+
+                            <input asp-for="Company" class="email-placeholder" placeholder="Enter Company" type="text" />
+                        </div>
+                    </div>
+                    <span asp-validation-for="Company"></span>
+
+                </div>
+            </div>
+          
+        }
+        @if (Model.CountryEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="CountryId"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <select asp-for="CountryId" asp-items="Model.AvailableCountries"
+                                    data-trigger="country-select"
+                                    data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                                    data-stateprovince="#@Html.IdFor(model => model.StateProvinceId)"
+                                    data-loading="#states-loading-progress"></select>
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="CountryId"></span>
+
+                </div>
+            </div>
+           
+        }
+
+        @if (Model.CountryEnabled && Model.StateProvinceEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="StateProvinceId"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <select asp-for="StateProvinceId" asp-items="Model.AvailableStates" data-trigger="state-select"></select>
+                            <span id="states-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="StateProvinceId"></span>
+
+                </div>
+            </div>
+           
+        }
+        @if (Model.CountyEnabled)
+        {
+
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="County"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="County" class="email-placeholder" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="County"></span>
+
+                </div>
+            </div>
+           
+        }
+        @if (Model.CityEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="City"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="City" class="email-placeholder" placeholder="Enter City" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="City"></span>
+
+                </div>
+            </div>
+            
+        }
+        @if (Model.StreetAddressEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="Address1"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="Address1" class="email-placeholder" placeholder="Enter Address1" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="Address1"></span>
+
+                </div>
+            </div>
+            
+        }
+        @if (Model.StreetAddress2Enabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="Address2"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="Address2" class="email-placeholder" placeholder="Enter Address2" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="Address2"></span>
+
+                </div>
+            </div>
+          
+        }
+        @if (Model.ZipPostalCodeEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="ZipPostalCode"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="ZipPostalCode" class="email-placeholder" placeholder="Enter ZipPostalCode" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="ZipPostalCode"></span>
+
+                </div>
+            </div>
+           
+        }
+        @if (Model.PhoneEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="PhoneNumber"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="PhoneNumber" class="email-placeholder" placeholder="Enter Phone Number" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="PhoneNumber"></span>
+
+                </div>
+            </div>
+           
+        }
+        @if (Model.FaxEnabled)
+        {
+            <div class="inputs">
+                <div class="email-field">
+                    <div class="email-label-container">
+                        <label class="label-email" asp-for="FaxNumber"></label>
+                    </div>
+                    <div class="component-66">
+                        <div class="vuesaxlinearuser-parent">
+                            <input asp-for="FaxNumber" class="email-placeholder" placeholder="Enter Fax Number" />
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="FaxNumber"></span>
+
+                </div>
+            </div>
+          
+        }
+        @if (Model.CustomAddressAttributes.Count > 0)
+        {
+            @await Html.PartialAsync("_AddressAttributes", Model.CustomAddressAttributes)
+        }
+    </div>
+</div>

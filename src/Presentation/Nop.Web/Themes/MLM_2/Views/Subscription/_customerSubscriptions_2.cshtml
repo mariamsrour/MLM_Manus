@@ -1,0 +1,272 @@
+﻿@model List<Nop.Web.Models.Subscriptions.UserSubscription>
+@using Nop.Core
+@using Nop.Services.Catalog
+@using System.Linq
+@inject IWorkContext workContext
+
+@{
+
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var counter = 1;
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/_customersubscriptions_2.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/_customersubscriptions_2.css");
+
+    }
+}
+
+
+
+<section class="container-wrapper">
+    <div class="container3">
+        <div class="login-benefits">
+            <div class="login-benefits-container">
+                <div class="login-benefit-details">
+                    <div class="benefit-description">
+                        <div class="strong-login">
+                            <h3 class="strong-login1">My Subscription</h3>
+                        </div>
+
+                        <div class="status-wrapper">
+                            <button class="status-btn active" data-active="true">
+                                Active <span class="count"> @(Model.Where(x => x.IsActive).Count()) </span>
+                            </button>
+
+                            <button class="status-btn" data-active="false">
+                                Inactive <span class="count"> @(Model.Where(x => !x.IsActive).Count()) </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (Model.Count > 0)
+        {
+            <div id="active">
+                    <div class="table-wrapper">
+                        <table class="cart">
+                          
+                            <thead>
+                                <tr class="">
+                                    <th></th>
+                                    <th >Account Name</th>
+                                    <th class="expiration-date">Product Name</th>
+                                    <th class="expiration-date">Description</th>
+                                    <th class="expiration-date">Category</th>
+                                    <th class="number-of-ads">Number Of ads used</th>
+                                    <th class="number-of-ads">Number Of ads left</th>
+                                    <th class="expiration-date">Expiration Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.Where(x => x.IsActive).ToList())
+                                {
+                                <tr class="rectangle-parent2">
+                                        <td class="add-to-cart">
+                                            @(counter++)
+                                        </td>
+                                        <td>
+                                            @customer.FirstName @customer.LastName
+                                        </td>
+
+                                        <td class="product">
+                                            <div class="premium-15-ads-container">
+                                                <p class="gold">@s.Package.Plan.Name</p>
+                                                <p class="gold">@s.Package.Name</p>
+                                            </div>
+                                        </td>
+                                        <td class="unit-price">
+                                            <div class="semi-premium-net1">@s.Package.Plan.Description</div>
+
+                                        </td>
+                                        <td class="unit-price">
+                                            <div class="semi-premium-net1"> @s.catName</div>
+
+                                        </td>
+                                        <td class="unit-price">
+                                            <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.HighlightedUsed : s.NormalUsed)</div>
+
+                                        </td>
+                                        <td class="">
+                                            <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.Package.HighlightedAds - s.HighlightedUsed : s.Package.NormalAds - s.NormalUsed)</div>
+
+                                        </td>
+                                        <td>
+                                            <div class="premium-15-ads-container">@s.ExpirationDate.ToString("dd/M/yyyy")</div>
+
+                                        </td>
+                                        <td>
+                                            <a class="component-2835" href="@Url.Action("Checkout", "Subscription", new {packageId = s.Package.Id, isRenew = true, catId=s.catId})">
+                                                <img class="vuesaxlinearreceipt-icon" alt="" src="images/sub/vuesaxlinearreceipt.svg">
+
+                                                <b class="post-ad3">Re-new</b>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+
+
+
+                                    @*   <div class="rectangle-parent2">
+                        <div class="frame-child18"></div>
+                        <div class="premium-details">
+                            <div class="premium-account">
+                                <div class="wrapper1">
+                                    <div class="div">@(counter++)</div>
+                                </div>
+                                <div class="marwan-sayed-wrapper">
+                                    <div class="marwan-sayed1">@customer.FirstName @customer.LastName</div>
+                                </div>
+                                <div class="account-plan">
+                                    <div class="premium-15-ads-container">
+                                        <p class="gold">@s.Package.Plan.Name</p>
+                                        <p class="gold">@s.Package.Name</p>
+                                    </div>
+                                </div>
+                                <div class="account-features">
+                                    <div class="semi-premium-net1">@s.Package.Plan.Description</div>
+                                </div>
+                                <div class="account-features">
+                                    <div class="semi-premium-net1"> @s.catName</div>
+                                </div>
+                                <div class="frame">
+                                    <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.HighlightedUsed : s.NormalUsed)</div>
+                                </div>
+                                <div class="frame">
+                                    <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.Package.HighlightedAds - s.HighlightedUsed : s.Package.NormalAds - s.NormalUsed)</div>
+                                </div>
+                                <div class="frame">
+                                    <div class="premium-15-ads-container">@s.ExpirationDate.ToString("dd/M/yyyy")</div>
+                                </div>
+
+
+                                <a class="component-2835" href="@Url.Action("Checkout", "Subscription", new {packageId = s.Package.Id, isRenew = true, catId=s.catId})">
+                                    <img class="vuesaxlinearreceipt-icon" alt="" src="images/sub/vuesaxlinearreceipt.svg">
+
+                                    <b class="post-ad3">Re-new</b>
+                                </a>
+                            </div>
+                        </div>
+                    </div> *@
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+            <div id="inactive" class="hide">
+                @{
+                    counter = 1; // Reset counter for inactive subscriptions
+                }
+                <div class="table-wrapper">
+                    <table class="cart">
+
+                        <thead>
+                            <tr class="">
+                                <th></th>
+                                <th>Account Name</th>
+                                <th class="expiration-date">Product Name</th>
+                                <th class="expiration-date">Description</th>
+                                <th class="expiration-date">Category</th>
+                                <th class="number-of-ads">Number Of ads used</th>
+                                <th class="number-of-ads">Number Of ads left</th>
+                                <th class="expiration-date">Expiration Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Model.Where(x => !x.IsActive).ToList())
+                            {
+                                <tr class="rectangle-parent2">
+                                    <td class="add-to-cart">
+                                        @(counter++)
+                                    </td>
+                                    <td>
+                                        @customer.FirstName @customer.LastName
+                                    </td>
+
+                                    <td class="product">
+                                        <div class="premium-15-ads-container">
+                                            <p class="gold">@s.Package.Plan.Name</p>
+                                            <p class="gold">@s.Package.Name</p>
+                                        </div>
+                                    </td>
+                                    <td class="unit-price">
+                                        <div class="semi-premium-net1">@s.Package.Plan.Description</div>
+
+                                    </td>
+                                    <td class="unit-price">
+                                        <div class="semi-premium-net1"> @s.catName</div>
+
+                                    </td>
+                                    <td class="unit-price">
+                                        <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.HighlightedUsed : s.NormalUsed)</div>
+
+                                    </td>
+                                    <td class="">
+                                        <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.Package.HighlightedAds - s.HighlightedUsed : s.Package.NormalAds - s.NormalUsed)</div>
+
+                                    </td>
+                                    <td>
+                                        <div class="premium-15-ads-container">@s.ExpirationDate.ToString("dd/M/yyyy")</div>
+
+                                    </td>
+                                    <td>
+                                        <a class="component-2835" href="@Url.Action("Checkout", "Subscription", new {packageId = s.Package.Id, isRenew = true, catId=s.catId})">
+                                            <img class="vuesaxlinearreceipt-icon" alt="" src="images/sub/vuesaxlinearreceipt.svg">
+
+                                            <b class="post-ad3">Re-new</b>
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="no-data" style="margin:auto;">
+
+                <h3 class="strong-login1">No Subscription Found</h3>
+                <img src="~/images/Empty.png" />
+
+            </div>
+        }
+
+    </div>
+
+</section>
+
+
+<script>
+    $(document).ready(function() {
+        $('.status-btn').on('click', function() {
+            // Toggle active state between siblings
+            $(this).addClass('active').siblings('.status-btn').removeClass('active');
+            if ($(this).attr("data-active") === "true" ) {
+                $("#active").removeClass("hide");
+                $("#inactive").addClass("hide");
+
+            } else {
+                 $("#inactive").removeClass("hide");
+                $("#active").addClass("hide");
+            }
+        });
+    });
+</script>

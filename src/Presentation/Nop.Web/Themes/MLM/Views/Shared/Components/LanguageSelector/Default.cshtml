@@ -1,0 +1,50 @@
+﻿@model LanguageSelectorModel
+
+@inject Nop.Core.IWebHelper webHelper
+
+@if (Model.AvailableLanguages.Count > 1)
+{
+    <div class="language-selector">
+    @{
+        var returnUrl = webHelper.GetRawUrl(Context.Request);
+
+        if (Model.UseImages)
+        {
+            <ul class="language-list">
+                @foreach (var lang in Model.AvailableLanguages)
+                {
+                    <li>
+                        <a href="@Url.RouteUrl("ChangeLanguage", new { langid = lang.Id, returnUrl }, webHelper.GetCurrentRequestProtocol())" title="@lang.Name">
+                            <img title='@lang.Name' alt='@lang.Name' @(lang.Id == Model.CurrentLanguageId ? " class=selected" : null)
+                                 src="@Url.Content("~/images/flags/" + @lang.FlagImageFileName) "/>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+             <div class="language-download1">
+            <a class="english">Download App</a>
+            <img
+              class="vuesaxlineararrow-down-icon1"
+              alt=""
+              src="images/vuesaxlineararrowdown.svg"
+            />
+          </div>
+            var languages = await Model.AvailableLanguages.SelectAwait(async lang => new SelectListItem
+            {
+                Text = lang.Name,
+                Value = Url.RouteUrl("ChangeLanguage", new { langid = lang.Id, returnUrl }, webHelper.GetCurrentRequestProtocol()),
+                Selected = lang.Id.Equals(Model.CurrentLanguageId)
+            }).ToListAsync();
+
+            <div class="language-download">
+            <select class="english" id="customerlanguage" name="customerlanguage" asp-items="@languages" onchange="setLocation(this.value);" aria-label="@T("Languages.Selector.Label")"></select>
+            
+             </div>
+
+        }
+    }
+    </div>
+}

@@ -1,0 +1,47 @@
+﻿.spec {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.spec-attributes-group {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  justify-content: space-evenly;
+}
+
+.spec-name {
+  margin-top: 16px;
+}
+
+.spec select {
+  min-width: 150px;
+  height: 50px;
+  border-radius: 50px;
+}
+
+
+.spec .choices__list--single {
+  background: #FFFFFF;
+  border: 1px solid #383375;
+  border-radius: 42.551px;
+  height: 65.24px;
+  /* justify-content: space-between; */
+  align-items: center;
+  padding: 14.1837px 22.6939px;
+  text-align: justify;
+  min-width:150px;
+}
+
+  .spec .choices__list--single .choices__item {
+    padding-top: 7px;
+  }
+
+.spec .choices[data-type*=select-one]::after {
+  right: 20.5px !important;
+}
+
+.spec .choices__list--dropdown, .choices__list[aria-expanded] {
+    min-width:150px;
+}

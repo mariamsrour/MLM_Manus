@@ -1,0 +1,56 @@
+﻿@model PrivateMessageIndexModel
+
+@{
+    Layout = "_ColumnsTwoCustom";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.PrivateMessages").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-private-messages");
+    NopHtml.AppendPageCssClassParts("html-private-messages-page");
+
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/mymessages.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/mymessages.css");
+
+    }
+}
+
+
+
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Messages })
+}
+
+<div class="page wishlist-page">
+
+    <div class="page-body login-custom custom-register">
+        <h3 class="strong-login1">
+            @T("PrivateMessages.PrivateMessages")
+        </h3>
+
+
+        <div class="no-data">
+            <img src="~/images/Empty.png" alt="@T("Wishlist.CartIsEmpty")" />
+
+            <div class="no-data">
+                @T("PrivateMessages.Inbox.NoItems")
+            </div>
+        </div>
+
+
+    </div>
+</div>

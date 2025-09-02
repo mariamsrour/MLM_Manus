@@ -1,0 +1,210 @@
+
+input[type="radio"]:checked + label:before, input[type="checkbox"]:checked ~ label:before {
+  border: 1px solid #383375;
+  background-color: #383375;
+  width: 16px;
+  height: 16px;
+}
+
+input[type="radio"] + label:before, input[type="checkbox"] ~ label:before {
+  width: 16px;
+  height: 16px;
+}
+
+input[type="radio"]:checked + label, input[type="checkbox"]:checked ~ label {
+  color: #383375;
+}
+
+input[type="radio"] + label, input[type="checkbox"] ~ label {
+  color: #383375;
+}
+
+.featured input[type="radio"] + label, .featured input[type="checkbox"] ~ label {
+  color: white;
+}
+
+.plan-card-footer {
+  margin-top: 50px;
+}
+
+.plan-card {
+  width: 325px;
+  height: 702px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+  .plan-card.featured {
+    background: url('/Themes/MLM/Content/images/card.png');
+    background-position: top;
+  }
+
+.plan-icon {
+  width: 60px;
+  height: 60px;
+  float: right;
+}
+
+.expand {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+  .expand.active {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+/* Add arrow rotation animation if needed */
+.toggle-pack-btn .arrow {
+  transition: transform 0.3s ease;
+}
+
+.expand.active ~ .acc-header .toggle-pack-btn .arrow {
+  transform: rotate(-180deg);
+}
+
+.plan-name {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 43px;
+  align-items: center;
+  letter-spacing: -0.695983px;
+  color: #101828;
+}
+
+.featured .plan-name, .featured .pc-name-wrapper, .featured .price, .featured .pc-desc, .featured .pc-features, .featured .price-large {
+  color: #fff;
+}
+
+.pc-name-wrapper {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 43px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.695983px;
+  color: #383375;
+}
+
+.price {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12.698px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  letter-spacing: -0.301281px;
+  color: #101828;
+}
+
+.toggle-pack-btn {
+  width: 15px;
+  height: 7px;
+  padding: 0px;
+  margin-top: 13px;
+  margin-right: 8px;
+}
+
+.price-large {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 61px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -1.04397px;
+  color: #101828;
+}
+
+.pc-desc {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 19.5745px;
+  line-height: 28px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.39149px;
+  color: #1C193A;
+  opacity: 0.8;
+}
+
+.pc-features li {
+  margin-bottom: 5px;
+}
+
+.pc-features {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 26px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.173996px;
+  color: #101828;
+}
+
+.check-f {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle !important;
+}
+
+.select-plan-link {
+  color: white;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 31px;
+  width: 272px;
+  height: 51px;
+  background: #383375;
+  border-radius: 30px;
+}
+
+.featured .select-plan-link {
+  background: white;
+  color: #383375;
+}
+
+  .featured .select-plan-link:hover {
+    background: #383375;
+    color: white;
+  }
+
+.select-plan-link :hover {
+  background: white;
+  color: #383375;
+}
+
+.plans-wrapper {
+  display: inline-flex;
+  margin-top: 20px;
+  gap: 25px;
+  justify-content: center;
+  width: -webkit-fill-available;
+}
+
+.acc-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.pc-price-wrapper {
+  display: flex;
+  flex-direction: row;
+}

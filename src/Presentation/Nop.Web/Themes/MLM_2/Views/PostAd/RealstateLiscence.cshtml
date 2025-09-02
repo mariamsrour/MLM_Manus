@@ -1,0 +1,178 @@
+﻿@model Nop.Web.Models.Catalog.RealStateLiscenceModel;
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+    var item = 2;
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/realstateliscence.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/realstateliscence.css");
+
+    }
+}
+
+
+
+
+<div class="root">
+    <main class="auth-container">
+        <form asp-controller="PostAd" asp-action="RealstateLiscence" method="post" id="product-form">
+            <input type="hidden" asp-for="CategoryId" />
+
+            <section class="footer">
+                <header class="background3">
+                    <h2 class="heading-1">Real estate license verification</h2>
+                </header>
+                <div class="login-form">
+                    <div class="input-container">
+                        <div class="input-label">
+                            License holder full name
+                        </div>
+                        <div class="email-input">
+                            <input asp-for="HolderName" type="text" placeholder="" required />
+                        </div>
+                    </div>
+
+                    <div class="input-container">
+                        <div class="input-label">
+                            License holder ID
+                        </div>
+                        <div class="email-input">
+                            <input asp-for="HolderId" type="text" placeholder="" required />
+                        </div>
+                    </div>
+
+                    <div class="input-container">
+                        <div class="input-label">
+                            License Number
+                        </div>
+                        <div class="email-input">
+                            <input asp-for="LiscenceNumber" type="text" placeholder="" required />
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <button type="button" class="check">Check</button>
+                    </div>
+
+                </div>
+            </section>
+
+
+
+
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="license-container">
+                            <div class="pop-header" >
+                                <img src="https://cdn.builder.io/api/v1/image/assets/d53df5d6e0b34d2bb3a4bd50f1df9970/e5390a6be912b66236044243cfbb2a6e0eff743f?placeholderIfAbsent=true"
+                                     alt="Company Logo"
+                                     class="logo-image" />
+
+                                     <img src="~/images/Component 334.png" class="check-circle" />
+                                     <div class="result-container">
+                                         <div class="res-title">
+                                        License Verified Successfully
+                                         </div>
+                                    <div class="res-desc">
+                                        Your license has been successfully applied and verified. Your real estate business is now officially licensed and compliant.
+                                    </div>
+                                     </div>
+
+                            </div>
+                            <hr class="divider" />
+                            <div class="license-title">
+                                License Information
+                            </div>
+                            <div class="license-fields">
+                                <div class="field-group">
+                                    <div class="field-label">
+                                        License Holder Name
+                                    </div>
+                                    <div class="field-value" id="modal-holder-name">
+                                        Marwan Sayed
+                                    </div>
+                                </div>
+                                <div class="field-group">
+                                    <div class="field-label">
+                                        National ID
+                                    </div>
+                                    <div class="field-value" id="modal-holder-id">
+                                        165413155151135
+                                    </div>
+                                </div>
+                                <div class="field-group">
+                                    <div class="field-label">
+                                        Real Estate license Number
+                                    </div>
+                                    <div class="field-value" id="modal-number">
+                                        1351385151551552051
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="confirm-button-container">
+                                <button type="submit" class="confirm-button">
+                                    Confirm
+                                </button>
+                            </div>
+                            <div class="footer-section">
+                                <div class="thank-you-text">
+                                    Thank You
+                                </div>
+                                <div class="contact-info">
+                                    <div class="contact-item">
+                                        +966 2185151151
+                                    </div>
+                                    <div class="contact-item">
+                                        13 St. Omar Bin Elkhatab JEddah Saudi Arabia
+                                    </div>
+                                    <div class="contact-item">
+                                        www.Mlm.com
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </main>
+</div>
+<script>
+                        $(document).ready(function () {
+
+                      $('.check').on('click', function () {
+        const  holdername = $('#HolderName').val();
+    const  holderid = $('#HolderId').val();
+    const  holdernummber = $('#LiscenceNumber').val();
+    $('#modal-holder-name').html(holdername);
+        $('#modal-holder-id').html(holderid);
+            $('#modal-number').html(holdernummber);
+        const modalElement = document.getElementById('confirmModal');
+            const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+
+
+    });
+        });
+
+</script>

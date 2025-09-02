@@ -1,0 +1,456 @@
+﻿@using Nop.Core
+@using Nop.Services.Orders;
+@using Nop.Services.Customers;
+@using Nop.Services.Security;
+@using Nop.Core.Domain.Orders;
+@using Nop.Services.Media;
+@using Nop.Services.Common;
+@using Nop.Core.Domain.Customers;
+@using Nop.Core.Domain.Media;
+@using Nop.Web.Factories;
+@using Nop.Services.Forums;
+
+
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+@inject IPermissionService permissionService
+@inject IShoppingCartService shoppingCartService
+@inject ICustomerService customerService
+@inject IPictureService pictureService
+@inject IGenericAttributeService _genericAttributeService;
+@inject MediaSettings _mediaSettings;
+@inject ICustomerModelFactory _customerModelFactory;
+@inject IForumService forumService;
+@inject INewsItemReadService newsModelFactory;
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var wishlistEnabled = await permissionService.AuthorizeAsync(StandardPermissionProvider.EnableWishlist);
+    var shoppingCartEnabled = await permissionService.AuthorizeAsync(StandardPermissionProvider.EnableShoppingCart);
+
+    var shoppingCartItems = await shoppingCartService.GetShoppingCartAsync(await workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, storeId);
+    var shoppingCartItemsCount = shoppingCartItems.Sum(item => item.Quantity);
+
+    var wishlistItems = await shoppingCartService.GetShoppingCartAsync(await workContext.GetCurrentCustomerAsync(), ShoppingCartType.Wishlist, storeId);
+    var wishlistItemsCount = wishlistItems.Sum(item => item.Quantity);
+
+    ViewBag.WishlistEnabled = wishlistEnabled;
+    ViewBag.WishlistItems = wishlistItemsCount;
+    ViewBag.ShoppingCartEnabled = shoppingCartEnabled;
+    ViewBag.ShoppingCartItems = shoppingCartItemsCount;
+    ViewBag.MessagesCount = 0;
+    ViewBag.NotificationCount = 0;
+
+    var isLoggedIn = await customerService.IsRegisteredAsync(await workContext.GetCurrentCustomerAsync());
+    var customer = await workContext.GetCurrentCustomerAsync();
+    ViewBag.MessagesCount = await forumService.GetUnreadMessagesCount((customer != null) ? customer.Id : 0);
+    ViewBag.NotificationCount = await newsModelFactory.GetUnreadCountAsync((customer != null) ? customer.Id : 0);
+    var avatarUrl = await pictureService.GetPictureUrlAsync(
+                    await _genericAttributeService.GetAttributeAsync<int>(customer, NopCustomerDefaults.AvatarPictureIdAttribute),
+                    _mediaSettings.AvatarPictureSize,
+                    false);
+    var avatar = string.IsNullOrEmpty(avatarUrl) ? "images/default-avatar.jpg" : avatarUrl;
+    customer.AdminComment = avatar;
+    var modelAdd = await _customerModelFactory.PrepareCustomerAddressListModelAsync();
+
+
+}
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/header.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/header.css");
+
+    }
+}
+
+
+
+@if (isLoggedIn)
+{
+    <div class="header">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderBefore })
+
+        <!-- Upper -->
+        <div class="header-upper">
+            <div class="header-text">
+                <div class="footer-lower-block footer-social-buttons">
+                    @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
+                </div>
+            </div>
+            <div class="profile-links responsive-nav-content">
+                <div class="responsive-nav-body">
+                    <div class="header-selects">
+                        @await Component.InvokeAsync(typeof(LanguageSelectorViewComponent))
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mid -->
+        <div class="header-mid table">
+            <!-- Left -->
+            <div class="table-cell header-left">
+                <div class="nav-button menu-button">
+                    <span class="trigger" title="@T("SevenSpikes.Themes.Common.MenuTitle")"></span>
+                </div>
+                <a href="/">
+                    <img class="logo-wb-2-1" loading="lazy" alt="" src="images/0000302-logo-wb-2-1@2x.png" id="logoWb21" />
+                </a>
+            </div>
+
+            <!-- Center -->
+            <div class="table-cell header-center responsive-nav-content">
+              
+                <form asp-route="ProductSearch" method="get" id="small-search-box-form">
+                    <div class="input-search-store-logged">
+                        <div class="search-input">
+                            <input type="text" class="search-box-text" id="small-searchterms" autocomplete="off" name="q" placeholder="Search here store for Product" />
+                            <div class="component-137" style="display:none;">
+                                <a class="product-jobs-property-container">
+                                    <p class="product">Product</p>
+                                    <p class="product">Jobs</p>
+                                    <p class="product">Property</p>
+                                    <p class="product">Cars</p>
+                                    <p class="product">Everything</p>
+                                </a>
+                            </div>
+                        </div>
+                        <button class="component-283" type="submit">
+                            <img class="vuesaxlinearsearch-normal-icon" alt="" src="images/vuesaxlinearsearchnormal.svg" />
+                            <a class="post-ad">Search</a>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right -->
+            <div class="table-cell header-right responsive-nav-wrapper">
+                <!-- Location -->
+                <div class="location-picker" onclick="toggleAdd();">
+                    <div class="component-299">
+                        <img class="vuesaxlinearlocation-icon" alt="" src="images/vuesaxlinearlocation.svg" />
+                        <div class="location-parent">
+                            <a class="location">Location</a>
+                            @if (modelAdd != null && modelAdd.Addresses.Count > 0)
+                            {
+                                <div class="riyadh-sau">@modelAdd.Addresses.FirstOrDefault().City - @modelAdd.Addresses.FirstOrDefault().CountryName</div>
+                            }
+                            else
+                            {
+                                <div class="riyadh-sau">Alexandria, Egypt</div>
+                            }
+                        </div>
+                        <img class="location-dropdown-icon" alt="" src="images/location-dropdown.svg" />
+                    </div>
+                </div>
+
+                <div class="user-adds">
+                    @await Html.PartialAsync("_map", (modelAdd != null & modelAdd.Addresses.Count() > 0) ? modelAdd.Addresses : new List<Nop.Web.Models.Common.AddressModel>())
+                </div>
+
+                <!-- Options -->
+                <div class="user-options">
+                    <div class="nav-button wishlist-button">
+                        <a class="trigger" title="@T("Wishlist")" href="@Url.RouteUrl("Wishlist")">
+                            <img class="component-303-icon" loading="lazy" alt="" src="images/component-304.svg" />
+                        </a>
+                    </div>
+                    <div class="nav-button wishlist-button">
+                        @if (ViewBag.MessagesCount > 0)
+                        {
+                            <span class="counter wishlist-qty-2">@ViewBag.MessagesCount</span>
+                        }
+                        <a class="trigger" title="@T("Messages")" href="@Url.RouteUrl("CustomerMessages")">
+                            <img class="component-icon" loading="lazy" alt="" src="images/messages-3.png" />
+                        </a>
+                    </div>
+                    <div class="nav-button wishlist-button">
+                        @if (ViewBag.NotificationCount > 0)
+                        {
+                            <span class="counter wishlist-qty-2">@ViewBag.NotificationCount</span>
+                        }
+                        <a class="trigger" title="@T("Notifications")" href="@Url.RouteUrl("CustomerNotifications")">
+                            <img class="component-icon" loading="lazy" alt="" src="images/notification.png" />
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Profile -->
+                <div class="location-picker sec" onclick="$('.user-prof').toggle('hide')">
+                    <div class="component-299">
+                        <img class="header-prof" alt="" src="@avatar" />
+                        <div class="location-parent">
+                            <a class="location">Welcome</a>
+                            <div class="logged-in-user">@customer.FirstName</div>
+                        </div>
+                        <img class="location-dropdown-icon" alt="" src="images/location-dropdown.svg" />
+                    </div>
+                </div>
+
+                <div class="user-prof hide responsive-nav-content">
+                    @if (customer != null)
+                    {
+                        @await Html.PartialAsync("_profileMenu", customer)
+                    }
+                </div>
+
+                <!-- Post Ad -->
+                <button class="component-283 sec" onclick="window.location='@Url.RouteUrl("SelectAdCategory")';">
+                    Post Ad
+                </button>
+            </div>
+        </div>
+
+        <!-- Lower -->
+        <div class="header-lower">
+            <div class="header-lower-inner table">
+                <div class="header-menu table-cell responsive-nav-content">
+                    <div class="responsive-nav-head">
+                        <span class="text">@T("SevenSpikes.Themes.Common.MenuTitle")</span>
+                        <span class="button close-menu"></span>
+                    </div>
+                    @{
+                        var menu = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
+                    }
+                    @if (String.IsNullOrEmpty(await menu.RenderHtmlContentAsync()))
+                    {
+                        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+                    }
+                    else
+                    {
+                        @menu
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra responsive -->
+        <div class="search-box store-search-box responsive-nav-content">
+            @await Component.InvokeAsync(typeof(SearchBoxViewComponent))
+        </div>
+     
+    </div>
+}
+else
+{
+    <div class="header">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderBefore })
+
+        <!-- Upper -->
+        <div class="header-upper">
+            <div class="header-text">
+                <div class="footer-lower-block footer-social-buttons">
+                    @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
+                </div>
+            </div>
+            <div class="profile-links responsive-nav-content">
+                <div class="responsive-nav-body">
+                    <div class="header-selects">
+                        @await Component.InvokeAsync(typeof(LanguageSelectorViewComponent))
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mid -->
+        <div class="header-mid table">
+            <!-- Left -->
+            <div class="table-cell header-left">
+                <div class="nav-button menu-button">
+                    <span class="trigger" title="@T("SevenSpikes.Themes.Common.MenuTitle")"></span>
+                </div>
+                <a href="/">
+                    <img class="logo-wb-2-1" loading="lazy" alt="" src="images/0000302-logo-wb-2-1@2x.png" id="logoWb21" />
+                </a>
+            </div>
+
+            <!-- Center -->
+            <div class="table-cell header-center responsive-nav-content">
+                <div class="responsive-nav-head">
+                    <span class="text">@T("Search")</span>
+                    <span class="button close-menu"></span>
+                </div>
+                <form asp-route="ProductSearch" method="get" id="small-search-box-form">
+                    <div class="input-search-store">
+                        <div class="search-input">
+                            <input type="text" class="search-box-text" id="small-searchterms" autocomplete="off" name="q" placeholder="Search here store for Product" />
+                            <div class="component-137" style="display:none;">
+                                <a class="product-jobs-property-container">
+                                    <p class="product">Product</p>
+                                    <p class="product">Jobs</p>
+                                    <p class="product">Property</p>
+                                    <p class="product">Cars</p>
+                                    <p class="product">Everything</p>
+                                </a>
+                            </div>
+                        </div>
+                        <button class="component-283" type="submit">
+                            <img class="vuesaxlinearsearch-normal-icon" alt="" src="images/vuesaxlinearsearchnormal.svg" />
+                            <a class="post-ad">Search</a>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right -->
+            <div class="table-cell header-right responsive-nav-wrapper">
+                <div class="location-picker" onclick="toggleAdd();">
+                    <div class="component-299">
+                        <img class="vuesaxlinearlocation-icon" alt="" src="images/vuesaxlinearlocation.svg" />
+                        <div class="location-parent">
+                            <a class="location">Location</a>
+                            <div class="riyadh-sau"></div>
+                        </div>
+                        <img class="location-dropdown-icon" alt="" src="images/location-dropdown.svg" />
+                    </div>
+                </div>
+
+                <div class="user-adds">
+                    @await Html.PartialAsync("_map", (modelAdd != null & modelAdd.Addresses.Count() > 0) ? modelAdd.Addresses : new List<Nop.Web.Models.Common.AddressModel>())
+                </div>
+
+                <div class="user-options">
+                    <a href="/customer-info">
+                        <img class="component-303-icon" loading="lazy" alt="" src="images/component-303.svg" />
+                    </a>
+                    <div class="nav-button wishlist-button">
+                        <a class="trigger" title="@T("Wishlist")" href="@Url.RouteUrl("Wishlist")">
+                            <img class="component-303-icon" loading="lazy" alt="" src="images/component-304.svg" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lower -->
+        <div class="header-lower">
+            <div class="header-lower-inner table">
+                <div class="header-menu table-cell responsive-nav-content">
+                    <div class="responsive-nav-head">
+                        <span class="text">@T("SevenSpikes.Themes.Common.MenuTitle")</span>
+                        <span class="button close-menu"></span>
+                    </div>
+                    @{
+                        var menu = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
+                    }
+                    @if (String.IsNullOrEmpty(await menu.RenderHtmlContentAsync()))
+                    {
+                        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+                    }
+                    else
+                    {
+                        @menu
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra responsive -->
+        <div class="search-box store-search-box responsive-nav-content">
+            @await Component.InvokeAsync(typeof(SearchBoxViewComponent))
+        </div>
+     
+    </div>
+}
+
+
+        <script>
+    $(document).ready(function() {
+    
+    
+        function toggleAdd() {
+               const element = $(".user-adds");
+    if (element.css("display") === "none") {
+        element.css("display", "block");
+    } else {
+        element.css("display", "none");
+    }
+        }
+
+        var scity = sessionStorage.getItem("City");
+        var scountry = sessionStorage.getItem("Country");
+        var sadd = sessionStorage.getItem("Address");
+
+         if(scity && scountry){
+           $(".riyadh-sau").html(scity + " - " +scountry );
+             $("#header-selected-location-string").html(sadd);
+         }
+    
+    });
+
+   function toggleAdd() {
+
+               const element = $(".user-adds");
+    if (element.css("display") === "none") {
+        element.css("display", "block");
+    } else {
+        element.css("display", "none");
+    }
+   }
+
+     function selectAdd(city, country) {
+           if (!city || !country) {
+          city =sessionStorage.getItem("City");
+           country = sessionStorage.getItem("Country");
+     }
+
+        sessionStorage.setItem("City", city);
+        sessionStorage.setItem("Country", country);
+           $(".riyadh-sau").html(city + " - " + country );
+           $(".user-adds").css("display", "none");
+
+    
+     }
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        const $input = $('#small-searchterms');
+        const $placeholders = $('.product-jobs-property-container .product');
+        let index = 0;
+
+        function updatePlaceholder() {
+            // Fade out
+            $input.fadeOut(200, function () {
+                // Update placeholder text
+                const newPlaceholder = `Search here store for ${$placeholders.eq(index).text()}`;
+                $input.attr('placeholder', newPlaceholder);
+
+                // Fade in
+                $input.fadeIn(200);
+            });
+
+            // Update index for next iteration
+            index = (index + 1) % $placeholders.length;
+        }
+        let vv = $input.val();
+        if(!vv){
+                    setInterval(updatePlaceholder, 1000);
+        }
+    });
+
+
+</script>
+
+<script>
+    document.querySelectorAll('a').forEach(link => {
+      const originalColor = getComputedStyle(link).color;
+      link.style.setProperty('--original-color', originalColor);
+      link.style.color = originalColor;
+    });
+    document.querySelectorAll('.btn').forEach(link => {
+      const originalColor = getComputedStyle(link).color;
+      link.style.setProperty('--original-btn-color', originalColor);
+      link.style.color = originalColor;
+    });
+</script>

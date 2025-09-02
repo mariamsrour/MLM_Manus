@@ -1,0 +1,79 @@
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+
+@{
+    Layout = "_Root.Head";
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
+    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
+
+    var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase);
+    var isCatalogPage = (controllerName.Equals("catalog", StringComparison.InvariantCultureIgnoreCase)
+                        || controllerName.Equals("product", StringComparison.InvariantCultureIgnoreCase))
+
+                        && actionName.Equals("category", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("manufacturer", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("manufacturerall", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("vendor", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("vendorall", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("productsbytag", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("newproducts", StringComparison.InvariantCultureIgnoreCase)
+                        || actionName.Equals("recentlyviewedproducts", StringComparison.InvariantCultureIgnoreCase);
+    var isProductPage = controllerName.Equals("product", StringComparison.InvariantCultureIgnoreCase)
+                        && actionName.Equals("productdetails", StringComparison.InvariantCultureIgnoreCase);
+
+    var HomePageLayout = string.Empty;
+    var CatalogPageLayout = string.Empty;
+    var ProductPageLayout = string.Empty;
+
+    if (isHomePage) {
+        HomePageLayout = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.HomePageLayout", "with-slider", storeId, true);
+    }
+    if (isCatalogPage)
+    {
+        CatalogPageLayout = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.CatalogPageLayout", "two-columns", storeId, true);
+    }
+    if (isProductPage)
+    {
+        ProductPageLayout = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.ProductPageLayout", "standard-gallery", storeId, true);
+    }
+}
+
+@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })
+@{ await Html.RenderPartialAsync("_Notifications"); }
+@{ await Html.RenderPartialAsync("_JavaScriptDisabledWarning"); }
+
+<div class="master-wrapper-page @HomePageLayout @CatalogPageLayout @ProductPageLayout">
+    <script asp-location="Footer">
+        var localized_data = {
+            AjaxCartFailure: "@T("AjaxCart.Failure")"
+        };
+        AjaxCart.init(false, '.cart-qty', '.wishlist-qty', '#flyout-cart', localized_data);
+    </script>
+    <div class="overlayOffCanvas"></div>
+    <div class="header-wrapper">
+        @{ await Html.RenderPartialAsync("_Header"); }
+    </div>
+    @if (isHomePage && HomePageLayout == "with-slider")
+    {
+        @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_main_slider" })
+    }
+    @if (isHomePage && HomePageLayout == "no-slider")
+    {
+        @await Component.InvokeAsync("HomepageCategories")
+    }
+    @await RenderSectionAsync("Breadcrumb", false)
+    <div class="master-wrapper-content" id="main" role="main">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentBefore })
+        <div class="master-column-wrapper">
+            @RenderBody()
+        </div>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentAfter })
+    </div>
+    @await Component.InvokeAsync(typeof(FooterViewComponent))
+</div>
+@await Component.InvokeAsync(typeof(EuCookieLawViewComponent))
+@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })

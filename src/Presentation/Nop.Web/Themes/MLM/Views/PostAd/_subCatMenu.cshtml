@@ -1,0 +1,30 @@
+﻿@model List<Nop.Web.Models.Catalog.CategorySimpleModel>
+
+<ul class="sub-menu">
+    @foreach(var cc in Model)
+    {
+        <li class="menu-item">
+            @if (cc.HaveSubCategories)
+            {
+                <span class="menu-label">
+
+                    @cc.Name <span class="close-btn">×</span>
+                    @if (cc.HaveSubCategories)
+                    {
+                        <img class="vuesaxlinearsearch-normal-icon2 arro-down"
+                             alt=""
+                             src="images/arrow-down-light.png" />
+                    }
+                </span>
+                @await Html.PartialAsync("_subCatMenu", cc.SubCategories)
+            }
+            else
+            {
+                <a href="@Url.RouteUrl("PostAd")">
+                    @cc.Name
+                </a>
+            }
+        </li>
+    }
+ 
+</ul>

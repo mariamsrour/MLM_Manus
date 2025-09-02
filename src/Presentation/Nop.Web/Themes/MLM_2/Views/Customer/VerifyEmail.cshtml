@@ -1,0 +1,100 @@
+﻿@model VerifyEmailModel
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Register").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-registration-result-page");
+    NopHtml.AppendPageCssClassParts("html-registration-page");
+
+}
+
+<style>
+    .component-66 {
+        align-self: stretch;
+        height: 48px !important;
+        border-radius: var(--br-11xl) !important;
+        background-color: var(--color-white) !important;
+        border: .5px solid var(--neutral-400) !important;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: var(--padding-smi) var(--padding-lg) !important;
+        width: 490px;
+        margin: 20px auto;
+    }
+
+    .button-1 {
+        min-width: 490px !important;
+        outline: 1px solid transparent;
+        background-color: #383375!important;
+        padding: 15px 25px;
+        color: #fff;
+        text-transform: uppercase;
+        transition: all .2s ease;
+        border-radius: 40px;
+        font-weight: 600;
+        height: 50px;
+    }
+
+    input[type="text"]:focus {
+        background-color: inherit !important;
+        border-color: inherit !important;
+    }
+</style>
+<div class="page registration-result-page">
+    <div class="page-title">
+        <h1> Email Verification</h1>
+    </div>
+    <div class="page-body">
+        <div class="container">
+            <form asp-route="VerifyEmail"  method="post" autocomplete="off">
+
+                <div asp-validation-summary="ModelOnly" class="message-error" style="display:flex; flex-direction:row;">
+                    <span style="display:inline-flex;">
+                        <img class="vuesaxlinearwarning-2-icon" loading="lazy" alt="" src="images/vuesaxlinearwarning2.svg" style="
+    margin-right: 15px;
+">
+
+                    </span>
+
+                </div>
+                @Html.HiddenFor(model => model.CustomerId)
+
+                <div class="message-container">
+                    <div class="strong-login-parent">
+                        <h3 class="strong-login">
+                            <label for="Code">Enter the verification code sent to your email:</label>
+
+                           </h3>
+
+                        <div class="input-fields">
+                            <div class="email-field">
+                                <div class="email-label-container">
+                                    <div class="label-email">OTP Code</div>
+                                </div>
+                             
+                                    <div class="vuesaxlinearuser-parent">
+                                    
+                                        <input asp-for="Code" class="component-66" placeholder="Enter OTP Code" type="text" />
+                                    </div>
+                             
+                            </div>
+                           
+                        </div>
+                    </div>
+                  
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="button-1 register-continue-button">Submit</button>
+                </div>
+            </form>
+
+          
+        </div>
+
+    </div>
+</div>

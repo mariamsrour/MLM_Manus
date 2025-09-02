@@ -1,0 +1,84 @@
+﻿@model VendorReviewModel
+<div class="submit-review-popup">
+    <div class="title">
+        <div class="review-title-1">@T("Vendor.Reviews.WriteReview")</div>
+    </div>
+    <form asp-controller="Catalog" asp-action="SubmitVendorReview" method="post" id="vendor-review-form" class="write-review">
+        <input type="hidden" asp-for="VendorId" />
+
+        <!-- Rating -->
+        <div class="form-group">
+            <dive class="review-subtitle">@T("Vendor.Reviews.Rating")</dive>
+            <div class="review-rating">
+                <div class="rating-options">
+                    <input asp-for="Rating" value="0" type="radio" id="addproductrating_0" style="display: none;" />
+                    <input asp-for="Rating" value="1" type="radio" id="addproductrating_1" aria-label="@T("Reviews.Fields.Rating.Bad")" />
+                    <label for="addproductrating_1"></label>
+                    <input asp-for="Rating" value="2" type="radio" id="addproductrating_2" aria-label="@T("Reviews.Fields.Rating.NotGood")" />
+                    <label for="addproductrating_2"></label>
+                    <input asp-for="Rating" value="3" type="radio" id="addproductrating_3" aria-label="@T("Reviews.Fields.Rating.NotBadNotExcellent")" />
+                    <label for="addproductrating_3"></label>
+                    <input asp-for="Rating" value="4" type="radio" id="addproductrating_4" aria-label="@T("Reviews.Fields.Rating.Good")" />
+                    <label for="addproductrating_4"></label>
+                    <input asp-for="Rating" value="5" type="radio" id="addproductrating_5" aria-label="@T("Reviews.Fields.Rating.Excellent")" />
+                    <label for="addproductrating_5"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Text -->
+        <div class="form-group">
+            <textarea asp-for="ReviewText" class="form-control" placeholder="@T("Vendor.Reviews.ReviewText")"></textarea>
+            <span asp-validation-for="ReviewText"></span>
+        </div>
+
+        <!-- Tags Selection -->
+        <div class="form-group">
+@*             <label>@T("Vendor.Reviews.SelectTags"):</label>
+ *@            <div class="tag-selector">
+                @foreach (var tag in Model.AvailableTags)
+                {
+                    <input type="checkbox" class="tag-checkbox" id="tag-@tag.Id" value="@tag.Id"  />
+                    <label for="tag-@tag.Id" class="quick-responses-wrapper" style="margin:5px;" onclick="toggleCheck(this);">
+                        <span class="quick-responses">
+                            <span class="showed-up-on">
+                                @tag.Tag
+                            </span>
+                        </span>
+                    </label>
+
+                }
+                <input type="hidden" id="SelectedTagIds" name="SelectedTagIds" />
+                <input type="hidden" asp-for="AvailableTags" />
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="buttons">
+            <button type="submit" class="btn btn-primary submit-review">@T("Vendor.Reviews.Submit")</button>
+        </div>
+    </form>
+</div>
+
+<script>
+
+        $(document).ready(function () {
+        $(".tag-checkbox").change(function () {
+          let selectedIds = [];
+
+            $(".tag-checkbox:checked").each(function () {
+                selectedIds.push($(this).val());
+            });
+
+            $("#SelectedTagIds").val(selectedIds);
+
+            console.log($("#SelectedTagIds").val());
+        });
+          window.toggleCheck = function (label) {
+        $(label).toggleClass("active-tag"); // Toggle a class
+    };
+    });
+       
+   
+
+</script>

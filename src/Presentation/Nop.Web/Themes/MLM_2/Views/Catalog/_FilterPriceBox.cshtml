@@ -1,0 +1,97 @@
+﻿@model PriceRangeFilterModel
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/filterPriceBox.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/filterPriceBox.css");
+
+    }
+}
+
+
+
+
+<div class="product-filter price-range-filter">
+
+    <div class="block filter-block dropdown-block">
+        <div class="filtersGroupPanel filtersDropDownPanel">
+            <label class="toggleControl">Ad Type</label>
+            <div class="product-type-filter">
+                <div class="filter-group">
+                    <input id="product-type-all" name="product-type" type="radio" class="product-type-checkbox" value="null" />
+                    <label for="product-type-all"> All</label>
+
+                    <input id="product-type-buy" name="product-type" type="radio" class="product-type-checkbox" value="11" />
+                    <label for="product-type-buy">  For Buy</label>
+                </div>
+                <div class="filter-group">
+                    <input id="product-type-req" name="product-type" type="radio" class="product-type-checkbox" value="13" />
+                    <label for="product-type-req">  Buy Request</label>
+
+                    <input id="product-type-rent" name="product-type" type="radio" class="product-type-checkbox" value="12" />
+                    <label for="product-type-rent">  For Rent</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="block filter-block dropdown-block">
+        <div class="filtersGroupPanel filtersDropDownPanel">
+            <label class="toggleControl">By Price</label>
+            <div class="price-input-fields">
+           
+                <input class="price-input-num" type="number" id="price-from" name="priceFrom" placeholder="From" />
+                <img class="to-arrow" style="display:inline;padding-left:13px; " src="/images/Vector 653.png">
+                <input style="float: inline-end;" class="price-input-num" type="number" id="price-to" name="priceTo" placeholder="To" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script asp-location="Footer">
+    $(function () {
+        $('#filter-price').on('click', function () {
+            var from = parseInt($('#price-from').val()) || 0;
+            var to = parseInt($('#price-to').val()) || 0;
+
+            if (from > to) {
+                alert('@T("Filtering.PriceRange.InvalidRange")');
+                return;
+            }
+
+            CatalogProducts.getProducts({
+                price: from + '-' + to
+            });
+        });
+
+        $(CatalogProducts).on('before', function (e) {
+            var from = parseInt($('#price-from').val()) || 0;
+            var to = parseInt($('#price-to').val()) || 0;
+            if (from && to) {
+                e.payload.urlBuilder.addParameter('price', from + '-' + to);
+            }
+        });
+    });
+        $(document).on('change', '.product-type-checkbox', function () {
+        CatalogProducts.getProducts();
+    });
+
+    $(CatalogProducts).on('before', function (e) {
+        var selectedTypes = $('.product-type-checkbox:checked').map(function () {
+            return $(this).val();
+        }).get().join(',');
+
+        if (selectedTypes) {
+            e.payload.urlBuilder.addParameter('type', selectedTypes);
+        }
+    });
+</script>

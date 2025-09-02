@@ -1,0 +1,76 @@
+﻿@using Nop.Core
+@using Nop.Web.Models.Subscriptions
+
+@inject Nop.Core.IWebHelper webHelper
+
+@model List<Plan>
+
+
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+}
+
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/selectplan.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/selectplan.css");
+
+    }
+}
+
+
+
+
+
+<div class="main">
+    <div class="steps">
+        <img class="step-items-icon"
+        loading="lazy"
+        alt=""
+        src="images/frame-1918723851.svg" />
+
+        <b class="select-plan">Select Plan</b>
+    </div>
+    <div class="content1">
+        <div class="content-child"></div>
+    </div>
+    <div class="steps1">
+        <img class="step-items-icon"
+        loading="lazy"
+        alt=""
+        src="images/frame-1918723853.svg" />
+
+        <b class="select-plan">Checkout</b>
+    </div>
+    <div class="content2">
+        <div class="content-child"></div>
+    </div>
+    <div class="steps2">
+        <img class="step-items-icon"
+        loading="lazy"
+        alt=""
+        src="images/frame-1918723854.svg" />
+
+        <b class="select-plan">Complete</b>
+    </div>
+</div>
+
+
+
+@await Html.PartialAsync("_plans", Model)

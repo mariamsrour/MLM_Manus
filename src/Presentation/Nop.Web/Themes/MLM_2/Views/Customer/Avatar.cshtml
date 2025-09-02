@@ -1,0 +1,53 @@
+﻿@model CustomerAvatarModel
+@{
+
+    //title
+    //page class
+    NopHtml.AppendPageCssClassParts("html-avatar-page");
+}
+
+<form asp-route="CustomerAvatar" method="post" enctype="multipart/form-data" style="width:fit-content;">
+    <div class="page account-page avatar-page">
+        <div class="page-body  login-custom custom-register">
+
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerAvatarTop, additionalData = Model })
+            <div asp-validation-summary="ModelOnly" class="message-error"></div>
+            <div class="fieldset">
+                @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                {
+                    <div class="image">
+                        <img src="@(Model.AvatarUrl)" alt="avatar" />
+                    </div>
+                } else
+                {
+                    <div class="image">
+                        <img src="images/default-avatar.jpg" alt="avatar" />
+                    </div>
+                }
+                <input class="upload-img" name="uploadedFile" accept="image/jpeg, image/gif" type="file" />
+            </div>
+
+            <div class="info">
+                @T("Account.Avatar.UploadRules")
+            </div>
+            <div class="btn-wrap">
+                <button class="register-button" type="submit" name="upload-avatar">
+                    <div class="register-wrapper">
+                        <b class="rem-av light">@T("Common.Upload")</b>
+                    </div>
+                </button> 
+                @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                {
+                    <button class="register-button" type="submit" name="remove-avatar">
+                        <div class="register-wrapper light">
+                            <b class="rem-av dark">@T("Account.Avatar.RemoveAvatar")</b>
+                        </div>
+                    </button>
+            
+                }
+            </div>
+
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerAvatarBottom, additionalData = Model })
+        </div>
+    </div>
+</form>

@@ -1,0 +1,418 @@
+﻿@using Nop.Web.Models.Subscriptions
+
+@model List<Plan>
+@inject Nop.Core.IWebHelper webHelper
+
+<style>
+
+    input[type="radio"]:checked + label:before, input[type="checkbox"]:checked ~ label:before {
+        border: 1px solid #383375;
+        background-color: #383375;
+        width:16px;
+        height:16px;
+    }
+        input[type="radio"] + label:before, input[type="checkbox"] ~ label:before {
+        width: 16px;
+        height: 16px;
+
+        }
+    input[type="radio"]:checked + label, input[type="checkbox"]:checked ~ label {
+        color: #383375;
+    }
+
+    input[type="radio"] + label, input[type="checkbox"] ~ label {
+        color: #383375;
+    }
+
+    .featured input[type="radio"] + label, .featured input[type="checkbox"] ~ label {
+        color: white;
+    }
+    .plan-card-footer{
+        margin-top:50px;
+    }
+    .plan-card{
+    width:325px;
+    height:702px;
+    background-color:white;
+    padding:30px;
+    border-radius: 30px;
+    display:flex;
+    flex-direction:column;
+        gap: 12px;
+    }
+
+    .plan-card.featured {
+    background: url('/Themes/MLM/Content/images/card.png');
+    background-position: top;
+    }
+
+    .plan-icon {
+    width:60px;
+    height:60px;
+    float:left;
+    }
+
+    .expand {
+    display: none;
+    transition: all 0.3s ease;
+    }
+
+    .expand.active {
+    display: flex;
+            flex-direction: column;
+            gap:12px;
+    }
+
+    /* Add arrow rotation animation if needed */
+    .toggle-pack-btn .arrow {
+    transition: transform 0.3s ease;
+    }
+
+    .expand.active ~ .acc-header .toggle-pack-btn .arrow {
+    transform: rotate(180deg);
+    }
+
+    .plan-name{
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 43px;
+    align-items: center;
+    letter-spacing: -0.695983px;
+    color: #101828;
+    }
+
+    .featured .plan-name, .featured .pc-name-wrapper, .featured .price, .featured .pc-desc, .featured .pc-features, .featured .price-large {
+    color: #fff;
+    }
+
+    .pc-name-wrapper {
+
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 43px;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.695983px;
+    color: #383375;
+    }
+
+    .price {
+
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12.698px;
+    line-height: 18px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    letter-spacing: -0.301281px;
+    color: #101828;
+    }
+
+    .toggle-pack-btn{
+    width:15px;
+    height:7px;
+    padding:0px;
+        margin-top: 13px;
+        margin-left: 8px;
+    }
+
+    .price-large{
+
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 61px;
+    display: flex;
+    align-items: center;
+    letter-spacing: -1.04397px;
+    color: #101828;
+
+    }
+
+    .pc-desc {
+
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 19.5745px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.39149px;
+    color: #1C193A;
+    opacity: 0.8;
+
+    }
+
+    .pc-features li {
+        margin-bottom:5px;
+    }
+    .pc-features{
+
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 26px;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.173996px;
+    color: #101828;
+
+    }
+
+    .check-f{
+    width:22px;
+    height:22px;
+    vertical-align:middle !important;
+    }
+
+    .select-plan-link{
+    color:white; 
+    justify-content: center;
+    align-items: center;
+    padding: 15px 31px;
+    width: 272px;
+    height: 51px;
+    background: #383375;
+    border-radius: 30px;
+    }
+
+    .featured .select-plan-link {
+    background: white;
+    color: #383375;
+    }
+
+    .featured .select-plan-link:hover {
+    background: #383375;
+    color: white;
+    }
+
+    .select-plan-link :hover {
+    background: white;
+    color: #383375;
+    }
+
+    .plans-wrapper{
+    display:inline-flex;
+    margin-top:20px;
+    gap:25px;
+    justify-content: center;
+    width: -webkit-fill-available;
+    }
+
+    .acc-header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .pc-price-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+</style>
+
+<div class="plans-wrapper">
+    @foreach (var p in Model)
+    {
+        <div class="plan-card @(p.IsPopular? "featured":"")">
+            <img class="plan-icon" src="~/images/@(p.Id)_plan_icon.png" />
+
+            <div class="plan-name">
+                @p.Name
+            </div>
+            @foreach (var pc in p.Packages)
+            {
+                bool isFirst = p.Packages.FirstOrDefault() == pc;
+
+                <div class="package-container">
+                    <div class="acc-header">
+                        <div class="pc-name-wrapper">
+                            @if (isFirst)
+                            {
+                                <input id="package_@pc.Id"
+                                       type="radio"
+                                       name="package"
+                                       value="@pc.Id"
+                                       data-target="toggle-pack-container-@pc.Id"
+                                       class="package-radio" checked="checked" />
+                            }
+                            else
+                            {
+                                <input id="package_@pc.Id"
+                                       type="radio"
+                                       name="package"
+                                       value="@pc.Id"
+                                       data-target="toggle-pack-container-@pc.Id"
+                                       class="package-radio" />
+                            }
+
+                            <label for="package_@pc.Id">
+                                @pc.Name
+                            </label>
+                           
+                        </div>
+                        <div class="pc-price-wrapper">
+                            <div class="price">
+                                @pc.Price.ToString("C")
+                            </div>
+                            <button type="button" class="toggle-pack-btn" data-target="toggle-pack-container-@pc.Id">
+                                @if (p.IsPopular)
+                                {
+                                    <img class="arrow" src="~/images/arrow_down_w.png" />
+
+                                }
+                                else
+                                {
+                                    <img class="arrow" src="~/images/arrow_down.png" />
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                  
+                    <div class="expand @(isFirst? "active" : "")" id="toggle-pack-container-@pc.Id">
+                        <div class="price-large">
+                            @pc.Price.ToString("C")
+                        </div>
+                        <div class="pc-desc">
+                            @p.Description
+                        </div>
+
+                        <div class="pc-features">
+                            <ul>
+                                @foreach (var f in p.Features)
+                                {
+                                    <li>
+                                        @if (p.IsPopular)
+                                        {
+                                            <img class="check-f" src="~/images/check-circle-w.png" />
+
+                                        }
+                                        else
+                                        {
+                                            <img class="check-f" src="~/images/check-circle.png" />
+                                        }
+                                        @f
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="plan-card-footer">
+                <a href="@Url.Action("Checkout", "Subscription", new {packageId = p.Packages.FirstOrDefault().Id})" class="btn  select-plan-link" data-base-url="@Url.Action("Checkout", "Subscription")">Select Plan</a>
+            </div>
+        </div>
+    }
+
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Handle radio button changes
+        document.querySelectorAll('.package-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Get the parent plan card
+                const planCard = this.closest('.plan-card');
+
+                // Collapse all expands in THIS PLAN CARD ONLY
+                planCard.querySelectorAll('.expand').forEach(div => {
+                    div.classList.remove('active');
+                });
+
+                if(this.checked) {
+                    // Expand only the target in THIS PLAN
+                    const target = planCard.querySelector(`#${this.dataset.target}`);
+                    if(target) {
+                        target.classList.add('active');
+                    }
+
+                    // Update select plan link IN THIS PLAN CARD
+                    const packageId = this.value;
+                    const baseUrl = planCard.querySelector('.select-plan-link').dataset.baseUrl;
+                    const link = `${baseUrl}?packageId=${packageId}`;
+
+                    planCard.querySelector('.select-plan-link').href = link;
+                }
+            });
+        });
+
+        // Keep the button click handler as is
+        document.querySelectorAll('.toggle-pack-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const radio = document.querySelector(`#package_${targetId.split('-').pop()}`);
+                if(radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Initialize first radio per plan card
+        // document.querySelectorAll('.plan-card').forEach(card => {
+        //     if(!card.querySelector('.package-radio:checked')) {
+        //         const firstRadio = card.querySelector('.package-radio');
+        //         if(firstRadio) {
+        //             firstRadio.checked = true;
+        //             firstRadio.dispatchEvent(new Event('change'));
+        //         }
+        //     }
+        // });
+    });
+</script>
+@* <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle radio button changes
+        document.querySelectorAll('.package-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const allExpands = document.querySelectorAll('.expand');
+                allExpands.forEach(div => div.classList.remove('active'));
+
+                if(this.checked) {
+                    const target = document.getElementById(this.dataset.target);
+                    target.classList.add('active');
+
+                    // Update select plan link
+                    const packageId = this.value;
+                    const baseUrl = this.closest('.plan-card')
+                        .querySelector('.select-plan-link').dataset.baseUrl;
+                    const link = `${baseUrl}?packageId=${packageId}`;
+
+                    this.closest('.plan-card')
+                        .querySelector('.select-plan-link').href = link;
+                }
+            });
+        });
+
+        // Handle button clicks to toggle
+        document.querySelectorAll('.toggle-pack-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const radio = document.querySelector(`#package_${targetId.split('-').pop()}`);
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            });
+        });
+
+        // Initialize first radio as checked if none are selected
+        // document.querySelectorAll('.plan-card').forEach(card => {
+        //     if(!card.querySelector('.package-radio:checked')) {
+        //         const firstRadio = card.querySelector('.package-radio');
+        //         if(firstRadio) {
+        //             firstRadio.checked = true;
+        //             firstRadio.dispatchEvent(new Event('change'));
+        //         }
+        //     }
+        // });
+    });
+</script> *@

@@ -1,0 +1,89 @@
+﻿@model ProductSpecificationModel
+
+@using Nop.Core.Domain.Catalog;
+
+@if (Model.Groups.SelectMany(g => g.Attributes).ToList().Count > 0)
+{
+    <div class="product-specs-box">
+        <div class="title">
+            @T("Products.Specs")
+        </div>
+       
+       @*  *@
+
+       @*  <div class="room-amenities">
+            <div class="amenities">
+                <img class="room-details-child" loading="lazy" alt="" src="images/group-1171275021.svg">
+
+                <div class="bathroom">3 Bathroom</div>
+            </div>
+            <div class="amenities">
+                <img class="bedroom-icon" loading="lazy" alt="" src="images/vector.svg">
+
+                <div class="bedroom">4 Bedroom</div>
+            </div>
+            <div class="amenities">
+                <img class="pool-details-child" loading="lazy" alt="" src="images/group-1171275022.svg">
+
+                <div class="private-pool">Private Pool</div>
+            </div>
+            <div class="amenities">
+                <img class="wifi-details-child" loading="lazy" alt="" src="images/group-1171275029.svg">
+
+                <div class="private-pool">Wifi</div>
+            </div>
+            <div class="amenities">
+                <img class="medical-details-child" loading="lazy" alt="" src="images/group-1171275031.svg">
+
+                <div class="private-pool">Medical Bags</div>
+            </div>
+            <div class="amenities">
+                <img class="workspace-details-child" loading="lazy" alt="" src="images/group-1171275032.svg">
+
+                <div class="private-pool">Workspace</div>
+            </div>
+        </div> *@
+        <div class="room-amenities">
+            @foreach (var group in Model.Groups)
+            {
+                @if (group.Attributes.Count > 0)
+                {
+
+
+                    @for (int i = 0; i < group.Attributes.Count; i++)
+                    {
+                        var attr = group.Attributes[i];
+
+
+                        @for (int j = 0; j < attr.Values.Count; j++)
+                        {
+                            var value = attr.Values[j];
+
+                          @*   @if (!string.IsNullOrEmpty(value.ColorSquaresRgb) && (value.AttributeTypeId == (int)SpecificationAttributeType.Option))
+                            {
+                                <div class="attribute-squares color-squares attribute-squares-padding">
+                                    <span class="attribute-square-container" title="@Html.Raw(value.ValueRaw)">
+                                        <span class="attribute-square" style="background-color: @(value.ColorSquaresRgb);">&nbsp;</span>
+                                    </span>
+                                </div>
+                            }
+                            else
+                            { *@
+
+                            <div class="amenities">
+                                <img class="room-details-child" loading="lazy" alt="" src="@Url.Content(value.Icon)">
+
+                                <div class="bathroom"> @Html.Raw(value.ValueRaw)</div>
+                            </div>
+
+                        }
+
+                    }
+                }
+            }
+        </div>
+
+
+      
+    </div>
+}

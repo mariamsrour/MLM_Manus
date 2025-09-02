@@ -1,0 +1,790 @@
+/* 
+  Responsive.css for nopCommerce 4.70 custom theme
+*/
+
+/* --- Mobile Portrait (<= 480px) --- */
+@media (max-width: 480px) {
+  /* General layout */
+  .master-wrapper-page, .master-wrapper-content, .center-1, .center-2, .side-2 {
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  .header-upper, .header-mid, .header-lower {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-logo img { max-width: 150px; }
+  .search-box { width: 100%; }
+  .header-links-wrapper { display: none; } /* Use a mobile menu */
+
+  /* Footer */
+  .footer-upper, .footer-middle, .footer-lower {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  /* Product grids */
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Product pages */
+  .product-essential {
+    flex-direction: column;
+  }
+
+  /* Forms */
+  .form-fields { flex-direction: column; }
+  .form-fields .inputs { width: 100%; }
+
+  /* Tables */
+  .data-table thead { display: none; }
+  .data-table, .data-table tbody, .data-table tr, .data-table td {
+    display: block;
+    width: 100%;
+  }
+  .data-table tr { margin-bottom: 15px; }
+  .data-table td { text-align: left; padding-right: 50%; position: relative; }
+  .data-table td::before { content: attr(data-label); position: absolute; right: 0; width: 45%; padding-left: 10px; white-space: nowrap; text-align: right; font-weight: bold; }
+}
+
+/* --- Mobile Landscape / Small Tablets (481px - 767px) --- */
+@media (min-width: 481px) and (max-width: 767px) {
+  /* General layout */
+  .master-wrapper-page { max-width: 750px; margin: 0 auto; }
+
+  /* Header */
+  .header-mid { flex-direction: row; justify-content: space-between; align-items: center; }
+
+  /* Product grids */
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* --- Tablets (768px - 1023px) --- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* General layout */
+  .master-wrapper-page { max-width: 980px; }
+
+  /* Header */
+  .header-links-wrapper { display: block; }
+
+  /* Product grids */
+  .product-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Tables */
+  .data-table thead { display: table-header-group; }
+  .data-table, .data-table tbody, .data-table tr, .data-table td {
+    display: table;
+    width: 100%;
+  }
+  .data-table tr { display: table-row; }
+  .data-table td { display: table-cell; text-align: right; padding-right: 0; }
+  .data-table td::before { display: none; }
+}
+
+/* --- Laptops (1024px - 1439px) --- */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  /* General layout */
+  .master-wrapper-page { max-width: 1200px; }
+
+  /* Product grids */
+  .product-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* --- Large Desktops (>= 1440px) --- */
+@media (min-width: 1440px) {
+  /* General layout */
+  .master-wrapper-page { max-width: 1400px; }
+}
+
+
+
+
+/* myAdsProducts.css responsive adjustments */
+@media (max-width: 768px) {
+  .products-wrapper, .products-container {
+    width: 100% !important;
+  }
+}
+
+
+
+
+/* myReviews.css responsive adjustments */
+@media (max-width: 768px) {
+  .html-vendor-page .master-wrapper-content {
+    padding-top: 20px;
+  }
+
+  .wishlist-page {
+    padding: 10px;
+  }
+}
+
+
+
+
+/* mymessages.css responsive adjustments */
+@media (max-width: 768px) {
+  .html-wishlist-page .master-wrapper-content {
+    padding-top: 20px;
+  }
+
+  .wishlist-page {
+    padding: 10px;
+  }
+}
+
+
+
+
+/* notification.css responsive adjustments */
+@media (max-width: 768px) {
+  .html-private-messages .master-wrapper-content {
+    padding-top: 20px;
+  }
+
+  .wishlist-page {
+    padding: 10px;
+  }
+
+  .rectangle-parent2 {
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .notification-date {
+    margin-right: 0;
+  }
+}
+
+
+
+
+/* plans.css responsive adjustments */
+@media (max-width: 768px) {
+  .plan-card {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+  }
+
+  .plans-wrapper {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .plan-card-footer {
+    margin-top: 20px;
+  }
+
+  .select-plan-link {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .plan-name {
+    font-size: 24px;
+  }
+
+  .price-large {
+    font-size: 36px;
+  }
+
+  .pc-desc {
+    font-size: 16px;
+  }
+}
+
+
+
+
+/* print.css responsive adjustments */
+@media (max-width: 768px) {
+  .order-details-page .order-details-area > div {
+    float: none;
+    width: 100%;
+    margin: 0 0 20px;
+  }
+
+  .order-details-page .data-table th,
+  .order-details-page .data-table td {
+    white-space: normal;
+  }
+}
+
+
+
+
+/* privatemessagesinbox.css responsive adjustments */
+@media (max-width: 768px) {
+  .rectangle-parent2 {
+    padding: 10px;
+  }
+
+  .msg-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .thred-details {
+    margin-right: 0;
+    text-align: center;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .customer-details {
+    justify-content: center;
+  }
+
+  .date-sec {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .subject {
+    font-size: 14px;
+  }
+
+  .msg {
+    font-size: 12px;
+  }
+
+  .customer-name {
+    font-size: 14px;
+  }
+
+  .date {
+    font-size: 12px;
+  }
+
+  .remove-btn {
+    font-size: 14px;
+  }
+}
+
+
+
+
+/* privatemsgindex.css responsive adjustments */
+@media (max-width: 768px) {
+  .background6 {
+    padding: var(--padding-xl) var(--padding-base);
+  }
+
+  .plan-steps {
+    flex-direction: column;
+    gap: var(--gap-base);
+  }
+
+  .plan-steps-inner,
+  .plan-steps-child {
+    padding: var(--padding-base) 0 0;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .account-details {
+    flex-direction: column;
+    gap: var(--gap-base);
+  }
+
+  .login-details-container {
+    flex-direction: column;
+    gap: var(--gap-base);
+  }
+
+  .benefit-list-container {
+    flex-direction: column;
+    gap: var(--gap-base);
+  }
+
+  .subscription-info {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .login-benefit-details {
+    flex-direction: column;
+    gap: var(--gap-base);
+  }
+
+  .container-wrapper {
+    padding: 0 var(--padding-base);
+  }
+
+  .premium-account {
+    flex-direction: column;
+    gap: var(--gap-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .background6 {
+    font-size: var(--font-size-xl);
+  }
+
+  .heading-14 {
+    font-size: var(--font-size-lg);
+  }
+
+  .plan-steps-wrapper {
+    padding: 0 var(--padding-xs);
+  }
+
+  .account-details {
+    gap: var(--gap-xs);
+  }
+
+  .login-details-container {
+    gap: var(--gap-xs);
+  }
+
+  .benefit-list-container {
+    gap: var(--gap-xs);
+  }
+
+  .subscription-usage {
+    flex-direction: column;
+    gap: var(--gap-xs);
+  }
+
+  .login-benefit-details {
+    gap: var(--gap-xs);
+  }
+
+  .premium-account {
+    gap: var(--gap-xs);
+  }
+}
+
+
+
+
+/* productbox.css responsive adjustments */
+@media (max-width: 768px) {
+  .component-1400 {
+    padding: 10px;
+    gap: 5px;
+  }
+}
+
+
+
+
+/* producttemplatesimple.css responsive adjustments */
+@media (max-width: 768px) {
+  .send-msg {
+    left: 0;
+    width: 100%;
+    float: none;
+    margin-top: 10px;
+  }
+}
+
+
+
+
+/* profilemenu.css responsive adjustments */
+@media (max-width: 768px) {
+  .root10 {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .ellipse-parent6 {
+    width: 100%;
+    align-items: center;
+  }
+
+  .component-152, .component-154 {
+    width: 100%;
+    padding: 10px;
+    justify-content: center;
+  }
+}
+
+
+
+
+/* postNewAd.css responsive adjustments */
+@media (max-width: 768px) {
+  .background2 {
+    padding: var(--padding-base) var(--padding-base);
+  }
+
+  .email-input {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .seller-options {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ad-action-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .login-form {
+    padding: 0 var(--padding-base);
+    gap: 20px;
+  }
+
+  .title-input {
+    width: 100%;
+  }
+
+  .component-66 {
+    width: 100%;
+  }
+
+  .description-container {
+    padding: 0 var(--padding-base);
+  }
+
+  .available-to-label {
+    gap: 10px;
+  }
+
+  .bedroom-label-parent {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bathroom-option {
+    width: 100%;
+  }
+
+  .pet-friendly-option {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .availability-container {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 var(--padding-base);
+  }
+
+  .background3 {
+    padding: var(--padding-base) var(--padding-base);
+  }
+
+  .ad-photos-instructions {
+    width: 100%;
+  }
+
+  .image-slots {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heading-1 {
+    font-size: 24px;
+  }
+
+  .ad-type {
+    font-size: 20px;
+  }
+
+  .for-sale-by {
+    font-size: 20px;
+  }
+
+  .ad-action {
+    font-size: 20px;
+  }
+
+  .ad-title {
+    font-size: 20px;
+  }
+
+  .description {
+    font-size: 20px;
+  }
+
+  .available-to {
+    font-size: 20px;
+  }
+
+  .bathroom {
+    font-size: 20px;
+  }
+
+  .pet-friendly {
+    font-size: 20px;
+  }
+
+  .heading-11 {
+    font-size: 24px;
+  }
+}
+
+
+
+
+/* register.css responsive adjustments */
+@media (max-width: 768px) {
+  .date-picker-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .date-picker-wrapper .choices {
+    width: 100%;
+  }
+}
+
+
+
+
+/* report.css responsive adjustments */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 20px;
+    width: 100%;
+    max-width: 768px;
+    height: auto;
+    border-radius: 24px;
+    position: relative;
+  }
+
+  .image-gallery-section {
+    position: static;
+    margin-bottom: 32px;
+    width: 100%;
+    height: auto;
+  }
+
+  .main-image-container {
+    width: 100%;
+    height: 400px;
+  }
+
+  .thumbnails-container {
+    overflow-x: auto;
+    gap: 16px;
+    width: 100%;
+    height: auto;
+  }
+
+  .thumbnail {
+    flex-shrink: 0;
+    height: 100px;
+    width: 120px;
+  }
+
+  .ad-info-section {
+    position: static;
+    margin-bottom: 32px;
+    width: 100%;
+    height: auto;
+  }
+
+  .divider {
+    position: static;
+    margin: 20px 0;
+    width: 100%;
+  }
+
+  .form-section {
+    position: static;
+  }
+
+  .form-content {
+    flex-direction: column;
+    gap: 32px;
+    margin-bottom: 40px;
+    width: 100%;
+    height: auto;
+  }
+
+  .reporting-reasons {
+    width: 100%;
+  }
+
+  .reasons-list {
+    width: 100%;
+  }
+
+  .report-details {
+    width: 100%;
+  }
+
+  .submit-button {
+    position: static;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .reasons-title {
+    font-size: 16px;
+  }
+
+  .ad-title {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-container {
+    padding: 16px;
+    max-width: 640px;
+    border-radius: 16px;
+  }
+
+  .main-image-container {
+    height: 250px;
+  }
+
+  .thumbnails-container {
+    gap: 10px;
+  }
+
+  .thumbnail {
+    width: 80px;
+    height: 70px;
+  }
+
+  .submit-button {
+    height: 44px;
+  }
+
+  .submit-text {
+    font-size: 14px;
+  }
+
+  .reason-label,
+  .details-label,
+  .details-textarea {
+    font-size: 14px;
+  }
+}
+
+
+
+
+/* search.css responsive adjustments */
+@media (max-width: 768px) {
+  .html-search-page .master-wrapper-content {
+    padding-top: 20px;
+  }
+}
+
+
+
+
+/* selectCategory.css responsive adjustments */
+@media (max-width: 768px) {
+  .background5 {
+    padding: 20px;
+  }
+
+  .categories-and-sign-in {
+    gap: 20px;
+  }
+
+  .heading-1-welcome-please-si-parent {
+    gap: 20px;
+  }
+
+  .component-211-open {
+    padding: 15px;
+  }
+
+  .category-navigation-items {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .accordion-content1 {
+    padding: 15px;
+  }
+
+  .flat-color-iconsidea-parent {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .menu-item {
+    padding: 10px;
+  }
+
+  .menu-label.active {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-banner {
+    font-size: 24px;
+  }
+
+  .heading-1 {
+    font-size: 20px;
+  }
+
+  .heading-11 {
+    font-size: 20px;
+  }
+
+  .by-categories {
+    font-size: 14px;
+  }
+
+  .descriptive-titles-are {
+    font-size: 12px;
+  }
+
+  .next {
+    font-size: 14px;
+  }
+}
+
+
+
+
+/* selectplan.css responsive adjustments */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .steps, .steps1, .steps2 {
+    width: 100%;
+    align-items: center;
+  }
+
+  .content1, .content2 {
+    padding: 20px 0 0;
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .select-plan {
+    font-size: 14px;
+  }
+}
+
+

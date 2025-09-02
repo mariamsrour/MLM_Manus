@@ -1,0 +1,645 @@
+﻿@model Nop.Web.Models.Catalog.TopMenuModel
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+
+
+}
+
+<style>
+
+    :root {
+    /* Fonts */
+    --font-poppins: Poppins;
+    --font-montserrat: Montserrat;
+    --font-open-sans: "Open Sans";
+    --font-inter: Inter;
+    /* font sizes */
+    --font-size-3xs: 10px;
+    --font-size-xs: 12px;
+    --font-size-smi: 13px;
+    --font-size-sm: 14px;
+    --font-size-mini: 15px;
+    --font-size-base: 16px;
+    --font-size-mid: 17px;
+    --font-size-lg-4: 18.4px;
+    --font-size-lgi: 19px;
+    --font-size-xl: 20px;
+    --font-size-3xl: 22px;
+    --font-size-5xl: 24px;
+    --font-size-7xl: 26px;
+    --font-size-9xl: 28px;
+    --font-size-13xl: 32px;
+    --font-size-41xl: 60px;
+    /* Colors */
+    --color-black: #000;
+    --color-crimson: #ea4450;
+    --color-dimgray-100: #585858;
+    --color-gray-100: #222529;
+    --color-gray-400: #757575;
+    --color-gray-500: #1d2127;
+    --color-gray-600: #1c2023;
+    --color-lightslategray: #9c99ba;
+    --color-silver-100: #c9c5c5;
+    --color-silver-200: #bebebe;
+    --color-steelblue: #39a0c8;
+    --color-white: #fff;
+    --color-whitesmoke-100: #f4f4f4;
+    --color-whitesmoke-200: #ebebeb;
+    --color-whitesmoke-300: rgba(235, 235, 235, 0.4);
+    /* Gaps */
+    --gap-0: 0px;
+    --gap-11xs: 2px;
+    --gap-9xs: 4px;
+    --gap-8xs: 5px;
+    --gap-7xs: 6px;
+    --gap-6xs: 7px;
+    --gap-5xs: 8px;
+    --gap-4xs-3: 8.3px;
+    --gap-3xs: 10px;
+    --gap-2xs-9: 10.9px;
+    --gap-xs: 12px;
+    --gap-smi: 13px;
+    --gap-base: 16px;
+    --gap-mid: 17px;
+    --gap-lgi: 19px;
+    --gap-xl: 20px;
+    --gap-3xl: 22px;
+    --gap-8xl: 27px;
+    --gap-13xl: 32px;
+    --gap-23xl: 42px;
+    --gap-27xl: 46px;
+    --gap-35xl: 54px;
+    --gap-45xl: 64px;
+    --gap-92xl: 111px;
+    --gap-145xl: 164px;
+    --gap-229xl-8: 248.8px;
+    /* Paddings */
+    --padding-12xs: 1px;
+    --padding-10xs: 3px;
+    --padding-9xs: 4px;
+    --padding-8xs-5: 4.5px;
+    --padding-8xs-9: 4.9px;
+    --padding-8xs: 5px;
+    --padding-5xs: 8px;
+    --padding-3xs: 10px;
+    --padding-2xs: 11px;
+    --padding-xs: 12px;
+    --padding-smi: 13px;
+    --padding-sm-2: 13.2px;
+    --padding-sm: 14px;
+    --padding-mini: 15px;
+    --padding-base: 16px;
+    --padding-base-7: 16.7px;
+    --padding-mid: 17px;
+    --padding-lg: 18px;
+    --padding-lgi-8: 19.8px;
+    --padding-lgi-9: 19.9px;
+    --padding-xl: 20px;
+    --padding-2xl: 21px;
+    --padding-3xl: 22px;
+    --padding-6xl: 25px;
+    --padding-7xl: 26px;
+    --padding-11xl-2: 30.2px;
+    --padding-12xl: 31px;
+    --padding-19xl: 38px;
+    --padding-36xl: 55px;
+    --padding-39xl: 58px;
+    --padding-40xl: 59px;
+    --padding-52xl-9: 71.9px;
+    --padding-53xl-8: 72.8px;
+    --padding-57xl: 76px;
+    --padding-58xl: 77px;
+    --padding-70xl: 89px;
+    --padding-94xl: 113px;
+    --padding-123xl: 142px;
+    --padding-131xl: 150px;
+    --padding-317xl: 336px;
+    --padding-333xl: 352px;
+    --padding-342xl: 361px;
+    --padding-417xl: 436px;
+    --padding-1055xl: 1074px;
+    /* Border radiuses */
+    --br-xl: 20px;
+    --br-11xl: 30px;
+    --br-21xl: 40px;
+    --br-23xl-4: 42.4px;
+    --br-26xl: 45px;
+    --br-31xl: 50px;
+    --br-41xl: 60px;
+    --br-47xl-6: 66.6px;
+    --br-161xl: 180px;
+    /* Figma Variables */
+    /* Color Variables */
+    --Neutral-200: #b7b7b7;
+    --Neutral-300: #939393;
+    --Neutral-400: #6f6f6f;
+    --Neutral-50: #efefef;
+    --Neutral-600: #373737;
+    --Neutral-700: #1c1c1c;
+    --Primary-100: #cdccdc;
+    --Primary-400: #383375;
+    --Primary-500: #2a2658;
+    --Primary-600: #1c193a;
+    --Warning-400: #f7941f;
+    }
+    .arro-down {
+    float: inline-end;
+    }
+    .welcome-banner {
+    align-self: stretch;
+    text-align: center;
+    font-size: var(--font-size-9xl);
+    color: var(--Primary-600);
+    font-family: var(--font-montserrat);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--gap-45xl);
+    }
+
+    .background5 {
+    height: 104px;
+    background-color: var(--Neutral-50);
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 32px 672px var(--padding-19xl);
+    box-sizing: border-box;
+    display: flex;
+    align-self: stretch;
+    }
+
+    .heading-1 {
+    height: 34px;
+    width: 390px;
+    font-size: inherit;
+    line-height: 33.6px;
+    font-weight: 600;
+    font-family: inherit;
+    margin: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .categories-and-sign-in {
+    width: 679px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--gap-45xl);
+    }
+
+    .heading-1-welcome-please-si-parent {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--gap-13xl);
+    }
+
+    .heading-11 {
+    height: 39px;
+    font-size: inherit;
+    line-height: 33.6px;
+    font-weight: 600;
+    font-family: inherit;
+    margin: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    }
+
+    .component-242 {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-radius: 25px;
+    overflow: hidden;
+    align-items: flex-start;
+    text-align: left;
+    font-size: var(--font-size-base);
+    color: var(--Neutral-600);
+    font-family: var(--font-poppins);
+    /*    padding: 20px;
+    background: white; */
+    }
+
+    .component-211 {
+    align-self: stretch;
+    background-color: var(--color-white);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 25px;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    cursor: pointer;
+    }
+
+    .component-211-open {
+    align-self: stretch;
+    background-color: var(--color-white);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--padding-3xl) var(--padding-417xl) var(--padding-3xl) var(--padding-6xl);
+    gap: var(--gap-3xs);
+    cursor: pointer;
+    }
+
+    .category-navigation-items {
+    width: 630px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-0);
+    }
+
+    .by-categories {
+    position: relative;
+    text-transform: uppercase;
+    }
+
+    .vuesaxlinearsearch-normal-icon2 {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    }
+
+    .accordion-item-mock {
+    align-self: stretch;
+    display: none;
+    flex-direction: column;
+    }
+
+    .accordion-content1 {
+    align-self: stretch;
+    background-color: var(--color-white);
+    display: grid;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--padding-3xl) var(--padding-417xl) var(--padding-3xl) var(--padding-6xl);
+    gap: var(--gap-3xs);
+    cursor: default;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    }
+
+    .accordion-content1.accordion__open {
+    grid-template-rows: 1fr;
+    }
+
+    .accordion-content1,
+    .accordion-content1.accordion__close {
+    grid-template-rows: 0fr;
+    }
+
+    .accordion-content-wrap {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    overflow: hidden;
+    }
+
+    .component-208 {
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    cursor: pointer;
+    }
+
+    .next-button-wrapper,
+    .next-button-inner-wrapper {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    }
+
+    .next-wrapper {
+    height: 48px;
+    border-radius: var(--br-26xl);
+    background-color: var(--Primary-400);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: -webkit-fill-available;
+    }
+
+    .next {
+    position: relative;
+    font-size: var(--font-size-base);
+    letter-spacing: -0.35px;
+    line-height: var(--font-size-xl);
+    text-transform: uppercase;
+    font-family: var(--font-montserrat);
+    color: var(--color-white);
+    text-align: center;
+    }
+
+    .flat-color-iconsidea-parent {
+    width: 85%;
+    border-radius: var(--br-xl);
+    background-color: rgba(92, 107, 192, .1);
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-xl) var(--padding-base);
+    box-sizing: border-box;
+    gap: 15px;
+    text-align: left;
+    font-size: var(--font-size-mini);
+    color: var(--color-black);
+    font-family: var(--font-inter);
+    justify-content: space-around;
+    text-align: justify;
+    }
+
+    .flat-color-iconsidea {
+    height: 51.8px;
+    width: 51.8px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    object-fit: contain;
+    }
+
+    .descriptive-titles-are {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    }
+
+    .menu-wrapper {
+    position: relative;
+    width: -webkit-fill-available;
+    font-family: Arial, sans-serif;
+    }
+
+    .menu, .sub-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    }
+
+    .menu-item {
+    padding: 15px 30px 15px 30px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    background: white;
+    }
+
+    .menu-item:hover {
+    background-color: #DBDBDB;
+    }
+
+    .menu-item:last-of-type {
+    padding-bottom:30px;
+    }
+
+    .menu-item:first-of-type {
+    padding-top: 30px;
+    }
+
+    .close-btn {
+    padding-top: 2.5px;
+    display: none;
+    /* margin-left: 10px; */
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    float: inline-end;
+    border: 1px solid white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    font-weight: 100;
+    }
+
+    .sub-menu {
+    display: none;
+    padding: 10px 0;
+    }
+
+    .highlight-box {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 8px;
+    transition: top 0.3s ease;
+    z-index: 0;
+    }
+
+    .menu-label.active {
+    background-color: #383375;
+    display: inline-block;
+    color: white;
+    width: calc(100%);
+    /* margin-left: -30px; */
+    padding: 20px 20px 20px 30px;
+    border-radius: 45px;
+    }
+    .menu-item.trans{
+    background-color:transparent;
+    background-color: transparent;
+    padding: 0px;
+    }
+    .last-sub{
+    background-color:white;
+    border-radius:10px;
+    margin-top: 10px;
+    }
+</style>
+
+<section class="welcome-banner">
+    <div class="background5">
+        <h2 class="heading-1">Post Ad</h2>
+    </div>
+    <div class="categories-and-sign-in">
+        <div class="heading-1-welcome-please-si-parent">
+            <h2 class="heading-11">Select a category</h2>
+            <div class="component-242" data-acc-group>
+
+                <div class="menu-wrapper">
+                    <div class="highlight-box"></div>
+                    <ul class="menu">
+                        @foreach (var cat in Model.Categories.FirstOrDefault().SubCategories)
+                        {
+                            <li class="menu-item">
+                                @if (cat.HaveSubCategories)
+                                {
+                                    <span class="menu-label">
+                                        @cat.Name
+                                        <span class="close-btn">×</span>
+
+                                        <img class="vuesaxlinearsearch-normal-icon2 arro-down"
+                                        alt=""
+                                        src="images/arrow-down-light.png" />
+
+                                    </span>
+                                    @await Html.PartialAsync("_subCatMenu", cat.SubCategories)
+                                } else
+                                {
+                                    <a href="@Url.RouteUrl("PostAd")">
+                                        @cat.Name
+
+                                    </a>
+                                }
+                            </li>
+                }
+                            </ul>
+                </div>
+
+             @*    @foreach (var cat in Model.Categories.FirstOrDefault().SubCategories)
+                {
+                    <div>
+                        <div class="component-211" data-acc-item
+                        data-acc-header
+                        data-acc-original>
+                            <div class="category-navigation-items">
+                                <div class="by-categories">@cat.Name</div>
+                                @if(cat.SubCategories.Count() > 0)
+                                {
+                                    <img class="vuesaxlinearsearch-normal-icon2"
+                                    alt=""
+                                    src="images/vuesaxlineararrowdown.svg" />
+                                }
+
+                            </div>
+                        </div>
+                       
+                    </div>
+                } *@
+               
+            </div>
+        </div>
+        <div class="component-208">
+            <div class="next-button-wrapper" id="nextButtonWrapper">
+                <div class="next-button-inner-wrapper">
+                    <a class="next-wrapper" href="@Url.RouteUrl("PostAd")">
+                        <b class="next">Next</b>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <div class="flat-color-iconsidea-parent">
+            <img class="flat-color-iconsidea"
+                 loading="lazy"
+                 alt=""
+                 src="images/flat-color-icons_idea.png" />
+
+            <div class="descriptive-titles-are">
+                Descriptive titles are the best fuel for high performing ads!
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function() {
+      const $highlight = $('.highlight-box');
+
+      function moveHighlight($item) {
+        const offsetTop = $item.position().top;
+        $highlight.css('top', offsetTop);
+      }
+
+      function resetSiblings($item) {
+        const $siblings = $item.parent().children('.menu-item').not($item);
+        $siblings.hide();
+        $siblings.find('.sub-menu').slideUp(200);
+        $siblings.find('.close-btn').hide();
+        $siblings.find('.arro-down').show();
+
+      }
+
+      function markLastSub() {
+        $('.menu-item').removeClass('last-sub');
+         $('.sub-menu:visible').each(function() {
+          $(this).removeClass('last-sub');          
+        });
+
+        $('.sub-menu:visible').last().addClass('last-sub');   
+        // .each(function() {
+        //   const $visibleSubs = $(this).children('.menu-item');
+        //   if ($visibleSubs.length > 0) {
+        //     $visibleSubs.last().addClass('last-sub');
+        //   }
+        // });
+      }
+
+      $(document).on('click', '.menu-label', function(e) {
+        e.stopPropagation();
+        const $clickedLabel = $(this);
+        const $menuItem = $clickedLabel.closest('.menu-item');
+
+        moveHighlight($menuItem);
+        resetSiblings($menuItem);
+
+        const $submenu = $menuItem.children('.sub-menu');
+        const $closeBtn = $clickedLabel.children('.close-btn');
+        const $arro = $clickedLabel.children('.arro-down');
+
+        if ($submenu.length > 0 && !$clickedLabel.hasClass('active')) {
+          $submenu.slideDown(200, function() {
+            markLastSub();
+          });
+          $closeBtn.show();
+          $arro.hide();
+          $clickedLabel.addClass('active');
+          $menuItem.addClass('trans');
+        }
+      });
+
+      $(document).on('click', '.close-btn', function(e) {
+        e.stopPropagation();
+        const $label = $(this).closest('.menu-label');
+        const $parentItem = $label.closest('.menu-item');
+        const $subMenu = $parentItem.children('.sub-menu');
+        const $arro = $label.children('.arro-down');
+
+        $subMenu.slideUp(200, function() {
+          markLastSub();
+        });
+        $label.removeClass('active');
+        $parentItem.removeClass('trans');
+        $parentItem.siblings('.menu-item').show();
+        $(this).hide();
+        $arro.show();
+      });
+
+      moveHighlight($('.menu > .menu-item:first'));
+    });
+</script>

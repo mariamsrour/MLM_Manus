@@ -1,0 +1,76 @@
+﻿@model  List<Nop.Web.Models.Subscriptions.UserSubscription>
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/customersubscription.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/customersubscription.css");
+
+    }
+}
+
+
+<div class="root1">
+    <header class="background6">
+        <div class="vuesaxlineararrow-right-parent">
+            <img class="vuesaxlineararrow-right-icon"
+                 loading="lazy"
+                 alt=""
+                 src="images/sub/vuesaxlineararrowright.svg" />
+
+            <h1 class="heading-14">Select Plan</h1>
+        </div>
+    </header>
+    <section class="plan-steps-wrapper">
+        <div class="plan-steps">
+            <div class="frame-parent39">
+                <img class="frame-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/sub/frame-1918723851.svg" />
+
+                <b class="select-plan">Select Plan</b>
+            </div>
+            <div class="plan-steps-inner">
+                <div class="line-div"></div>
+            </div>
+            <div class="frame-parent40">
+                <img class="frame-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/sub/frame-1918723853.svg" />
+
+                <b class="select-plan">Checkout</b>
+            </div>
+            <div class="plan-steps-child">
+                <div class="line-div"></div>
+            </div>
+            <div class="frame-parent41">
+                <img class="frame-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/sub/frame-1918723854.svg" />
+
+                <b class="select-plan">Complete</b>
+            </div>
+        </div>
+    </section>
+@await Html.PartialAsync("_customerSubscriptions", Model)
+
+</div>

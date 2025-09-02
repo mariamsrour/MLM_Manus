@@ -1,0 +1,249 @@
+@model WishlistModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Media
+@using Nop.Core.Domain.Tax
+
+@inject IWebHelper webHelper
+@inject IWorkContext workContext
+@inject MediaSettings mediaSettings
+
+@{
+    Layout = "_ColumnsTwoCustom";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Wishlist").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-wishlist-page");
+
+
+}
+    
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/wishlist.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/wishlist.css");
+
+    }
+}
+
+
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.WishList })
+}
+
+<div class="page wishlist-page">
+
+    <div class="page-body login-custom custom-register">
+        <div class="title-wrap">
+
+            <h3 class="strong-login1">
+                @T("Account.Wishlist")
+
+            </h3>
+            <div class="status-btn" data-active="active"> Items  <span class="count"> @Model.Items.Count </span> </div>
+
+        </div>
+     
+
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.WishlistTop, additionalData = Model })
+        @if (Model.Items.Count > 0)
+        {
+            <div class="wishlist-content">
+                @if (Model.Warnings.Count > 0)
+                {
+                    <div class="message-error">
+                        <ul>
+                            @foreach (var warning in Model.Warnings)
+                            {
+                                <li>@warning</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                <form asp-route="Wishlist" method="post">
+                    <div class="table-wrapper">
+                        <table class="cart">
+                            <colgroup>
+                                @if (Model.DisplayAddToCart)
+                                {
+                                    <col width="1" />
+                                }
+                                
+                                @if (Model.ShowProductImages)
+                                {
+                                    <col width="1" />
+                                }
+                                <col width="2" />
+                                <col width="1" />
+                                <col width="1" />
+                                <col width="1" />
+                                @if (Model.IsEditable)
+                                {
+                                    <col width="1" />
+                                }
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    @if (Model.DisplayAddToCart)
+                                    {
+                                        <th class="add-to-cart">
+                                            <input class="remover-checker"  type="checkbox" name="removeallfromcart"  aria-label="@T("ShoppingCart.Remove")" />
+                                            <button type="button" name="updatecart" class="remove-btn" onclick="$('.remover-checker').attr('checked', true); $('#updatecart').trigger('click');"></button>
+
+                                        </th>
+                                    }
+                                  
+                                    @if (Model.ShowProductImages)
+                                    {
+                                        <th class="product-picture">
+                                            @T("ShoppingCart.Image")
+                                        </th>
+                                    }
+                                    <th class="product">
+                                        @T("ShoppingCart.Product(s)")
+                                    </th>
+                                    <th class="unit-price">
+                                        @T("ShoppingCart.UnitPrice")
+                                    </th>
+                                    <th class="unit-price">
+                                        @T("ShoppingCart.DatePosted")
+                                    </th>
+                                    <th class="unit-price">
+                                        @T("ShoppingCart.DateAdded")
+                                    </th>
+
+
+                                    @if (Model.IsEditable)
+                                    {
+                                        <th class="">
+                                            <button class="register-button" type="button" onclick=" $('#updatecart').trigger('click');">
+                                                <div class="register-wrapper">
+                                                    <b class="delete-all" style="color:#fff;font-weight:400;">@T("ShoppingCart.Remove") All</b>
+                                                </div>
+                                            </button>
+                                            
+                                        </th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        @if (Model.DisplayAddToCart)
+                                        {
+                                            <td class="add-to-cart">
+                                                <input type="checkbox" class="remover-checker" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
+                                                <button type="button" name="updatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true); $('#updatecart').trigger('click');"></button>
+                                            </td>
+                                        }
+                                      
+                                        @if (Model.ShowProductImages)
+                                        {
+                                            <td class="product-picture">
+                                                <a class ="wish-img" href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))">
+                                                    <img  alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title"  />
+                                                </a>
+                                            </td>
+                                        }
+                                        <td class="product">
+                                            <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))" class="product-name">@item.ProductName</a>
+                                            @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                            {
+                                                <div class="attributes">
+                                                    @Html.Raw(item.AttributeInfo)
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.RecurringInfo))
+                                            {
+                                                <div class="recurring-info">
+                                                    @Html.Raw(item.RecurringInfo)
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.RentalInfo))
+                                            {
+                                                <div class="rental-info">
+                                                    @Html.Raw(item.RentalInfo)
+                                                </div>
+                                            }
+                                            @if (Model.IsEditable && item.AllowItemEditing)
+                                            {
+                                                var editCartItemUrl = Url.RouteUrl<Product>(new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
+                                                editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
+                                                <div class="edit-item">
+                                                    <a href="@editCartItemUrl">@T("Common.Edit")</a>
+                                                </div>
+                                            }
+                                            @if (item.Warnings.Count > 0)
+                                            {
+                                                <div class="message-error">
+                                                    <ul>
+                                                        @foreach (var warning in item.Warnings)
+                                                        {
+                                                            <li>@Html.Raw(warning)</li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td class="unit-price">
+                                            <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
+                                            <span class="product-unit-price price">@item.UnitPrice</span>
+                                        </td>
+                                        <td class="unit-price">
+                                            <label class="td-title">@T("ShoppingCart.DatePosted"):</label>
+                                            <span class="product-unit-price">@item.DatePosted.ToShortDateString()</span>
+                                        </td>
+                                        <td class="unit-price">
+                                            <label class="td-title">@T("ShoppingCart.DateAdded"):</label>
+                                            <span class="product-unit-price">@item.DateAdded.ToShortDateString()</span>
+                                        </td>
+                                        @if (Model.IsEditable)
+                                        {
+                                            <td class="">
+                                                <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
+                                                <button class="rem" type="button" name="updatecart" onclick="$('#removefromcart@(item.Id)').attr('checked', true); $('#updatecart').trigger('click');">
+                                                    <img src="~/images/trash.png" />  @T("Common.Remove")
+                                                </button>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                  
+                    <button type="submit" name="updatecart" id="updatecart" style="display:none;" ></button>
+
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="no-data">
+            <img src="~/images/Empty.png" alt="@T("Wishlist.CartIsEmpty")" />
+
+            <div class="no-data">
+
+
+
+                @T("Wishlist.CartIsEmpty")
+            </div>
+            </div>
+        }
+     
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.WishlistBottom, additionalData = Model })
+    </div>
+</div>

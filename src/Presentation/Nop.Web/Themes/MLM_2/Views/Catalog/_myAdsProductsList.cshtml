@@ -1,0 +1,271 @@
+﻿@using Nop.Core.Domain.Catalog;
+@model CatalogProductsModel
+
+
+@if (Model.Products.Count > 0)
+{
+    <div class="status-wrapper">
+        <button class="status-btn active" data-active="all">
+            ALL <span class="count"> @(Model.Products.Count()) </span>
+        </button>
+        <button class="status-btn " data-active="active">
+            Active <span class="count"> @(Model.Products.Where(x => x.AdStatus == AdStatus.Active).Count()) </span>
+        </button>
+
+        <button class="status-btn" data-active="inactive">
+            Inactive <span class="count">@(Model.Products.Where(x => x.AdStatus == AdStatus.Inactive).Count())  </span>
+        </button>
+
+        <button class="status-btn" data-active="pending">
+            Pending <span class="count"> @(Model.Products.Where(x => x.AdStatus == AdStatus.Pending).Count()) </span>
+        </button>
+
+        <button class="status-btn" data-active="rejected">
+            Rejected <span class="count">@(Model.Products.Where(x => x.AdStatus == AdStatus.Rejected).Count())  </span>
+        </button>
+    </div>
+
+    <div id="all">
+        <div class="benefit-details">
+            <div class="account-name pic">Picture</div>
+            <div class="expiration-date tit">Title</div>
+            <div class="expiration-date pri">Price</div>
+            <div class="number-of-ads exp">Expires</div>
+            <div class="expiration-date vie">Views</div>
+            <div class="expiration-date rep">Replies</div>
+            @* <div class="expiration-date pag">Page</div> *@
+            @* <div class="expiration-date act">Actions</div> *@
+        </div>
+        @foreach (var s in Model.Products.ToList())
+        {
+            <div class="rectangle-parent2">
+                <div class="account-name">
+                    <img src="@s.PictureModels.FirstOrDefault().ImageUrl" />
+                </div>
+                <div class="ad-title-wrap">
+                    <div class="ad-title"><a href="@(Url.RouteUrl<Product>(new { SeName = s.SeName }))">@s.Name</a></div>
+                    <div class="btn-wrap">
+                        <a class="edit-btn" href="@Url.RouteUrl("EditAd", new {adId = s.Id})"><img src="/images/edit-2.png" />Edit </a>
+                        <button class="remove-btn action-button" data-action="delete" data-id="@s.Id"><img src="/images/trash.png" />Remove</button>
+                    </div>
+                </div>
+                <div class="expiration-date">@s.ProductPrice.Price</div>
+                <div class="number-of-ads">@s.CreatedOn.ToString("dd/MM/yyyy")</div>
+                <div class="expiration-date vie">0</div>
+                <div class="expiration-date rep">0</div>
+                @* <div class="expiration-date pag">0</div> *@
+                @* <div class="expiration-date"><button class="pause-btn action-button" data-action="pause" data-id="@s.Id">Pause Ad</button></div> *@
+            </div>
+        }
+    </div>
+    <div id="active" class="hide" >
+        <div class="benefit-details">
+            <div class="account-name pic">Picture</div>
+            <div class="expiration-date tit">Title</div>
+            <div class="expiration-date pri">Price</div>
+            <div class="number-of-ads exp">Expires</div>
+            <div class="expiration-date vie">Views</div>
+            <div class="expiration-date rep">Replies</div>
+            @* <div class="expiration-date pag">Page</div> *@
+            <div class="expiration-date act">Actions</div>
+        </div>
+        @foreach (var s in Model.Products.Where(x => x.AdStatus == AdStatus.Active).ToList())
+        {
+            <div class="rectangle-parent2">
+                <div class="account-name">
+                    <img src="@s.PictureModels.FirstOrDefault().ImageUrl" />
+                </div>
+                <div class="ad-title-wrap">
+                    <div class="ad-title"><a href="@(Url.RouteUrl<Product>(new { SeName = s.SeName }))">@s.Name</a></div>
+                    <div class="btn-wrap">
+                        <a class="edit-btn" href="@Url.RouteUrl("EditAd", new {adId = s.Id})"><img src="/images/edit-2.png" />Edit </a>
+                        <button class="remove-btn action-button" data-action="delete" data-id="@s.Id"><img src="/images/trash.png" />Remove</button>
+                    </div>
+                </div>
+                <div class="expiration-date">@s.ProductPrice.Price</div>
+                <div class="number-of-ads">@s.CreatedOn.ToString("dd/MM/yyyy")</div>
+                <div class="expiration-date vie">0</div>
+                <div class="expiration-date rep">0</div>
+                @* <div class="expiration-date pag">0</div> *@
+                <div class="expiration-date"><button class="pause-btn action-button" data-action="pause" data-id="@s.Id">Pause Ad</button></div>
+            </div>
+        }
+    </div>
+
+    <div id="inactive" class="hide">
+        <div class="benefit-details">
+            <div class="account-name pic">Picture</div>
+            <div class="expiration-date tit">Title</div>
+            <div class="expiration-date pri">Price</div>
+            <div class="number-of-ads exp">Expires</div>
+            <div class="expiration-date vie">Views</div>
+            <div class="expiration-date rep">Replies</div>
+            @* <div class="expiration-date pag">Page</div> *@
+            <div class="expiration-date act">Actions</div>
+        </div>
+        @foreach (var s in Model.Products.Where(x => x.AdStatus == AdStatus.Inactive).ToList())
+
+        {
+            <div class="rectangle-parent2">
+                <div class="account-name">
+                    <img src="@s.PictureModels.FirstOrDefault().ImageUrl" />
+                </div>
+                <div class="ad-title-wrap">
+                    <div class="ad-title"><a href="@(Url.RouteUrl<Product>(new { SeName = s.SeName }))">@s.Name</a></div>
+                    <div class="btn-wrap">
+                        <a class="edit-btn" href="@Url.RouteUrl("EditAd", new {adId = s.Id})"><img src="/images/edit-2.png" />Edit </a>
+                        <button class="remove-btn action-button" data-action="delete" data-id="@s.Id"><img src="/images/trash.png" />Remove</button>
+                    </div>
+                </div>
+                <div class="expiration-date">@s.ProductPrice.Price</div>
+                <div class="number-of-ads">@s.CreatedOn.ToString("dd/MM/yyyy")</div>
+                <div class="expiration-date vie">0</div>
+                <div class="expiration-date rep">0</div>
+                @* <div class="expiration-date pag">0</div> *@
+                <div class="expiration-date"><button class="pause-btn action-button" data-action="reactivate" data-id="@s.Id">Re-Activate</button></div>
+            </div>
+        }
+    </div>
+
+    <div id="pending" class="hide">
+        <div class="benefit-details">
+            <div class="account-name pic">Picture</div>
+            <div class="expiration-date tit">Title</div>
+            <div class="expiration-date pri">Price</div>
+            <div class="number-of-ads exp">Expires</div>
+            <div class="expiration-date vie">Views</div>
+            <div class="expiration-date rep">Replies</div>
+            @* <div class="expiration-date pag">Page</div> *@
+        </div>
+        @foreach (var s in Model.Products.Where(x => x.AdStatus == AdStatus.Pending).ToList())
+
+        {
+            <div class="rectangle-parent2">
+                <div class="account-name">
+                    <img src="@s.PictureModels.FirstOrDefault().ImageUrl" />
+                </div>
+                <div class="ad-title-wrap">
+                    <div class="ad-title"><a href="@(Url.RouteUrl<Product>(new { SeName = s.SeName }))">@s.Name</a></div>
+                    <div class="btn-wrap">
+                        <a class="edit-btn" href="@Url.RouteUrl("EditAd", new {adId = s.Id})"><img src="/images/edit-2.png" />Edit </a>
+                        <button class="remove-btn action-button" data-action="delete" data-id="@s.Id"><img src="/images/trash.png" />Remove</button>
+                    </div>
+                </div>
+                <div class="expiration-date">@s.ProductPrice.Price</div>
+                <div class="number-of-ads">@s.CreatedOn.ToString("dd/MM/yyyy")</div>
+                <div class="expiration-date vie">0</div>
+                <div class="expiration-date rep">0</div>
+                @* <div class="expiration-date pag">0</div> *@
+            </div>
+        }
+    </div>
+
+    <div id="rejected" class="hide">
+        <div class="benefit-details">
+            <div class="account-name pic">Picture</div>
+            <div class="expiration-date tit">Title</div>
+            <div class="expiration-date pri">Price</div>
+            <div class="number-of-ads exp">Expires</div>
+            <div class="expiration-date vie">Views</div>
+            <div class="expiration-date rep">Replies</div>
+            @* <div class="expiration-date pag">Page</div> *@
+            <div class="expiration-date act">Actions</div>
+        </div>
+        @foreach (var s in Model.Products.Where(x => x.AdStatus == AdStatus.Rejected).ToList())
+
+        {
+            <div class="rectangle-parent2">
+                <div class="account-name">
+                    <img src="@s.PictureModels.FirstOrDefault().ImageUrl" />
+                </div>
+                <div class="ad-title-wrap">
+                    <div class="ad-title"><a href="@(Url.RouteUrl<Product>(new { SeName = s.SeName }))">@s.Name</a></div>
+                    <div class="btn-wrap">
+                        <a class="edit-btn" href="@Url.RouteUrl("EditAd", new {adId = s.Id})"><img src="/images/edit-2.png" />Edit </a>
+                        <button class="remove-btn action-button" data-action="delete" data-id="@s.Id"><img src="/images/trash.png" />Remove</button>
+                    </div>
+                </div>
+                <div class="expiration-date">@s.ProductPrice.Price</div>
+                <div class="number-of-ads">@s.CreatedOn.ToString("dd/MM/yyyy")</div>
+                <div class="expiration-date vie">0</div>
+                <div class="expiration-date rep">0</div>
+                @* <div class="expiration-date pag">0</div> *@
+                <div class="expiration-date"><button class="pause-btn rejection-btn" data-action="rejected" data-rejected="@s.RejectionReason"
+                            data-id="@s.Id"
+                            data-edit-url="@Url.RouteUrl("EditAd", new { adId = s.Id })">
+                        Rejection Reason
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+    var pager = Html.Pager(Model)
+    .QueryParam("pagenumber")
+    // for search page
+    .BooleanParameterName("advs")
+    .BooleanParameterName("isc")
+    .BooleanParameterName("sid")
+    .RenderEmptyParameters(true);
+
+    @if (!await pager.IsEmpty())
+    {
+        <div class="pager">
+            @pager
+        </div>
+    }
+}
+else
+{
+    <div class="no-data" style="margin:auto;">
+
+        <h3 class="strong-login1">No Ads Found</h3>
+        <img src="~/images/Empty.png" />
+
+    </div>
+}
+   
+
+
+<script>
+                                    $(document).ready(function() {
+        $('.status-btn').on('click', function() {
+            // Toggle active state between siblings
+            $(this).addClass('active').siblings('.status-btn').removeClass('active');
+            if ($(this).attr("data-active") === "all" ) {
+                $("#all").removeClass("hide");
+                $("#inactive").addClass("hide");
+                $("#pending").addClass("hide");
+                $("#rejected").addClass("hide");
+                $("#active").addClass("hide");
+
+            }
+            else if ($(this).attr("data-active") === "active" ) {
+                $("#active").removeClass("hide");
+                $("#inactive").addClass("hide");
+                $("#pending").addClass("hide");
+                $("#rejected").addClass("hide");
+                $("#all").addClass("hide");
+
+            } else if ($(this).attr("data-active") === "inactive" ) {
+                 $("#inactive").removeClass("hide");
+                $("#active").addClass("hide");
+                     $("#pending").addClass("hide");
+                $("#rejected").addClass("hide");
+                $("#all").addClass("hide");
+            } else if ($(this).attr("data-active") === "pending" ) {
+                 $("#inactive").addClass("hide");
+                $("#active").addClass("hide");
+                     $("#pending").removeClass("hide");
+                $("#rejected").addClass("hide");
+                $("#all").addClass("hide");
+           } else if ($(this).attr("data-active") === "rejected" ) {
+                 $("#inactive").addClass("hide");
+                $("#active").addClass("hide");
+                     $("#pending").addClass("hide");
+                $("#rejected").removeClass("hide");
+                $("#all").addClass("hide");
+            }
+        });
+    });
+</script>

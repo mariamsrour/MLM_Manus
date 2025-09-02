@@ -1,0 +1,160 @@
+﻿@using Nop.Core
+@using Nop.Web.Models.Subscriptions
+
+@inject Nop.Core.IWebHelper webHelper
+
+@model List<Plan>
+
+
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+}
+
+
+
+<style>
+    .html-subscription-checkout-page .master-wrapper-content {
+        padding-top:40px;
+    }
+    .step-items-icon {
+    align-self: stretch;
+    flex: 1;
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+    }
+
+    .select-plan {
+    align-self: stretch;
+    position: relative;
+    letter-spacing: -0.17px;
+    line-height: 26.1px;
+    }
+
+    .steps {
+    width: 101px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--gap-base);
+    text-align: left;
+    color: var(--Primary-400);
+    }
+
+    .content-child {
+    align-self: stretch;
+    height: 1.5px;
+    position: relative;
+    border-top: 1.5px solid #b7b7b7;
+    box-sizing: border-box;
+    }
+
+    .content1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 50px 0px 0px;
+    box-sizing: border-box;
+    min-width: 92px;
+        height: 1.5px;
+    }
+
+    .steps1 {
+    width: 101px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: var(--gap-base);
+    z-index: 2;
+    }
+
+    .content2 {
+    width: 141px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+        padding: 50px 0px 0px;
+        box-sizing: border-box;
+    }
+
+    .steps2 {
+    width: 101px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--gap-base);
+    z-index: 3;
+    }
+
+    .main {
+    width: 713px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: var(--gap-13xl);
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    font-size: var(--font-size-mid-4);
+    color: var(--Neutral-400);
+    font-family: var(--font-montserrat);
+    margin: auto;
+    }
+
+</style>
+
+
+
+<div class="main">
+    <div class="steps">
+        <img class="step-items-icon"
+        loading="lazy"
+        alt=""
+        src="images/frame-1918723851.svg" />
+
+        <b class="select-plan">Select Plan</b>
+    </div>
+    <div class="content1">
+        <div class="content-child"></div>
+    </div>
+    <div class="steps1">
+        <img class="step-items-icon"
+        loading="lazy"
+        alt=""
+        src="images/frame-1918723853.svg" />
+
+        <b class="select-plan">Checkout</b>
+    </div>
+    <div class="content2">
+        <div class="content-child"></div>
+    </div>
+    <div class="steps2">
+        <img class="step-items-icon"
+        loading="lazy"
+        alt=""
+        src="images/frame-1918723854.svg" />
+
+        <b class="select-plan">Complete</b>
+    </div>
+</div>
+
+
+
+@await Html.PartialAsync("_plans", Model)

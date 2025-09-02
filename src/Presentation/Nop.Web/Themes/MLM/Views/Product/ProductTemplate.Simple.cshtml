@@ -1,0 +1,369 @@
+﻿@model ProductDetailsModel
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Seo
+@using Nop.Services.Configuration
+@using Nop.Services.Html
+@using Microsoft.AspNetCore.Html;
+@using Nop.Core.Domain.Vendors
+
+@inject IHtmlFormatter htmlFormatter
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+
+@{
+    Layout = "_ColumnsOne";
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
+    //title
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-product-details-page");
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var productUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        NopHtml.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        NopHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+    }
+
+    var StickyColumn = string.Empty;
+    bool isProductOverviewSticky = await settingService.GetSettingByKeyAsync("AvenueThemeSettings.StickyProductDetails", true, storeId, true);
+
+    if ((await settingService.GetSettingByKeyAsync("AvenueThemeSettings.ProductPageLayout", "standard-gallery", storeId, true)).Equals("extended-gallery"))
+    {
+        if (isProductOverviewSticky)
+        {
+            StickyColumn = "sticky";
+        }
+    }
+}
+<!--product breadcrumb-->
+@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
+<div class="page product-details-page">
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
+        <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+            @if (seoSettings.MicrodataEnabled)
+            {
+                <script type="application/ld+json">
+                    @Html.Raw(Model.JsonLd)
+                </script>
+            }
+            <div data-productid="@Model.Id">
+                <div class="product-essential">
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
+                    <div class="gallery">
+                        @{
+                            IHtmlContent cloudZoom = null;
+                            if (((await settingService.GetSettingByKeyAsync("AvenueThemeSettings.ProductPageLayout", "standard-gallery", storeId, true)).Equals("standard-gallery")))
+                            {
+                                cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom", additionalData = Model });
+                            }
+                        }
+                        @if (cloudZoom != null && !String.IsNullOrEmpty(await cloudZoom.RenderHtmlContentAsync()))
+                        {
+                            @cloudZoom
+                            @await Html.PartialAsync("_ProductDetailsVideos", Model)
+                        }
+                        else
+                        {
+                            @await Html.PartialAsync("_ProductDetailsPictures", Model)
+                            @await Html.PartialAsync("_ProductDetailsVideos", Model)
+                        }
+                    </div>
+                    <div class="overview @StickyColumn">
+
+                        @await Html.PartialAsync("_ProductBreadcrumb", Model.Breadcrumb)
+
+                        <div class="middle">
+                            <!--manufacturers-->
+                            @*    @await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)
+                            @await Html.PartialAsync("_ShareButton", Model) *@
+
+                            <div class="product-title">
+                                <div class="title-txt">@Model.Name</div>
+                                @await Component.InvokeAsync("Widget", new { widgetZone = "productname_inside", additionalData = Model.Id })
+                                <div class="overview-buttons">
+                                    @{
+                                        var shareUrl = webHelper.GetStoreLocation() + Model.SeName;
+                                    }
+                                    <a class="share-url" href="javascript:void(0);" id="open-share-modal">
+                                        <img src="~/images/rishareline.svg" />
+                                    </a>
+                                    @await Html.PartialAsync("_ShareButton", shareUrl)
+
+                                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
+                                    @* @await Html.PartialAsync("_CompareProductsButton", Model) *@
+                                    @{
+                                        var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                                        dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                        @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                                    }
+                                    @* @await Html.PartialAsync("_ProductEmailAFriendButton", Model) *@
+                                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })
+                                </div>
+                            </div>
+                            @* @await Html.PartialAsync("_ProductReviewOverview", Model.ProductReviewOverview) *@
+                            <div class="product-name">
+                                <!--price-->
+                                @{
+                                    var dataDictPrice = new ViewDataDictionary(ViewData);
+                                    dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
+                                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductPriceTop, additionalData = Model })
+                                    @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+                                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductPriceBottom, additionalData = Model })
+                                }
+                            </div>
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
+
+                            @await Html.PartialAsync("_Discontinued", Model)
+
+
+                            @*   <!--SKU, MAN, GTIN, vendor-->
+                            @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model) *@
+
+                            <!--attributes-->
+                            @{
+                                // var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                // dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+                                // @await Html.PartialAsync("_ProductAttributes", Model, dataDictAttributes)
+                            }
+                            @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                            {
+                                @*   <div class="short-description">
+                                    @Html.Raw(Model.ShortDescription)
+                                </div> *@
+                            }
+                            <!--gift card-->
+                            @{
+            // var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                                // dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{Model.Id}";
+                                // @await Html.PartialAsync("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
+                            }
+                            @* @await Html.PartialAsync("_Availability", Model) *@
+                            <!--rental info-->
+                            @{
+                                // var dataDictRental = new ViewDataDictionary(ViewData);
+                                // dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
+                                // @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
+                            }
+
+                            <div class="contact-btns">
+                                <button class="contact-btn btn-dark">
+                                    <img src="images/vuesaxlinearcall.svg" />
+
+                                    <span>
+                                        Call @Model.VendorModel.Phone
+                                    </span>
+                                </button>
+                                @if (!string.IsNullOrEmpty(Model.VendorModel.WhatsappLink))
+                                {
+
+                                    <a href="@Model.VendorModel.WhatsappLink" class="contact-btn  btn-light ">
+                                        <img src="images/riwhatsappfill.svg" />
+
+
+                                        <span>
+                                            Whats app Me
+                                        </span>
+                                    </a>
+                                }
+                            </div>
+                            <!--price breaks-->
+                            @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
+                            <div class="loc">Location</div>
+                            <div class="city">
+                                <div class="hittin-riyadh">
+                                    <img src="images/vuesaxlinearlocation1.svg" />
+
+                                    <span>
+                                        @Model.City - @Model.County
+
+                                    </span>
+                                </div>
+                                @if (Model.ShowOnMaps)
+                                {
+                                    <a href="@Model.Coordinates" class="map-link">
+                                        <img class="logosgoogle-maps-icon" alt="" src="images/logosgooglemaps.svg">
+                                        <div class="view-on-maps">
+                                            View On Maps
+                                        </div>
+                                    </a>
+                                }
+                              
+                            </div>
+                        </div>
+
+
+                        <div class="advertiser">
+                            <div class="advertiser-child"></div>
+                            <div class="about-the-advertiser">About the Advertiser</div>
+                            <div class="advertiser-details">
+                                <div class="profile-container">
+                                    <img class="profile-picture-icon" loading="lazy" alt="" src="@Model.VendorModel.PictureUrl">
+
+                                    <div class="profile-info">
+                                        <div class="salem-elmosalamani">@Model.VendorModel.Name</div>
+                                        <div class="review-container">
+                                            <div class="rating-container">
+                                                <div class="product-reviews-overview">
+                                                    @*  @if (Model.VendorModel.ApprovedTotalReviews > 0)
+                                                    {
+                                                        <div class="product-review-links">
+                                                            <a href="#productreviews">@Model.VendorModel.ApprovedTotalReviews @T("Reviews.Overview.Reviews")</a>
+                                                          @if (Model.CanAddNewReview)
+                                                            {
+                                                                <span class="separator">|</span>
+                                                                <a href="#addreview" onclick="$('.write-review-button').trigger('click')">@T("Reviews.Overview.AddNew")</a>
+                                                            } 
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="product-no-reviews">
+                                                            <a href="#addreview" onclick="$('.write-review-button').trigger('click')">@T("Reviews.Overview.First")</a>
+                                                        </div>
+                                                    } *@
+                                                    <div class="empty-rating">@Model.VendorModel.ApprovedRatingSum</div>
+                                                    <div class="rating-stars">
+                                                        <div class="rating-box">
+                                                            <div class="rating-icons">
+                                                                @{
+                                                                    decimal ratingPercent = 0;
+                                                                    if (Model.VendorModel.ApprovedTotalReviews != 0)
+                                                                    {
+                                                                        ratingPercent = (@Model.VendorModel.ApprovedRatingSum * 100) / 5;
+                                                                    }
+                                                                }
+                                                                <div class="rating" style="width: @(ratingPercent)%">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @*    <img class="star-icons" loading="lazy" alt="" src="images/star-1.svg">
+
+                                                    <img class="star-icons" loading="lazy" alt="" src="images/star-1.svg">
+
+                                                    <img class="star-icons" loading="lazy" alt="" src="images/star-1.svg">
+
+                                                    <img class="star-icons" loading="lazy" alt="" src="images/star-1.svg">
+
+                                                    <img class="star-icons" loading="lazy" alt="" src="images/star-1.svg"> *@
+                                                   
+                                                </div>
+                                                    <a class="reviews" href="@(Url.RouteUrl<Vendor>(new { SeName = Model.VendorModel.SeName, reviews = 2 }))">
+                                                    @Model.VendorModel.ApprovedTotalReviews @T("Reviews.Overview.Reviews")
+                                                    </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <div class="response-info">
+                                    <div class="response-details">
+                                        <div class="response-elements">
+@*                                             <div class="hrs">@Model.VendorModel.AvgReply</div>
+ *@                                            <div class="hrs">@(string.IsNullOrEmpty(Model.VendorModel.AvgReply) ? 0 : Model.VendorModel.AvgReply) Hrs</div>
+
+                                            <a class="avg-reply">avg reply</a>
+                                        </div>
+                                        <div class="response-elements1"></div>
+                                        <div class="response-elements2">
+                                            <div class="div">@(string.IsNullOrEmpty(Model.VendorModel.AvgReplyRate) ? 0 : Model.VendorModel.AvgReplyRate)%</div>
+                                            <div class="reply-rate">reply rate</div>
+                                        </div>
+                                        <div class="response-elements1"></div>
+                                        <div class="response-elements4">
+                                            <div class="years">@(Model.VendorModel.CreatedOnUtc.RelativeFormat())</div>
+                                            <div class="member-since">member since</div>
+                                        </div>
+                                    </div>
+
+                                        
+                                </div>
+                              
+
+
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
+                        </div>
+
+                            <div class="listing-link">
+                                <div class="link-content" id="linkContentContainer">
+                                    <div class="view-13-listing">
+                                        <a href="@(Url.RouteUrl<Vendor>(new { SeName = Model.VendorModel.SeName,reviews = 1 }))">
+                                            View @Model.VendorModel.VendorProductsCount Listing for advertising
+                                        </a>
+                                        
+                                    </div>
+                                    <div class="vuesaxlinearlocation-wrapper">
+                                        <img class="link-icon-container-child" alt="" src="images/vector-25.svg">
+                                    </div>
+                                </div>
+                            </div>
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsEssentialBottom, additionalData = Model })
+                    </div>
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsBeforeCollateral, additionalData = Model })
+                    
+                </div>
+            </div>
+                <div class="product-collateral">
+                    @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
+
+                    @if (!string.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="product-specs-box">
+                            <div class="title">
+                                About This Product
+                            </div>
+                        </div>
+                        <div class="full-description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }
+                    @*                     @await Html.PartialAsync("_ProductTags", Model.ProductTags)
+ *@
+                </div>
+            </div>
+        </form>
+        <!--product reviews-->
+        @*  @if (Model.ProductReviewOverview.AllowCustomerReviews)
+        {
+            @await Html.PartialAsync("_ProductReviews", Model.ProductReviews)
+        } *@
+        @*    @await Component.InvokeAsync(typeof(ProductsAlsoPurchasedViewComponent), new { productId = Model.Id })
+        @await Component.InvokeAsync(typeof(RelatedProductsViewComponent), new { productId = Model.Id })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
+     *@
+    </div>
+</div>

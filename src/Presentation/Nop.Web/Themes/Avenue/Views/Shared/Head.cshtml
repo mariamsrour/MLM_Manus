@@ -1,0 +1,64 @@
+﻿@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Forums
+
+@inject CatalogSettings catalogSettings
+@inject ForumSettings forumSettings
+@inject IWorkContext workContext
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/msie.rtl.css");
+        @if (forumSettings.ForumsEnabled)
+        {
+            NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/forum.rtl.css");
+        }
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/1500.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/1200.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/1024.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/768.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/480.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/mobile.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/footable.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/styles.rtl.css");
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/msie.css");
+        @if (forumSettings.ForumsEnabled)
+        {
+            NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/forum.css");
+        }
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/1500.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/1200.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/1024.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/768.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/480.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/mobile.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/footable.css");
+        NopHtml.AppendCssFileParts("~/Themes/Avenue/Content/css/styles.css");
+    }
+
+    if (catalogSettings.DisplayAllPicturesOnCatalogPages)
+    {
+        NopHtml.AppendCssFileParts("~/lib_npm/swiper/swiper-bundle.min.css");
+    }
+    //NopHtml.AppendCssFileParts("~/lib_npm/@('@fortawesome')/fontawesome-free/css/all.min.css");
+    <link rel="stylesheet" href="~/lib_npm/@("@fortawesome")/fontawesome-free/css/all.min.css" />
+
+    NopHtml.AppendCssFileParts("~/Plugins/SevenSpikes.Core/Styles/perfect-scrollbar.min.css");
+
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/footable.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/perfect-scrollbar.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.theme.min.js" asp-location="Footer"></script>
+
+    <script src="~/Themes/Avenue/Content/scripts/avenue.js" asp-location="Footer"></script>
+}

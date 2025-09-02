@@ -1,0 +1,198 @@
+﻿@model ReportModel
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/AddReport.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/AddReport.css");
+
+    }
+}
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.AddReportAd").Text);
+    //page class
+    //NopHtml.AppendPageCssClassParts("html-registration-page");
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.17/css/intlTelInput.min.css" />
+
+
+
+<div class="page registration-result-page">
+    <div class="page-title">
+        <h1>@T("Reports.Add")</h1>
+    </div>
+
+    <main class="main-container">
+        <section class="image-gallery-section">
+            <div class="main-image-container">
+                <img id="mainImage"
+                src="@Model.Ad.DefaultPictureModel.FullSizeImageUrl"
+                alt="Main property image"
+                class="main-image" />
+            </div>
+            <div class="thumbnails-container">
+                @foreach(var im in Model.Ad.PictureModels){
+                    if (im.Id != Model.Ad.DefaultPictureModel.Id)
+                    {
+                        <img src="@im.ImageUrl"
+                        alt="Property thumbnail 1"
+                        class="thumbnail"
+                        onclick="changeMainImage(this.src)" />
+                    }
+                }
+
+            </div>
+        </section>
+
+        <section class="ad-info-section">
+            <div class="ad-id-container">
+                <p class="ad-id-label">Ad ID</p>
+                <p class="ad-id-value">#@Model.Ad.Id</p>
+            </div>
+            <h1 class="ad-title">@Model.Ad.Name, @Model.Ad.County</h1>
+        </section>
+
+        <hr class="divider" />
+
+        <form class="form-section" id="reportForm" asp-controller="Claims" asp-action="AddReport" method="post">
+            <input type="hidden" asp-for="AdId" />
+
+            <div class="form-content">
+                <div class="reporting-reasons">
+                    <h2 class="reasons-title">Reason For Reporting</h2>
+                    <div class="reasons-list">
+                        @{
+                            var count = 1;
+                        }
+                        @foreach(var r in Model.AdReportReasons)
+                        {
+                            <input type="radio"
+                            id="reason_@count"
+                            value="@r.Id"
+                            asp-for="SelectedReasonId"
+                            data-reason-title="@r.Title"
+                            class="reason-checkbox" />
+                            <label for="reason_@count" class="reason-item">
+                                <span class="reason-label">@count-@r.Title</span>
+                            </label>
+                            count++;
+                        }
+                        <span asp-validation-for="SelectedReasonId"></span>
+
+                    </div>
+                </div>
+                <div class="report-details">
+                    <label for="reportDetails" class="details-label">Report details</label>
+                    <textarea asp-for="CustomReason"
+
+                              placeholder="Enter report description"
+                              class="details-textarea"></textarea>
+                    <span asp-validation-for="CustomReason"></span>
+
+                </div>
+            </div>
+            <button type="submit" class="submit-button">
+                <span class="submit-text">REPORT AD</span>
+            </button>
+        </form>
+
+       
+    </main>
+
+    <script>
+        // Image gallery functionality
+        function changeMainImage(src) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = src;
+        }
+
+        // Form submission functionality
+       
+
+        // Add keyboard navigation for thumbnails
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        changeMainImage(this.src);
+                    }
+                });
+
+                // Make thumbnails focusable
+                thumbnail.setAttribute('tabindex', '0');
+            });
+        });
+
+        // Add form validation on input
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const checkboxes = document.querySelectorAll('input[name="reason"]');
+        //     const textarea = document.getElementById('reportDetails');
+        //     const submitButton = document.querySelector('.submit-button');
+
+        //     function validateForm() {
+        //         const hasSelectedReason = Array.from(checkboxes).some(cb => cb.checked);
+        //         const hasDetails = textarea.value.trim().length > 0;
+
+        //         // You could add visual feedback here
+        //         // For now, we'll just ensure the button remains clickable
+        //         submitButton.style.opacity = (hasSelectedReason && hasDetails) ? '1' : '0.7';
+        //     }
+
+        //     checkboxes.forEach(checkbox => {
+        //         checkbox.addEventListener('change', validateForm);
+        //     });
+
+        //     textarea.addEventListener('input', validateForm);
+
+        //     // Initial validation
+        //     validateForm();
+        // });
+
+               document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('reportForm');
+            const submitButton = document.querySelector('.submit-button');
+            const reasonRadios = document.querySelectorAll('input[name="SelectedReasonId"]');
+            const textarea = document.getElementById('CustomReason');
+
+            function validateForm() {
+                let selectedReason = null;
+                reasonRadios.forEach(radio => {
+                    if (radio.checked) {
+                        selectedReason = radio.dataset.reasonTitle?.toLowerCase();
+                    }
+                });
+
+                if (selectedReason === "other") {
+                    textarea.setAttribute('required', 'required');
+                } else {
+                    textarea.removeAttribute('required');
+                }
+            }
+
+            reasonRadios.forEach(radio => {
+                radio.addEventListener('change', validateForm);
+            });
+
+            // Optional: visually update the button on each input
+            textarea.addEventListener('input', validateForm);
+
+            // Initial check
+            validateForm();
+        });
+    </script>
+
+    </div>

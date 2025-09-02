@@ -1,0 +1,49 @@
+﻿.html-private-messages .master-wrapper-content {
+  padding-top: 40px;
+}
+
+.wishlist-page {
+  padding: 20px 29px 20px 20px;
+}
+
+.rectangle-parent2 {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+}
+
+  .rectangle-parent2:nth-of-type(2n+1) {
+    background-color: var(--Neutral-50);
+  }
+
+.rectangle-parent2 {
+  background-color: white;
+  align-self: stretch;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 30px;
+  gap: var(--gap-xl);
+  max-width: 100%;
+  font-size: var(--font-size-sm);
+  color: var(--Neutral-600);
+  font-family: var(--font-montserrat);
+}
+
+.notiicon {
+  border: 1px solid #373737;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.notification-details, .notification-date {
+  align-self: center;
+}
+
+.noti-title {
+  font-weight: 600;
+  color: #383375;
+}
+
+.notification-date {
+  margin-left: auto;
+}

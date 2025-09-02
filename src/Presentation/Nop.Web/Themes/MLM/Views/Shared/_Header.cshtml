@@ -1,0 +1,517 @@
+﻿@using Nop.Core
+@using Nop.Services.Orders;
+@using Nop.Services.Customers;
+@using Nop.Services.Security;
+@using Nop.Services.Forums;
+@using Nop.Core.Domain.Orders;
+@using Nop.Services.Media;
+@using Nop.Services.Common;
+@using Nop.Core.Domain.Customers;
+@using Nop.Core.Domain.Media;
+@using Nop.Web.Factories;
+
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+@inject IPermissionService permissionService
+@inject IShoppingCartService shoppingCartService
+@inject ICustomerService customerService
+@inject IPictureService pictureService
+@inject IGenericAttributeService _genericAttributeService;
+@inject MediaSettings _mediaSettings;
+@inject ICustomerModelFactory _customerModelFactory;
+@inject IForumService forumService;
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var wishlistEnabled = await permissionService.AuthorizeAsync(StandardPermissionProvider.EnableWishlist);
+    var shoppingCartEnabled = await permissionService.AuthorizeAsync(StandardPermissionProvider.EnableShoppingCart);
+
+    var shoppingCartItems = await shoppingCartService.GetShoppingCartAsync(await workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, storeId);
+    var shoppingCartItemsCount = shoppingCartItems.Sum(item => item.Quantity);
+
+    var wishlistItems = await shoppingCartService.GetShoppingCartAsync(await workContext.GetCurrentCustomerAsync(), ShoppingCartType.Wishlist, storeId);
+    var wishlistItemsCount = wishlistItems.Sum(item => item.Quantity);
+
+    ViewBag.WishlistEnabled = wishlistEnabled;
+    ViewBag.WishlistItems = wishlistItemsCount;
+    ViewBag.ShoppingCartEnabled = shoppingCartEnabled;
+    ViewBag.ShoppingCartItems = shoppingCartItemsCount;
+    ViewBag.NotificationCount = 0;
+
+    var isLoggedIn = await customerService.IsRegisteredAsync(await workContext.GetCurrentCustomerAsync());
+    var customer = await workContext.GetCurrentCustomerAsync();
+    ViewBag.MessagesCount = await forumService.GetUnreadMessagesCount((customer != null) ? customer.Id:0);
+
+    var avatar = (customer != null) ? await pictureService.GetPictureUrlAsync(
+                    await _genericAttributeService.GetAttributeAsync<int>(customer, NopCustomerDefaults.AvatarPictureIdAttribute),
+                    _mediaSettings.AvatarPictureSize,
+                    false) : "~/images/default-avatar.jpg";
+    customer.AdminComment = avatar;
+    var modelAdd = await _customerModelFactory.PrepareCustomerAddressListModelAsync();
+}
+<style>
+    .user-adds {
+    display:none;
+    width: max-content;
+    height: max-content;
+/*     background-color: #fff;
+ */    border-radius: 10px;
+    position: absolute;
+    z-index: 110;
+    left: 25%;
+    /* border: 1px solid #383375; */
+    top: 16%;
+    overflow-y: scroll;
+    }
+
+    .u-ad{
+    padding:30px 30px 0px 30px;
+    width:100%;
+    }
+    .u-ad:last-of-type{
+    padding-bottom:30px;
+    }
+
+    .user-adds {
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    }
+
+    .user-adds::-webkit-scrollbar {
+    display: none;
+    }
+
+    .user-prof{
+        width:max-content;
+        height:max-content;
+        position:absolute;
+        top:16%;
+        right:10%;
+        z-index:110;
+    }
+    .hide {
+        display:none;
+    }
+
+</style>
+
+@if (isLoggedIn)
+{
+    <div class="header">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderBefore })
+        @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
+        <div class="header-upper">
+            <div class="header-text">
+                @*     <img
+            class="list-icon"
+            loading="lazy"
+            alt=""
+            src="images/list.svg"
+          /> *@
+                <div class="footer-lower-block footer-social-buttons">
+                    @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
+                </div>
+
+            </div>
+            <div class="profile-links responsive-nav-content">
+                <div class="responsive-nav-head">
+                    <span class="text">@T("SevenSpikes.Themes.Avenue.Profile")</span>
+                    <span class="button close-links"></span>
+                </div>
+                <div class="responsive-nav-body">
+                    @*  @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
+                @await Component.InvokeAsync(typeof(HeaderLinksViewComponent)) *@
+                    <div class="header-selects">
+                        @*   @await Component.InvokeAsync(typeof(TaxTypeSelectorViewComponent))
+                    @await Component.InvokeAsync(typeof(CurrencySelectorViewComponent)) *@
+                        @await Component.InvokeAsync(typeof(LanguageSelectorViewComponent))
+                        @* @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderSelectors }) *@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-mid">
+            <a href="/">
+                <img class="logo-wb-2-1"
+                loading="lazy"
+                alt=""
+                src="images/0000302-logo-wb-2-1@2x.png"
+                id="logoWb21" />
+            </a>
+
+
+            <div class="input-search-store-logged">
+                <div class="search-input">
+                    <div class="search-here-store">Search here store for</div>
+                    <div class="component-137">
+                        <a class="product-jobs-property-container">
+                            <p class="product">Product</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Jobs</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Property</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Cars</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Everything</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Product</p>
+                        </a>
+                    </div>
+                </div>
+                <button class="component-283">
+                    <img class="vuesaxlinearsearch-normal-icon"
+                    alt=""
+                    src="images/vuesaxlinearsearchnormal.svg" />
+
+                    <a class="post-ad">Search</a>
+                </button>
+            </div>
+            <div class="location-picker" onclick="toggleAdd();">
+                <div class="component-299">
+                    <img class="vuesaxlinearlocation-icon"
+                    alt=""
+                    src="images/vuesaxlinearlocation.svg" />
+
+                    <div class="location-parent">
+                        <a class="location">Location</a>
+                        @if (modelAdd != null  && modelAdd.Addresses.Count > 0)
+                        {
+                            <div class="riyadh-sau">@modelAdd.Addresses.FirstOrDefault().City - @modelAdd.Addresses.FirstOrDefault().CountryName</div>
+
+                        }
+                        else
+                        {
+                            <div class="riyadh-sau">Alexandria, Egypt</div>
+
+                        }
+                    </div>
+                    <img class="location-dropdown-icon"
+                    alt=""
+                    src="images/location-dropdown.svg" />
+                </div>
+            </div>
+            <div class="user-adds">
+
+                @await Html.PartialAsync("_map", (modelAdd != null & modelAdd.Addresses.Count() > 0) ? modelAdd.Addresses : new List<Nop.Web.Models.Common.AddressModel>())
+            </div>
+            <div class="user-options">
+                @* <a href="@Url.RouteUrl("ApplyVendorAccount")"> *@
+
+                <div class="nav-button wishlist-button">
+                    <span class="counter wishlist-qty">@T("Wishlist.HeaderQuantity", ViewBag.WishlistItems)</span>
+
+                    <a class="trigger " title="@T("Wishlist")" href="@Url.RouteUrl("Wishlist")">
+                        <img class="component-303-icon"
+                             loading="lazy"
+                             alt=""
+                             src="images/component-304.svg" />
+                    </a>
+                </div>
+
+                <div class="nav-button wishlist-button">
+                    <span class="counter wishlist-qty-2">@ViewBag.MessagesCount</span>
+
+                    <a class="trigger " title="@T("Wishlist")" href="@Url.RouteUrl("Messages")">
+                        <img class="component-icon"
+                             loading="lazy"
+                             alt=""
+                             src="images/messages-3.png" />
+                    </a>
+                </div>
+                <div class="nav-button wishlist-button">
+                    <span class="counter wishlist-qty-2">@ViewBag.NotificationCount</span>
+
+                    <a class="trigger " title="@T("Wishlist")" href="@Url.RouteUrl("Notifications")">
+                        <img class="component-icon"
+                             loading="lazy"
+                             alt=""
+                             src="images/notification.png" />
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="location-picker sec" onclick="$('.user-prof').toggle('hide')">
+                <div class="component-299">
+                    <img class="header-prof"
+                         alt=""
+                         src="@avatar" />
+
+                    <div class="location-parent">
+                        <a  class="location">Welcome</a>
+                        <div class="logged-in-user">@customer.FirstName</div>
+                    </div>
+                    <img class="location-dropdown-icon"
+                         alt=""
+                         src="images/location-dropdown.svg" />
+                </div>
+            </div>
+
+            <div class="user-prof hide">
+                @if (customer != null)
+                {
+                    @await Html.PartialAsync("_profileMenu", customer)
+
+                }
+
+            </div>
+
+            <button class="component-283 sec" >
+
+                <a href="@Url.RouteUrl("SelectAdCategory")" class="post-ad">Post Ad</a>
+            </button>
+           
+        </div>
+
+        <div class="header-lower">
+            <div class="header-lower-inner">
+
+                <div class="header-menu table-cell responsive-nav-content">
+                    <div class="responsive-nav-head">
+                        <span class="text">@T("SevenSpikes.Themes.Common.MenuTitle")</span>
+                        <span class="button close-menu"></span>
+                    </div>
+                    @{
+                        var menu = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
+                    }
+                    @if (String.IsNullOrEmpty(await menu.RenderHtmlContentAsync()))
+                    {
+                        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+                    }
+                    else
+                    {
+                        @menu
+                    }
+                </div>
+
+            </div>
+        </div>
+        <div class="search-box store-search-box responsive-nav-content">
+            @await Component.InvokeAsync(typeof(SearchBoxViewComponent))
+        </div>
+        <div class="flyout-cart responsive-nav-content">
+            <div class="responsive-nav-head">
+                <span class="text">@T("ShoppingCart")</span>
+                <span class="button close-cart"></span>
+            </div>
+            <div class="responsive-nav-body">
+                @await Component.InvokeAsync(typeof(FlyoutShoppingCartViewComponent))
+            </div>
+        </div>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderAfter })
+    </div>
+}
+
+    else {
+    <div class="header">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderBefore })
+        @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
+        <div class="header-upper">
+            <div class="header-text">
+                @*     <img
+            class="list-icon"
+            loading="lazy"
+            alt=""
+            src="images/list.svg"
+          /> *@
+                <div class="footer-lower-block footer-social-buttons">
+                    @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
+                </div>
+
+            </div>
+            <div class="profile-links responsive-nav-content">
+                <div class="responsive-nav-head">
+                    <span class="text">@T("SevenSpikes.Themes.Avenue.Profile")</span>
+                    <span class="button close-links"></span>
+                </div>
+                <div class="responsive-nav-body">
+                    @*  @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
+                @await Component.InvokeAsync(typeof(HeaderLinksViewComponent)) *@
+                    <div class="header-selects">
+                        @*   @await Component.InvokeAsync(typeof(TaxTypeSelectorViewComponent))
+                    @await Component.InvokeAsync(typeof(CurrencySelectorViewComponent)) *@
+                        @await Component.InvokeAsync(typeof(LanguageSelectorViewComponent))
+                        @* @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderSelectors }) *@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-mid">
+            <a href="/">
+                <img class="logo-wb-2-1"
+                     loading="lazy"
+                     alt=""
+                     src="images/0000302-logo-wb-2-1@2x.png"
+                     id="logoWb21" />
+            </a>
+
+
+            <div class="input-search-store">
+                <div class="search-input">
+                    <div class="search-here-store">Search here store for</div>
+                    <div class="component-137">
+                        <a class="product-jobs-property-container">
+                            <p class="product">Product</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Jobs</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Property</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Cars</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Everything</p>
+                            <p class="product">&nbsp;</p>
+                            <p class="product">Product</p>
+                        </a>
+                    </div>
+                </div>
+                <button class="component-283">
+                    <img class="vuesaxlinearsearch-normal-icon"
+                         alt=""
+                         src="images/vuesaxlinearsearchnormal.svg" />
+
+                    <a class="post-ad">Search</a>
+                </button>
+            </div>
+            <div class="location-picker" >
+                <div class="component-299">
+                    <img class="vuesaxlinearlocation-icon"
+                         alt=""
+                         src="images/vuesaxlinearlocation.svg" />
+
+                    <div class="location-parent">
+                        <a class="location">Location</a>
+                        <div class="riyadh-sau">Alexandria, Egypt</div>
+                    </div>
+                    <img class="location-dropdown-icon"
+                         alt=""
+                         src="images/location-dropdown.svg" />
+                </div>
+            </div>
+            <div class="user-options">
+                @* <a href="@Url.RouteUrl("ApplyVendorAccount")"> *@
+                <a href="/customer-info">
+                    <img class="component-303-icon"
+                         loading="lazy"
+                         alt=""
+                         src="images/component-303.svg" />
+                </a>
+                <div class="nav-button wishlist-button">
+                    <span class="counter wishlist-qty">@T("Wishlist.HeaderQuantity", ViewBag.WishlistItems)</span>
+
+                    <a class="trigger " title="@T("Wishlist")" href="@Url.RouteUrl("Wishlist")">
+                        <img class="component-303-icon"
+                             loading="lazy"
+                             alt=""
+                             src="images/component-304.svg" />
+                    </a>
+                </div>
+
+
+
+            </div>
+            @* <div class="header-logo-wrapper table-cell">
+                <div class="nav-button menu-button">
+                    <span class="trigger" title="@T("SevenSpikes.Themes.Common.MenuTitle")"></span>
+                </div>
+                <div class="header-logo">
+                    @await Component.InvokeAsync(typeof(LogoViewComponent))
+                </div>
+            </div>
+                <div class="responsive-nav-wrapper table-cell">
+                <div class="nav-button search-button">
+                    <span class="trigger" title="@T("Search")"></span>
+                </div>
+                <div class="nav-button personal-button">
+                    <span class="trigger" title="@T("SevenSpikes.Themes.Avenue.Profile")"></span>
+                </div>
+                @if (ViewBag.WishlistEnabled != null && ViewBag.WishlistEnabled)
+                {
+                    <div class="nav-button wishlist-button">
+                        <a class="trigger" title="@T("Wishlist")" href="@Url.RouteUrl("Wishlist")"><span class="counter wishlist-qty">@T("Wishlist.HeaderQuantity", ViewBag.WishlistItems)</span></a>
+                    </div>
+                }
+                @if (ViewBag.ShoppingCartEnabled != null && ViewBag.ShoppingCartEnabled)
+                {
+                    <div class="nav-button cart-button">
+                        <a class="trigger" title="@T("ShoppingCart")" href="@Url.RouteUrl("ShoppingCart")"><span class="counter cart-qty">@T("ShoppingCart.HeaderQuantity", ViewBag.ShoppingCartItems)</span></a>
+                    </div>
+                }
+            </div> *@
+        </div>
+
+        <div class="header-lower">
+            <div class="header-lower-inner">
+
+                <div class="header-menu table-cell responsive-nav-content">
+                    <div class="responsive-nav-head">
+                        <span class="text">@T("SevenSpikes.Themes.Common.MenuTitle")</span>
+                        <span class="button close-menu"></span>
+                    </div>
+                    @{
+                        var menu = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
+                    }
+                    @if (String.IsNullOrEmpty(await menu.RenderHtmlContentAsync()))
+                    {
+                        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+                    }
+                    else
+                    {
+                        @menu
+                    }
+                </div>
+
+            </div>
+        </div>
+        <div class="search-box store-search-box responsive-nav-content">
+            @await Component.InvokeAsync(typeof(SearchBoxViewComponent))
+        </div>
+        <div class="flyout-cart responsive-nav-content">
+            <div class="responsive-nav-head">
+                <span class="text">@T("ShoppingCart")</span>
+                <span class="button close-cart"></span>
+            </div>
+            <div class="responsive-nav-body">
+                @await Component.InvokeAsync(typeof(FlyoutShoppingCartViewComponent))
+            </div>
+        </div>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderAfter })
+    </div>
+    }
+
+        <script>
+    $(document).ready(function() {
+    
+        function toggleAdd() {
+               const element = $(".user-adds");
+    if (element.css("display") === "none") {
+        element.css("display", "block");
+    } else {
+        element.css("display", "none");
+    }
+        }
+    
+    });
+
+   function toggleAdd() {
+
+               const element = $(".user-adds");
+    if (element.css("display") === "none") {
+        element.css("display", "block");
+    } else {
+        element.css("display", "none");
+    }
+   }
+
+     function selectAdd(city, country) {
+
+           $(".riyadh-sau").html(city + " - " + country );
+           $(".user-adds").css("display", "none");
+
+    
+     }
+
+
+</script>

@@ -1,0 +1,32 @@
+﻿@inject Nop.Services.Customers.IWalletService _walletService
+@inject Nop.Core.IWorkContext _workContext
+
+@{
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    var walletBalance = await _walletService.GetWalletBalanceAsync(customer.Id, "USD"); // Replace "USD" with the current currency code
+}
+
+
+@if (walletBalance > 0)
+{
+    <h3>Wallet Discount</h3>
+    <div>
+        <label>
+            <input class="wallet" type="checkbox" id="useWallet" name="useWallet" value="false" />
+            Use Wallet Balance (Available: @walletBalance.ToString("C"))
+        </label>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        // Attach the change event to the checkbox
+        $('#useWallet').on('change', function () {
+            // Update the value attribute to match the checked state
+            $(this).val(this.checked);
+
+            // Log the current value of the checkbox
+            console.log('Wallet Checkbox Value:', $(this).val());
+        });
+    });
+</script>
+

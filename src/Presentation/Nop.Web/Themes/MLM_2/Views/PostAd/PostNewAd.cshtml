@@ -1,0 +1,415 @@
+﻿@model Nop.Web.Areas.Admin.Models.Catalog.ProductModel
+@using Nop.Core.Domain.Catalog;
+@using Nop.Web.Framework.Extensions
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+    var item = 2;
+
+}
+   @using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/postNewAd.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/postNewAd.css");
+
+    }
+}
+
+<div class="root">
+    <main class="auth-container">
+        <form asp-controller="PostAd" asp-action="PostNewAd" method="post" id="product-form">
+            @for (var i = 0; i < Model.SelectedCategoryIds.Count(); i++)
+            {
+                <input type="hidden" asp-for="@Model.SelectedCategoryIds[i]" />
+            }
+            <input type="hidden" asp-for="RealStateLiscence" />
+            <section class="footer">
+                <header class="background3">
+                    <h2 class="heading-1">Ad Details</h2>
+                </header>
+                <div class="login-form">
+                    <div class="input-container">
+                        <div class="email-input">
+                            <h3 class="ad-type">Ad Type:</h3>
+                            <div class="ad-type-selector">
+                                <div class="sale-type">
+                                    @Html.RadioButtonFor(model => model.ProductTypeId, (int)ProductType.ForSale, new { id = "SaleType", @class = "component-131" })
+                                    <div class="for-sale-you-container">
+                                        <label for="SaleType">
+                                            <span>For Sale </span>
+                                            <span class="you-are-offering">- You are offering an item for sale</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="ad-type-options">
+                                    @Html.RadioButtonFor(model => model.ProductTypeId, (int)ProductType.BuyRequest, new { id = "WantToBuyType", @class = "component-131" })
+                                    <div class="for-sale-you-container">
+                                        <label for="WantToBuyType">
+                                            <span>I want</span>
+                                            <span class="you-are-offering">- You want to buy an item</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="ad-type-options1">
+                                    @Html.RadioButtonFor(model => model.ProductTypeId, (int)ProductType.ForRent, new { id = "RentType", @class = "component-131" })
+                                    <div class="for-sale-you-container">
+                                        <label for="RentType">
+                                            <span>Add To Rent</span>
+                                            <span class="you-are-offering">- You want to rent an item</span>
+                                        </label>
+                                    </div>
+                                    <span asp-validation-for="ProductTypeId"></span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="seller-type">
+                        <div class="seller-options">
+                            <h3 class="for-sale-by">For Sale by</h3>
+                            <div class="seller-type-options">
+                                <div class="owner-option">
+                                    @Html.RadioButtonFor(model => model.SoldById, (int)SoldBy.Owner, new { id = "SoldBy", @class = "component-131" })
+
+                                    <div class="for-sale-you-container">Owner</div>
+                                </div>
+                                <div class="owner-option">
+                                    @Html.RadioButtonFor(model => model.SoldById, (int)SoldBy.Business, new { id = "SoldBy", @class = "component-131" })
+
+                                    <div class="for-sale-you-container">Bussiness</div>
+                                </div>
+                                <span asp-validation-for="SoldById"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ad-action-container">
+                        <h3 class="ad-action">Ad Action</h3>
+                        <div class="action-options">
+                            <div class="price-option">
+                                <div class="price-input">
+                                    <div class="sale-type">
+                                        @Html.RadioButtonFor(model => model.AdActionId, (int)AdAction.Price, new { id = "AdAction", @class = "component-131" })
+
+                                        <div class="for-sale-you-container">Price</div>
+                                    </div>
+                                </div>
+                                <div class="component-262">
+                                    <div class="component-256">
+
+                                        <input class="sar42" placeholder="2000 SAR" asp-for="Price" type="number" />
+
+                                        <img class="vuesaxlinearstar-icon"
+                                             alt=""
+                                             src="images/post/vuesaxlinearstar.svg" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contact-option">
+                                @Html.RadioButtonFor(model => model.AdActionId, (int)AdAction.PleaseContact, new { id = "AdAction", @class = "component-131" })
+
+                                <div class="for-sale-you-container">Please Contact</div>
+                            </div>
+                            <span asp-validation-for="AdActionId"></span>
+
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <section class="ad-title-container">
+                    <div class="title-input">
+                        <h3 class="ad-title">Ad Title:</h3>
+                        <div class="component-260">
+                            @*                         <nop-editor asp-for="@Model.Locales[item].Name" class="component-66" />
+ *@                        <input type="text" asp-for="Name" class="component-66"
+                                                                placeholder="1997 Ford Mustang GT" />
+                            <span asp-validation-for="Name"></span>
+
+                        </div>
+                    </div>
+                </section>
+                <section class="description-container">
+                    <h3 class="description">Description:</h3>
+                    @* <nop-editor asp-for="@Model.Locales[item].FullDescription" class="component-259" /> *@
+
+                    <textarea asp-for="FullDescription" class="component-259" rows="{9}" cols="{75}"> </textarea>
+                    <span asp-validation-for="FullDescription"></span>
+
+                </section>
+
+
+                <section class="availability-container">
+                    <div class="availability-options">
+                        <div class="available-to-label">
+                            <h3 class="available-to">Available To</h3>
+
+                            @await Html.PartialAsync("_CreateOrUpdate.SpecificationAttributes", Model.ProductSpecsAttributes)
+
+                            @*  <div class="bedroom-label-parent">
+                                <div class="bedroom-label">
+                                    <div class="bedroom">Bedroom</div>
+                                </div>
+                                <div class="make">
+                                    <select class="bedroom-select-container"></select>
+                                </div>
+                            </div> *@
+                        </div>
+                    </div>
+                    @*   <div class="bathroom-option">
+                        <div class="group-div">
+                            <div class="bathroom-wrapper">
+                                <div class="bathroom">Bathroom</div>
+                            </div>
+                            <div class="make">
+                                <select class="bedroom-select-container"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pet-friendly-option">
+                        <div class="pet-friendly-wrapper">
+                            <div class="pet-friendly">Pet Friendly</div>
+                        </div>
+                        <div class="pet-friendly-options">
+                            <div class="pet-friendly-values">
+                                <input class="component-131" type="checkbox" />
+
+                                <div class="for-sale-you-container">Yes</div>
+                            </div>
+                            <div class="pet-friendly-values">
+                                <input class="component-131" type="checkbox" />
+
+                                <div class="for-sale-you-container">No</div>
+                            </div>
+                            <div class="pet-friendly-values">
+                                <input class="component-131" type="checkbox" />
+
+                                <div class="for-sale-you-container">Limited</div>
+                            </div>
+                        </div>
+                    </div> *@
+                </section>
+            </section>
+            <section class="footer">
+                <header class="background3">
+                    <h2 class="heading-11">2 Media</h2>
+                </header>
+                <div class="image-upload-container">
+                    <div class="ad-photos-container">
+                        <div class="ad-photos-instructions">
+                            <h1 class="add-photos-to">
+                                Add photos to attract interest to your ad
+                            </h1>
+                            <div class="include-pictures-with">
+                                Include pictures with different angles and details. You can
+                                upload a maximum of 10 photos, that are at least 300px wide or
+                                tall (we recommend at least 1000px).
+                            </div>
+                        </div>
+                        <div class="image-upload-container1">
+                            @await Html.PartialAsync("_CreateOrUpdate.Multimedia.Pictures", Model)
+                        </div>
+                        <div class="video-upload-container">
+                            <div class="video-input">
+                                <h3 class="youtube-video">YouTube Video:</h3>
+                                <div class="component-2601">
+                                    <div class="component-661">
+                                        <input class="thumbnail-image"
+                                               placeholder="www.youtube.com/watch%3Fv%3DMl7U1CGk9gM&q=EgSHlDeFGPLt-7oGIjDBHO2"
+                                               type="text"
+                                               asp-for="YoutubeUrl" />
+
+                                        <img class="vuesaxlinearstar-icon1"
+                                             alt=""
+                                             src="images/post/vuesaxlinearstar.svg" />
+
+                                        <div class="component-44"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="footer">
+                <header class="background3">
+                    <h2 class="heading-12">3 Contact Details</h2>
+                </header>
+                <div class="contact-details">
+                    <div class="contact-options">
+                        <div class="contact-methods">
+                            <h3 class="phone-number">Phone number:</h3>
+                            <div class="messaging-apps">
+                                <div class="component-662">
+                                    <input class="app-buttons"
+                                           placeholder="+966 81151061811"
+                                           type="text"
+                                           asp-for="Phone" />
+
+                                    <img class="vuesaxlinearimage-icon"
+                                         alt=""
+                                         src="images/post/vuesaxlinearcall.svg" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-methods">
+                            <h3 class="phone-number">WhatsApp</h3>
+                            <div class="messaging-apps">
+                                <div class="component-662">
+                                    <input class="app-buttons"
+                                           placeholder="+966 81151061811"
+                                           type="text"
+                                           asp-for="Whatsapp" />
+
+
+                                    <img class="vuesaxlinearimage-icon"
+                                         alt=""
+                                         src="images/post/vuesaxlinearwhatsapp.svg" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="footer">
+                <header class="background3">
+                    <h2 class="heading-12">4 Location</h2>
+                </header>
+                <footer class="location-input">
+                    <div class="location-selector">
+                        <div class="location-options">
+                            <div class="location-instructions">
+                                <div class="please-choose-your-country-and-parent">
+                                    <h3 class="please-choose-your">
+                                        Please choose your country and city
+                                    </h3>
+                                    <div class="country-city-selection">
+                                        <div class="country-selector">
+                                            @*    <div class="country-options">
+                                                <div class="selected-country">
+                                                        <div class="saudi-arabia-option">
+                                                        <div class="country-details">
+                                                            <img class="component-188z-icon"
+                                                            loading="lazy"
+                                                            alt=""
+                                                            src="images/post/component-188z.svg" />
+
+                                                            <div class="saudi-arabia">Saudi Arabia</div>
+                                                        </div>
+                                                        <img class="country-dropdown-icon"
+                                                        loading="lazy"
+                                                        alt=""
+                                                        src="images/post/vector-28-2.svg" />
+                                                    </div> 
+
+                                                </div>
+                                            </div>*@
+
+                                            <select class="city-selector" asp-for="Country" asp-items="Model.AvailableCountries"></select>
+
+                                            <select class="city-selector cityselect" asp-for="City" asp-items="Model.AvailableCities"></select>
+                                        </div>
+                                        <div class="map-toggle">
+                                            <div class="map-toggle-option">
+                                                <input class="showLocation" asp-for="ShowOnMaps" />
+                                                <div class="show-my-exact">
+                                                    Show my Exact location on Google Maps
+                                                </div>
+                                               @*  <div class="component-1313">
+                                                    <div class="location-pin"></div>
+                                                    <img class="map-pin-icon"
+                                                         loading="lazy"
+                                                         alt=""
+                                                         src="images/post/vector-21-3.svg" />
+                                                </div> *@
+                                             
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="map-explanation">
+                                    <img class="flat-color-iconsidea"
+                                         loading="lazy"
+                                         alt=""
+                                         src="images/post/flatcoloriconsidea@2x.png" />
+
+                                    <div class="ad-will-appear">
+                                        Ad will appear in all cities, but it will be appear in
+                                        City and Country filter
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="map-preview">
+                                <div class="i-want-a-google-map-for-riyadh">
+                                    @*  <img class="map-maker-riyadh-riyadh-sau"
+                                         loading="lazy"
+                                         alt=""
+                                         src="images/post/-map-maker-riyadh-riyadh-saudi-arabia-clean-cut@2x.png" /> *@
+                                    @await Html.PartialAsync("_LocationPicker", Model.City)
+                                    <div class="map-details">
+                                        <div class="selected-location">
+                                            <div class="currently-selected-123-container">
+                                                <p class="currently-selected">Currently selected</p>
+                                                <p class="al-olaya-district" id="selected-location-string">
+                                                    123 Al Olaya District, King Fahd Road
+                                                </p>
+                                            </div>
+                                         @*    <button class="pick-location-button">
+                                                <div class="pick-location-wrapper">
+                                                    <b class="pick-location">Pick location</b>
+                                                </div>
+                                            </button> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*                      <a class="component-2832" href="@Url.RouteUrl("MySubscriptions", new { adId = 57, catId = Model.SelectedCategoryIds.FirstOrDefault() })">
+                            <img class="vuesaxlinearsearch-normal-icon2"
+                                 alt=""
+                                 src="images/post/vuesaxlinearsearchnormal2.svg" />
+
+                            <b class="post-ad2">Checkout and post</b>
+                        </a> *@
+
+                        <button type="submit" class="component-2832">
+                            <img class="vuesaxlinearsearch-normal-icon2"
+                                 alt=""
+                                 src="images/post/vuesaxlinearsearchnormal2.svg" />
+
+                            <b class="post-ad2">Checkout and post</b>
+                        </button>
+                    </div>
+                </footer>
+            </section>
+        </form>
+
+    </main>
+</div>
+
+<script>
+        $('#product-form').on('submit', function (e) {
+        if ($('#imagePreviewGrid .component-263').length === 0) {
+            e.preventDefault(); // Prevent form submission
+            $('#imageUploadError').show();
+            window.scrollTo({ top: $('#tempImageUpload').offset().top - 100, behavior: 'smooth' });
+        } else {
+            $('#imageUploadError').hide();
+        }
+    });
+</script>

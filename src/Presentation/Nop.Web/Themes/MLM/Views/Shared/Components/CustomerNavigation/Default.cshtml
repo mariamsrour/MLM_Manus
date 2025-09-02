@@ -1,0 +1,52 @@
+﻿@model CustomerNavigationModel
+<div class="block block-account-navigation">
+    <div class="title">
+        <strong>@T("Account.Navigation")</strong>
+    </div>
+    <div class="listbox">
+        <ul class="list-customer">
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.AccountNavigationBefore, additionalData = Model })
+            @foreach (var item in Model.CustomerNavigationItems)
+            {
+                <li style="display:inline-flex;gap: 10px;" class=" @(Model.SelectedTab == item.Tab ? "active" : "inactive")">
+
+                    @switch (item.Tab)
+                    {
+                        case (int)CustomerNavigationEnum.Info:
+                            <img style="display:inline" class="vueicon"
+                            src="images/vuesaxlinearinfocircle.svg" />
+                            break;
+                        case (int)CustomerNavigationEnum.Addresses:
+                            <img style="display:inline" class="vueicon"
+                            src="images/vuesaxlinearlocation2.svg" />
+                            break;
+                        case (int)CustomerNavigationEnum.Avatar:
+                            <img style="display:inline" class="vueicon"
+                            src="images/vuesaxlinearuseroctagon.svg" />
+                            break;
+                        case (int)CustomerNavigationEnum.ChangePassword:
+                            <img style="display:inline;" class="vueicon"
+                            src="images/vuesaxlinearlock1.svg" />
+
+                     
+                            break;
+                        
+                      
+                        case (int)CustomerNavigationEnum.WishList:
+                            <img style="display:inline" class="vueicon"
+                            src="images/vuesaxlinearheart.svg" />
+                            break;
+                        case (int)CustomerNavigationEnum.Subscriptions:
+                            <img style="display:inline" class="vueicon"
+                                 src="images/vuesaxlinearinfocircle.svg" />
+                            break;
+
+                    }
+
+                    <a href="@Url.RouteUrl(item.RouteName)">@(item.Title)</a>
+                </li>
+            }
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.AccountNavigationAfter, additionalData = Model })
+        </ul>
+    </div>
+</div>

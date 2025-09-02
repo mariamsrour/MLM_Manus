@@ -1,0 +1,3 @@
+.products-wrapper, .products-container {
+  width: -webkit-fill-available !important;
+}

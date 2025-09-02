@@ -1,0 +1,86 @@
+﻿.html-wishlist-page .master-wrapper-content {
+  padding-top: 40px;
+}
+
+.wishlist-page {
+  padding: 35px 20px 0px;
+}
+
+
+.status-btn {
+  color: #c9c8c8;
+  margin: 0 20px;
+  font-weight: 700;
+  font-size: 16px;
+  padding-bottom: 6px;
+}
+
+.count {
+  padding: 2px 7px;
+  width: 5px;
+  height: 5px;
+  color: #fff;
+  border-radius: 50%;
+  background-color: #c9c8c8;
+}
+
+.title-wrap {
+  width: 100%;
+  display: flex;
+  justify-content:space-between;
+}
+
+.product {
+  min-width: 240px !important;
+  letter-spacing:0px;
+}
+
+.product-unit-price {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 15px;
+  color: #373737;
+}
+
+  .product-unit-price .price {
+    color: #2A2658;
+  }
+
+.delete-all {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  letter-spacing: 0.13px;
+  text-transform: capitalize;
+  color: #FFFFFF;
+}
+
+.custom-register .register-wrapper {
+  width: 148px;
+  height: 44px;
+  border-radius: 30px;
+}
+
+.wishlist-page .cart th {
+    letter-spacing:0px;
+}
+
+.wishlist-content {
+  margin-bottom: 0px !important;
+}
+
+.custom-register .strong-login1 {
+  font-family: 'Poppins'!important;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px!important;
+  line-height: 33px;
+  letter-spacing: -0.22px;
+  color: #1C193A!important;
+}
+

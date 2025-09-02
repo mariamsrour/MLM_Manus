@@ -1,0 +1,500 @@
+﻿@using Nop.Web.Models.Subscriptions
+
+
+@model Plan
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+
+    var price = double.Parse(Model.Packages.FirstOrDefault().Price.ToString());
+    var price_vat = double.Parse(price.ToString()) + (double.Parse(price.ToString()) * 0.15);
+    var price_vat_val = (double.Parse(price.ToString()) * 0.15);
+    var discount_val = (double.Parse(price.ToString()) * 0.10);
+    var price_discount = double.Parse(price.ToString()) - (double.Parse(price.ToString()) * 0.10);
+    var price_discount_vat_val = (double.Parse(price_discount.ToString()) * 0.15);
+
+    var price_discount_vat = double.Parse(price_discount.ToString()) + (double.Parse(price_discount.ToString()) * 0.15);
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/checkout.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/checkout.css");
+
+    }
+}
+
+
+
+<div class="title-page">
+    <img src="~/images/arrow-left.png" />
+    <span>
+        Checkout
+
+    </span>
+</div>
+<div class="main">
+    <div class="steps">
+        <img class="step-items-icon"
+             loading="lazy"
+             alt=""
+             src="images/Frame 1918723851.png" />
+
+        <b class="select-plan">Select Plan</b>
+    </div>
+    <div class="content1">
+        <div class="content-child"></div>
+    </div>
+    <div class="steps1">
+        <img class="step-items-icon"
+             loading="lazy"
+             alt=""
+             src="images/Frame 1918723853.png" />
+
+        <b class="select-plan">Checkout</b>
+    </div>
+    <div class="content2">
+        <div class="content-child"></div>
+    </div>
+    <div class="steps2">
+        <img class="step-items-icon"
+             loading="lazy"
+             alt=""
+             src="images/frame-1918723854.svg" />
+
+        <b class="select-plan">Complete</b>
+    </div>
+</div>
+<div class="all-wrapper">
+    @*   <div class="component-331">
+        <div class="component-331-inner">
+            <div class="payment-parent">
+                <div class="payment">Payment</div>
+                <div class="payment-separator"></div>
+            </div>
+        </div>
+        <div class="component-331-child">
+            <div class="pay-with-parent">
+                <div class="pay-with">Pay With:</div>
+                <div class="card-parent">
+                    <div class="card">
+
+                        <input id="pay" value="1" class="choose-pay" name="pay" type="radio" checked="checked" />
+
+                        <label for="pay" class="card1">Card</label>
+                    </div>
+                    <div class="bank">
+                        <input id="pay2" class="choose-pay" value="2" name="pay" class="component-330" type="radio" />
+
+                        <label for="pay2" class="card1">Bank</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="frame-parent " id="pay-with-card">
+            <div class="card-number-input-parent">
+                <div class="card-number-input">
+                    <div class="card-number">Card Number</div>
+                    <p class="card-number-placeholder"
+                       placeholder="1234  5678  9101  1121">
+                        1234  5678  9101  1121
+                    </p>
+                </div>
+                <div class="card-number-icon">
+                    <input id="select-card" class="component-330" type="radio" />
+
+                    <label for="select-card" class="card1"></label>
+                </div>
+            </div>
+            <div class="frame-wrapper" id="card-info">
+                <div class="username-input-parent">
+                    <div class="username-input">
+                        <div class="username-input-container">
+                            <div class="card-number1">Card Number</div>
+                            <div class="component-66">
+                                <input class="username-dropdown"
+                                       placeholder="1234  5678  9101  1121"
+                                       type="text" />
+
+                            </div>
+                        </div>
+                        <div class="security-details-inputs-parent">
+                            <div class="pay-with-parent">
+                                <div class="expiration-date">Expiration Date</div>
+                                <div class="component-661">
+                                    <input class="username-dropdown"
+                                           placeholder="MM/YY"
+                                           type="text" />
+                                </div>
+                            </div>
+                            <div class="pay-with-parent">
+                                <div class="expiration-date">CVV</div>
+                                <div class="component-662">
+                                    <input class="username-dropdown"
+                                           placeholder="123"
+                                           type="text" />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="component-132-parent">
+                            <div class="save-card-details">
+                                <input id="save-card" class="component-132" type="checkbox" />
+                                <div class="save-card-details-child"></div>
+
+                                <label for="save-card" class="save-card-details1">Save card details</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="component-283-parent">
+                        <div class="component-283" onclick="goToOtp();">
+
+
+                            <b class="post-ad">
+                                Pay
+                                <span class="discount hide">
+                                    @price_discount_vat SAR
+                                </span>
+                                <span class="non-discount">
+                                    @price_vat SAR
+                                </span>
+                                </b>
+                        </div>
+                        <div class="your-personal-data">
+                            Your personal data will be used to process your order, support
+                            your experience throughout this website, and for other purposes
+                            described in our privacy policy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="frame-parent hide" id="pay-with-bank">
+
+            <div class="frame-wrapper">
+
+                <div class="username-input-parent">
+                    <div class="username-input">
+                        <div class="username-input-container">
+                            <div class="card-number1">Bank Name</div>
+                            <div class="component-66">
+                                <input class="username-dropdown"
+                                       placeholder="1234  5678  9101  1121"
+                                       type="text" />
+
+
+                            </div>
+                        </div>
+
+                        <div class="username-input-container">
+                            <div class="card-number1">Bank Account Number </div>
+                            <div class="component-66">
+                                <input class="username-dropdown"
+                                       placeholder="1234  5678  9101  1121"
+                                       type="text" />
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="component-283-parent">
+                        <a class="component-283 non-discount" href="@Url.Action("CheckoutComplete", "Subscription" , new {package = Model.Packages.FirstOrDefault().Id, price = price_vat, isNew = true, isRenew= ViewBag.isRenew, adId = ViewBag.adId, catId = ViewBag.catId})">
+
+                            <b class="post-ad">
+                                Pay
+
+                                <span class="non-discount">
+                                    @price_vat SAR
+                                </span>
+                            </b>
+                        </a>
+
+                        <a class="component-283 discount hide" href="@Url.Action("CheckoutComplete", "Subscription" , new {package = Model.Packages.FirstOrDefault().Id, price = price_discount_vat , isNew = true, isRenew= ViewBag.isRenew, adId = ViewBag.adId, catId = ViewBag.catId})">
+
+                            <b class="post-ad">
+                                Pay
+                                <span>
+                                    @price_discount_vat SAR
+                                </span>
+
+                            </b>
+                        </a>
+                        <div class="your-personal-data">
+                            Your personal data will be used to process your order, support
+                            your experience throughout this website, and for other purposes
+                            described in our privacy policy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="frame-parent hide" id="card-otp">
+
+            <div class="frame-wrapper">
+                <div class="username-input-parent">
+                    <div class="username-input">
+
+                        <div class="security-details-inputs-parent_otp">
+                            <div class="expiration-date">Enter your 6-digit card pin to confirm this payment</div>
+
+                            <div class="pay-with-parent_otp">
+                                <div class="component-661_otp">
+                                    <input class="username-dropdown"
+                                           placeholder="0"
+                                           type="number"
+                                           maxlength="1" />
+                                </div>
+                                <div class="component-661_otp">
+
+                                    <input class="username-dropdown"
+                                           placeholder="0"
+                                           type="number"
+                                           maxlength="1" />
+                                </div>
+                                <div class="component-661_otp">
+
+                                    <input class="username-dropdown"
+                                           placeholder="0"
+                                           type="number"
+                                           maxlength="1" />
+                                </div>
+                                <div class="component-661_otp">
+
+                                    <input class="username-dropdown"
+                                           placeholder="0"
+                                           type="number"
+                                           maxlength="1" />
+                                </div>
+                                <div class="component-661_otp">
+
+                                    <input class="username-dropdown"
+                                           placeholder="0"
+                                           type="number"
+                                           maxlength="1" />
+                                </div>
+                                <div class="component-661_otp">
+
+                                    <input class="username-dropdown"
+                                           placeholder="0"
+                                           type="number"
+                                           maxlength="1" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timer">
+                            <div id="counter">00 : 59</div>
+                        </div>
+
+                    </div>
+                    <div class="component-283-parent">
+
+                        <div class="non-discount">
+                            <a class="component-283" href="@Url.Action("CheckoutComplete", "Subscription" , new {package = Model.Packages.FirstOrDefault().Id, price = price_vat, isNew = true, adId = ViewBag.adId, catId = ViewBag.catId})">
+
+                                <b class="post-ad">
+                                    Pay
+                                    <span class="non-discount">
+                                        @price_vat SAR
+                                    </span>
+                                </b>
+                            </a>
+                        </div>
+                        <div class="discount hide">
+                            <a class="component-283" href="@Url.Action("CheckoutComplete", "Subscription" , new {package = Model.Packages.FirstOrDefault().Id, price = price_discount_vat, isNew = true, adId = ViewBag.adId, catId = ViewBag.catId})">
+
+                                <b class="post-ad">
+                                    Pay
+                                    <span>
+                                        @price_discount_vat SAR
+                                    </span>
+
+                                </b>
+                            </a>
+                        </div>
+
+                        <div class="resend hide">
+                            <a onclick="goToOtp ();">
+                                Re-send verification code
+                            </a>
+                        </div>
+
+                        <div class="your-personal-data">
+                            Your personal data will be used to process your order, support
+                            your experience throughout this website, and for other purposes
+                            described in our privacy policy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+ *@
+    <div class="root5">
+        <section class="input-fields-wrapper">
+            <div class="input-fields1">
+                <div class="coupon-field">
+                    <h3 class="discount-code">Discount Code</h3>
+                    <div class="enter-your-coupon">Enter your coupon here</div>
+                </div>
+                <div class="component-66-parent">
+                    <div class="component-665">
+                        <input class="username-component"
+                               placeholder="3415316831"
+                               type="text" />
+
+
+                    </div>
+                    <button class="component-284" onclick="applyDiscount()">
+
+
+                        <b class="post-ad2">Apply</b>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section class="summary-container-wrapper">
+            <div class="summary-container">
+                <div class="summary-header">
+                    <h3 class="order-summary">Order Summary</h3>
+                    <div class="summary-header-child"></div>
+                </div>
+                <div class="order-description-parent">
+                    <div class="order-description">
+                        <div class="description">Description</div>
+                        <div class="semi-premium-net">
+                            @Model.Name , @Model.Packages.FirstOrDefault().Name
+                        </div>
+                    </div>
+                    <div class="summary-header-child"></div>
+
+                    <div class="order-pricing">
+                        <div class="pricing-details">
+                            <div class="subtotal">Subtotal</div>
+                            <div class="vat">Discount</div>
+                            <div class="vat">vat</div>
+                            <div class="vat tot">Total</div>
+                        </div>
+                        <div class="currency-container">
+                            <div class="sar42">@price SAR</div>
+                            <div class="div24">
+                                <span class=" discount hide"> @discount_val SAR</span>
+                                <span class="non-discount">---------</span>
+
+                            </div>
+                            <div class="amount-container">
+                                <div class="sar43">
+                                    <span class="discount hide">
+                                        @price_discount_vat_val SAR
+                                    </span>
+                                    <span class="non-discount">
+                                        @price_vat_val SAR
+                                    </span>
+
+                                </div>
+                            </div>
+                            <b class="sar44">
+                                <span class="discount hide">
+                                    @price_discount_vat SAR
+                                </span>
+                                <span class="non-discount">
+                                    @price_vat SAR
+                                </span>
+                            </b>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="component-283-parent">
+
+                <div class="non-discount">
+                    <a class="component-283" href="@Url.Action("CheckoutComplete", "Subscription" , new {package = Model.Packages.FirstOrDefault().Id, price = price_vat, isNew = true, adId = ViewBag.adId, catId = ViewBag.catId})">
+
+                        <b class="post-ad">
+                            Pay Now
+                        </b>
+                    </a>
+                </div>
+                <div class="discount hide">
+                    <a class="component-283" href="@Url.Action("CheckoutComplete", "Subscription" , new {package = Model.Packages.FirstOrDefault().Id, price = price_discount_vat, isNew = true, adId = ViewBag.adId, catId = ViewBag.catId})">
+
+                        <b class="post-ad">
+                            Pay Now
+                        </b>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Use jQuery's .on() method to handle change event
+        $('.choose-pay').on('change', function() {
+            // 'this' refers to the changed radio button
+            if ($(this).val() === "1") {
+                $("#pay-with-bank").addClass('hide');
+                $("#pay-with-card").removeClass('hide');
+            } else if ($(this).val() === "2") {
+                $("#pay-with-card").addClass('hide');
+                $("#pay-with-bank").removeClass('hide');
+            }
+        });
+
+    });
+
+    function applyDiscount (){
+         $(".non-discount").addClass('hide');
+         $(".discount").removeClass('hide');
+    }
+
+
+       function goToOtp ()
+        {
+            $("#pay-with-card").addClass('hide');
+            $("#card-otp").removeClass('hide');
+             let duration = 59; // countdown from 59 seconds
+
+        const timerInterval = setInterval(function () {
+            let minutes = Math.floor(duration / 60);
+            let seconds = duration % 60;
+
+            // Pad with zero if needed
+            let formatted = `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+            $("#counter").text(formatted);
+
+            if (duration <= 0) {
+                clearInterval(timerInterval);
+                $(".resend").removeClass('hide');
+                // Optional: do something when countdown finishes
+                console.log("Timer finished!");
+            }
+
+            duration--;
+        }, 1000); // update every second
+
+        }
+</script>

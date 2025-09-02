@@ -1,0 +1,141 @@
+﻿@model List<Nop.Web.Models.Subscriptions.UserSubscription>
+@using Nop.Core
+
+@inject IWorkContext workContext
+
+@{
+
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var counter = 1;
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/_customersubscriptions.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/_customersubscriptions_2.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/_customersubscriptions.css");
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/_customersubscriptions_2.css");
+
+    }
+}
+
+
+
+<section class="container-wrapper">
+    <div class="container3">
+        <div class="login-benefits">
+            <div class="login-benefits-container">
+                <div class="login-benefit-details">
+                    <div class="benefit-description">
+                        <div class="strong-login">
+                            <h3 class="strong-login1">My Subscription</h3>
+                        </div>
+                    </div>
+
+                    <div class="subscription-info">
+                        <div class="flat-color-iconsidea-parent">
+                            <img class="flat-color-iconsidea1" loading="lazy" alt="" src="images/sub/flatcoloriconsidea1@2x.png">
+                            <div class="you-can-choose">you can choose either select your current subscription or make a new subscribtion</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-wrap">
+            <table class="cart">
+                <thead>
+                    <tr class="">
+                        <th></th>
+                        <th>Account Name</th>
+                        <th class="expiration-date">Product Name</th>
+                        <th class="expiration-date">Description</th>
+                        <th class="expiration-date">Category</th>
+                        <th class="number-of-ads">Number Of ads used</th>
+                        <th class="number-of-ads">Number Of ads left</th>
+                        <th class="expiration-date">Expiration Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+
+                        <tr class="rectangle-parent2">
+                            <td class="add-to-cart">
+                                @(counter++)
+                            </td>
+                            <td>
+                                @customer.FirstName @customer.LastName
+                            </td>
+
+                            <td class="product">
+                                <div class="premium-15-ads-container">
+                                    <p class="gold">@s.Package.Plan.Name</p>
+                                    <p class="gold">@s.Package.Name</p>
+                                </div>
+                            </td>
+                            <td class="unit-price">
+                                <div class="semi-premium-net1">@s.Package.Plan.Description</div>
+
+                            </td>
+                            <td class="unit-price">
+                                <div class="semi-premium-net1"> @s.catName</div>
+
+                            </td>
+                            <td class="unit-price">
+                                <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.HighlightedUsed : s.NormalUsed)</div>
+
+                            </td>
+                            <td class="">
+                                <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.Package.HighlightedAds - s.HighlightedUsed : s.Package.NormalAds - s.NormalUsed)</div>
+
+                            </td>
+                            <td>
+                                <div class="premium-15-ads-container">@s.ExpirationDate.ToString("dd/M/yyyy")</div>
+
+                            </td>
+                            <td>
+                                @if ((s.Package.HighlightedAds > 0 && s.Package.HighlightedAds - s.HighlightedUsed > 0) || (s.Package.NormalAds > 0 && s.Package.NormalAds - s.NormalUsed > 0))
+                                {
+                                    <a class="component-2835" href="@Url.Action("CheckoutComplete", "Subscription" , new { isNew = false, activeSub = s.Id, adId = ViewBag.adId, catId = s.catId})">
+                                        <img class="vuesaxlinearreceipt-icon" alt="" src="images/sub/vuesaxlinearreceipt.svg">
+
+                                        <b class="post-ad3">Select</b>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="component-2835-grey" href="#">
+                                        <img class="vuesaxlinearreceipt-icon" alt="" src="images/sub/vuesaxlinearreceipt.svg">
+
+                                        <b class="post-ad3">All Ads Used</b>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <a class="component-283-wrapper" href="@Url.Action("SelectPlan", "Subscription", new {adId= ViewBag.adId, catId = ViewBag.catId})">
+            <div class="component-2834">
+                <img class="vuesaxlinearadd-circle-icon"
+                     alt=""
+                     src="images/sub/vuesaxlinearaddcircle.svg" />
+
+                <b class="post-ad3">Add New Subscription</b>
+            </div>
+        </a>
+    </div>
+</section>

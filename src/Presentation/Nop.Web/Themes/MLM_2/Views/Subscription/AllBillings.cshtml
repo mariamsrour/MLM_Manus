@@ -1,0 +1,204 @@
+﻿@model List<Nop.Web.Models.Subscriptions.UserSubscription>
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    Layout = "_ColumnsTwoCustom";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Wishlist").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-wishlist-page");
+
+
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/allbillings.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/allbillings.css");
+
+    }
+}
+
+
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Billings })
+}
+
+@{
+
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var counter = 1;
+}
+
+
+
+<section class="container-wrapper">
+    <div class="container3">
+        <div class="container-child"></div>
+        <div class="container-item"></div>
+        <div class="container-inner"></div>
+        <div class="login-benefits">
+            <div class="login-benefits-container">
+                <div class="login-benefit-details">
+                    <div class="benefit-description">
+                        <div class="strong-login">
+                            <h3 class="strong-login1">My Billings</h3>
+                        </div>
+
+                        <div class="status-wrapper">
+                            <button class="status-btn active" data-active="true">
+                                My Purchases
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (Model.Count > 0)
+            {
+                <div class="benefit-details">
+                    <div class="benefit-list-container">
+                        <div class="account-name">Account Name</div>
+                        <div class="expiration-date">Product Name</div>
+                        <div class="expiration-date">Description</div>
+                        <div class="number-of-ads">Order Date</div>
+                        <div class="expiration-date">Price</div>
+                    </div>
+                </div>
+                <div id="active">
+                    @foreach (var s in Model.Where(x => x.IsActive).ToList())
+                    {
+                        <div class="rectangle-parent2">
+                            <div class="frame-child18"></div>
+                            <div class="premium-details">
+                                <div class="premium-account">
+                                    <div class="wrapper1">
+                                        <div class="div">@(counter++)</div>
+                                    </div>
+                                    <div class="marwan-sayed-wrapper">
+                                        <div class="marwan-sayed1">@customer.FirstName @customer.LastName</div>
+                                    </div>
+                                    <div class="account-plan">
+                                        <div class="premium-15-ads-container">
+                                            <p class="gold">@s.Package.Plan.Name</p>
+                                            <p class="gold">@s.Package.Name</p>
+                                        </div>
+                                    </div>
+                                    <div class="account-features">
+                                        <div class="semi-premium-net1">@s.Package.Plan.Description</div>
+                                    </div>
+                                    <div class="frame">
+                                        <div class="premium-15-ads-container">@s.StartDate.ToString("dd/M/yyyy")</div>
+                                    </div>
+                                    <div class="frame">
+                                        <div class="premium-15-ads-container">@(s.PaidPrice)</div>
+                                    </div>
+
+
+
+                                   @*  <button class="component-2835">
+                                        <img class="vuesaxlinearreceipt-icon" alt="" src="images/receipt.png">
+
+                                        <b class="post-ad3">Invoice </b>
+                                    </button> *@
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div id="inactive" class="hide">
+                    @foreach (var s in Model.Where(x => !x.IsActive).ToList())
+                    {
+                        <div class="rectangle-parent2">
+                            <div class="frame-child18"></div>
+                            <div class="premium-details">
+                                <div class="premium-account">
+                                    <div class="wrapper1">
+                                        <div class="div">@(counter++)</div>
+                                    </div>
+                                    <div class="marwan-sayed-wrapper">
+                                        <div class="marwan-sayed1">@customer.FirstName @customer.LastName</div>
+                                    </div>
+                                    <div class="account-plan">
+                                        <div class="premium-15-ads-container">
+                                            <p class="gold">@s.Package.Plan.Name</p>
+                                            <p class="gold">@s.Package.Name</p>
+                                        </div>
+                                    </div>
+                                    <div class="account-features">
+                                        <div class="semi-premium-net1">@s.Package.Plan.Description</div>
+                                    </div>
+                                    <div class="frame">
+                                        <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.HighlightedUsed : s.NormalUsed)</div>
+                                    </div>
+                                    <div class="frame">
+                                        <div class="premium-15-ads-container">@(s.Package.HighlightedAds > 0 ? s.Package.HighlightedAds - s.HighlightedUsed : s.Package.NormalAds - s.NormalUsed)</div>
+                                    </div>
+                                    <div class="frame">
+                                        <div class="premium-15-ads-container">@s.ExpirationDate.ToString("dd/M/yyyy")</div>
+                                    </div>
+
+
+                                    <button class="component-2835" >
+                                        <img class="vuesaxlinearreceipt-icon" alt="" src="images/receipt.png">
+
+                                        <b class="post-ad3">Invoice </b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            }
+            else
+            {
+                <div class="no-data" style="margin:auto;">
+
+                    <h3 class="strong-login1">No Transactions Found</h3>
+                    <img src="~/images/Empty.png" />
+                  @*   <a class="component-283-wrapper" style="justify-content: center;" href="@Url.Action("SelectPlan", "Subscription")">
+                        <div class="component-2834">
+                            <img class="vuesaxlinearadd-circle-icon"
+                                 alt=""
+                                 src="images/sub/vuesaxlinearaddcircle.svg" />
+
+                            <b class="post-ad3">Add New Subscription</b>
+                        </div>
+                    </a> *@
+                </div>
+            }
+
+        </div>
+    </div>
+
+</section>
+
+
+<script>
+                                    $(document).ready(function() {
+        $('.status-btn').on('click', function() {
+            // Toggle active state between siblings
+            $(this).addClass('active').siblings('.status-btn').removeClass('active');
+            if ($(this).attr("data-active") === "true" ) {
+                $("#active").removeClass("hide");
+                $("#inactive").addClass("hide");
+
+            } else {
+                 $("#inactive").removeClass("hide");
+                $("#active").addClass("hide");
+            }
+        });
+    });
+</script>

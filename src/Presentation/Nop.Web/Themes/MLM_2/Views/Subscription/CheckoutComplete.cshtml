@@ -1,0 +1,123 @@
+﻿@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@using Nop.Services.Configuration
+@using Nop.Services.Catalog
+
+@inject CatalogSettings catalogSettings
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+@inject Nop.Services.Catalog.IProductService catalogService
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+}
+@using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/checkoutcomplete.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/checkoutcomplete.css");
+
+    }
+}
+
+
+
+
+<div class="title-page">
+    <img src="~/images/arrow-left.png" />
+    <span>
+        Checkout
+
+    </span>
+</div>
+
+<div class="main">
+    <section class="plan-selection">
+        <div class="checkout-process">
+            <div class="plan-options">
+                <img class="plan-details-icon"
+                loading="lazy"
+                alt=""
+                src="images/frame-1918723851.svg" />
+
+                <b class="select-plan">Select Plan</b>
+            </div>
+            <div class="plan-options1">
+                <div class="plan-options-child"></div>
+            </div>
+            <div class="plan-options2">
+                <img class="plan-details-icon"
+                loading="lazy"
+                alt=""
+                src="images/frame-1918723853.svg" />
+
+                <b class="select-plan">Checkout</b>
+            </div>
+            <div class="plan-options3">
+                <div class="plan-options-child"></div>
+            </div>
+            <div class="plan-options4">
+                <img class="plan-details-icon"
+                loading="lazy"
+                alt=""
+                src="images/frame-1918723854.svg" />
+
+                <b class="select-plan">Complete</b>
+            </div>
+        </div>
+    </section>
+    <section class="confirmation">
+        <div class="success-message">
+            <div class="component-333">
+                <img class="check-icon"
+                loading="lazy"
+                alt=""
+                src="images/check.png" />
+
+                <div class="success-shape"></div>
+            </div>
+        </div>
+        <div class="ad-placement">
+            <h2 class="your-ad-has">
+                Your ad has been placed successfully, your ad in under review and
+                you will be notified when it is accepted
+            </h2>
+           @*  @{
+                var prod = await catalogService.GetProductByIdAsync(ViewBag.adId);
+            } *@
+
+          @*   <a class="component-284" href="@(Url.RouteUrl<Product>(new {SeName = prod.SeName }))">
+                <img class="vuesaxlinearsearch-normal-icon"
+                     alt=""
+                     src="images/vuesaxlinearsearchnormal.svg" />
+
+                <b class="post-ad">View ad</b>
+            </a> *@
+
+            <a class="component-284" href="@Url.RouteUrl("CustomerAds")" >
+                <img class="vuesaxlinearsearch-normal-icon"
+                     alt=""
+                     src="images/vuesaxlinearsearchnormal.svg" />
+
+                <b class="post-ad">View ad</b>
+            </a>
+        </div>
+    </section>
+</div>

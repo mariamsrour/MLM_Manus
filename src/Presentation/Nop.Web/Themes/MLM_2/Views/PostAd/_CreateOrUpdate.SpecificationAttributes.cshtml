@@ -1,0 +1,40 @@
+﻿@model IList<ProductSpecificationAttributeModel>
+    @using Nop.Core
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/createorupdatespecs.rtl.css");
+
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Themes/MLM_2/Content/css/createorupdatespecs.css");
+
+    }
+}
+
+
+@if (Model.Any())
+{
+    <div class="spec-attributes-group">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            <div class="form-group spec">
+                <label class="spec-name">@Model[i].Name</label>
+                <input type="hidden" asp-for="@Model[i].Id" />
+                <input type="hidden" asp-for="@Model[i].Name" />
+                <select asp-for="@Model[i].SelectedSpecificationAttributeOptionId" class="form-control">
+                    <option value="">@T("Admin.Common.Select")</option>
+                    @foreach (var option in Model[i].Values)
+                    {
+                        <option value="@option.AttributeOptionId">@option.ValueRaw</option>
+                    }
+                </select>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,52 @@
+.date-picker-wrapper select {
+  border: 1px solid #6f6f6f !important;
+  border-radius: 10px;
+}
+
+.date-of-birth label {
+  margin-bottom: 25px;
+}
+
+.center-2 {
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.date-picker-wrapper .choices__list--single {
+  border: 1px solid #6f6f6f !important;
+  border-radius: 44px;
+  height: 51px !important;
+}
+
+.date-of-birth label {
+  margin-bottom: 25px;
+}
+
+
+.date-picker-wrapper {
+  display: inline-flex !important;
+  justify-content: space-between;
+}
+
+  .date-picker-wrapper .choices {
+    width: 28%;
+  }
+
+    .date-picker-wrapper .choices:last-child {
+      margin-bottom: 24px !important;
+    }
+
+  .date-picker-wrapper .choices__item--selectable {
+    font-size: 12px !important;
+    padding: 14px;
+  }
+
+  .date-picker-wrapper .choices[data-type*=select-one]::after {
+    border-color: #6f6f6f transparent transparent;
+    left: 12.5px !important;
+  }
+
+  .date-picker-wrapper .choices__list--dropdown, .choices__list[aria-expanded] {
+    min-width: 131px;
+  }
+
