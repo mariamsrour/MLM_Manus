@@ -1,0 +1,148 @@
+﻿@model PeekHourReportSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Reports.Sales.Bestsellers").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("Bestsellers");
+}
+
+@{
+    var bestsellerSummaryColumnNumber = 2;
+
+    const string hideSearchBlockAttributeName = "BestsellersPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Reports.Sales.Bestsellers")
+    </h1>
+    <div class="float-right">
+        &nbsp;
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default card-search">
+                    <div class="card-body">
+                        <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                            <div class="search-text">@T("Admin.Common.Search")</div>
+                            <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                            <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+                        </div>
+
+                       <div class="search-body @(hideSearchBlock ? "closed" : "")">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="StartDate" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-editor asp-for="StartDate" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="EndDate" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-editor asp-for="EndDate" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="text-center col-12">
+                                    <button type="button" id="search-salesreport" class="btn btn-primary btn-search">
+                                        <i class="fas fa-chart-line"></i>
+                                        @T("Admin.Reports.Sales.Bestsellers.RunReport")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                </div>
+
+                <div class="card card-default">
+                    <div class="card-body">
+                        <nop-doc-reference asp-string-resource="@T("Admin.Documentation.Reference.Reports", Docs.Reports + Utm.OnAdmin)" />
+
+                        @await Html.PartialAsync("Table", new DataTablesModel
+                   {
+                       Name = "salesreport-grid",
+                       UrlRead = new DataUrl("CountrySalesPeekHours", "Report", null),
+                       SearchButtonId = "search-salesreport",
+                       Length = Model.PageSize,
+                       LengthMenu = Model.AvailablePageSizes,
+                       Filters = new List<FilterParameter>
+                        {
+                        // new FilterParameter(nameof(Model.StartDate), typeof(DateTime?)),
+                        // new FilterParameter(nameof(Model.EndDate), typeof(DateTime?)),
+                        },
+                       ColumnCollection = new List<ColumnProperty>
+                        {
+                        new(nameof(PeekHourReportModel.Rank))
+                        {
+                        Title = "Rank"
+                        },
+                        new(nameof(PeekHourReportModel.CountryName))
+                        {
+                        Title = await _localizationService.GetResourceAsync("Admin.Reports.Sales.BestSellers.Vendor.Fields.Name")
+                        },
+                        new(nameof(PeekHourReportModel.PeakHour))
+                        {
+                        Title = "Peak Hour"
+                        },
+                        new(nameof(PeekHourReportModel.NumberOfOrders))
+                        {
+                        Title = await _localizationService.GetResourceAsync("Admin.Reports.Sales.BestSellers.Vendor.Fields.NumberOfOrders")
+                        },
+                       
+                        }
+                   })
+
+                        @*                    <script>
+
+                        function bestsellerfootercallback(tfoot, data, start, end, display) {
+                        //update order totals summary
+                        var postData = {
+                        StartDate: $('#@Html.IdFor(model => model.StartDate)').val(),
+                        EndDate: $('#@Html.IdFor(model => model.EndDate)').val(),
+                        OrderStatusId: $('#@Html.IdFor(model => model.OrderStatusId)').val(),
+                        PaymentStatusId: $('#@Html.IdFor(model => model.PaymentStatusId)').val(),
+                        StoreId: $('#@Html.IdFor(model => model.StoreId)').val(),
+                        VendorId: $('#@Html.IdFor(model => model.VendorId)').val(),
+                        BillingCountryId: $('#@Html.IdFor(model => model.BillingCountryId)').val(),
+                        ManufacturerId: $('#@Html.IdFor(model => model.ManufacturerId)').val(),
+                        CategoryId: $('#@Html.IdFor(model => model.CategoryId)').val()
+                        };
+                        addAntiForgeryToken(postData);
+
+                        $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "@(Url.Action("BestsellersReportAggregates", "Report"))",
+                        data: postData,
+                        success: function (data, textStatus, jqXHR) {
+                        if (data) {
+                        var reportSummary = '<div><strong>@T("Admin.Reports.Sales.Bestsellers.Total").Text: </strong> <span>' + data['aggregatortotal'] + '</span></div>';
+                        var orderTotalsColumn = $('#salesreport-grid').DataTable().column(@(bestsellerSummaryColumnNumber));
+                        $(orderTotalsColumn.footer()).html(reportSummary);
+                        }
+                        }
+                        });
+                        }
+                        </script> *@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

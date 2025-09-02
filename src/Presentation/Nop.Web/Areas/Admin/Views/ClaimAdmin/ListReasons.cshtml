@@ -1,0 +1,193 @@
+@model ReportReasonSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Categories").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("Categories");
+}
+
+@{
+    const string hideSearchBlockAttributeName = "CategoryPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        Report Reasons
+    </h1>
+    <div class="float-right">
+      
+        <div class="btn-group">
+            <a asp-action="CreateReason" class="btn btn-primary">
+                <i class="fas fa-plus-square"></i>
+                @T("Admin.Common.AddNew")
+            </a>
+            <button type="button" class="btn btn-success">
+                <i class="fas fa-download"></i>
+                @T("Admin.Common.Export")
+            </button>
+            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">&nbsp;</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-item">
+                    <a asp-action="ExportXml">
+                        <i class="far fa-file-code"></i>
+                        @T("Admin.Common.ExportToXml")
+                    </a>
+                </li>
+                <li class="dropdown-item">
+                    <a asp-action="ExportXlsx">
+                        <i class="far fa-file-excel"></i>
+                        @T("Admin.Common.ExportToExcel")
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default card-search">
+                    <div class="card-body">
+                        <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                            <div class="search-text">@T("Admin.Common.Search")</div>
+                            <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                            <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+                        </div>
+
+                        <div class="search-body @(hideSearchBlock ? "closed" : "")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="Search" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-editor asp-for="Search" />
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="text-center col-12">
+                                    <button type="button" id="search-categories" class="btn btn-primary btn-search"><i class="fas fa-search"></i>@T("Admin.Common.Search")</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-default">
+                    <div class="card-body">
+
+                        @await Html.PartialAsync("Table", new DataTablesModel
+                   {
+                       Name = "reasons-grid",
+                       UrlRead = new DataUrl("ListReasons", "ClaimAdmin", null),
+                       SearchButtonId = "search-categories",
+                       Length = Model.PageSize,
+                       LengthMenu = Model.AvailablePageSizes,
+                       // Filters = new List<FilterParameter>
+                       //  {
+                       //  new FilterParameter(nameof(Model.Search)),
+                       //  new FilterParameter(nameof(Model.Status)),
+                       //  new FilterParameter(nameof(Model.Startdate)),
+                       //  new FilterParameter(nameof(Model.End))
+
+                       //  },
+                       ColumnCollection = new List<ColumnProperty>
+                        {
+                        // new ColumnProperty(nameof(ReportReasons.Id))
+                        // {
+                        // // IsMasterCheckBox = true,
+                        // // Render = new RenderCheckBox("checkbox_categories"),
+                        // ClassName =  NopColumnClassDefaults.CenterAll,
+                        // Width = "50"
+                        // },
+                        new ColumnProperty(nameof(ReportReasons.Reason))
+                        {
+                        Title = "Report Reson",
+                        Width = "200",
+
+                        },
+                        new ColumnProperty(nameof(ReportReasons.Language))
+                        {
+                        Title = "Language",
+                        Width = "100",
+                        ClassName = NopColumnClassDefaults.CenterAll,
+                        },
+                        new ColumnProperty(nameof(ReportReasons.Id))
+                        {
+                        Title = "Delete",
+                        Width = "100",
+                        ClassName = NopColumnClassDefaults.Button,
+                        Render = new RenderButtonRemove("Delete")
+                        }
+                        // new ColumnProperty(nameof(ReportReasons.CreatedOnUtc))
+                        // {
+                        // Title = "Created On",
+                        // Width = "150",
+                        // ClassName =  NopColumnClassDefaults.CenterAll
+                        // },
+                        // new ColumnProperty(nameof(ReportReasons.Id))
+                        // {
+                        // Title = "View",
+                        // Width = "100",
+                        // ClassName =  NopColumnClassDefaults.Button,
+                        // Render = new RenderButtonEdit(new DataUrl("Edit"))
+                        // },
+                        // new ColumnProperty(nameof(ReportReasons.Id))
+                        // {
+                        // Title = "View",
+                        // Width = "100",
+                        // ClassName =  NopColumnClassDefaults.Button,
+                        // Render = new RenderButtonRemove()
+                        // }
+                        }
+                   })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.AntiForgeryToken()
+
+<script>
+    function table_deletedata_reasons_grid(id) {
+
+         if (!confirm('Are you sure you want to delete this reason?')) return;
+                 var token = $('input[name="__RequestVerificationToken"]').val();
+
+        $.ajax({
+            type: 'POST',
+            url: 'DeleteReason', // Update path if needed
+            data: { id: id },
+             headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Remove the row from the table
+                    $('#reasons-grid').DataTable().row($('#row_' + id)).remove().draw();
+                    alert('Deleted successfully');
+                } else {
+                    alert(response.message || 'Delete failed');
+                }
+            },
+            error: function () {
+                alert('Error occurred while deleting.');
+            }
+        });
+    
+    }
+</script>
+    

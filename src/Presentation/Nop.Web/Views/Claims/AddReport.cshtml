@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Ad Form</title>
+ 
+</head>
+<body>
+    <main class="main-container">
+        <section class="image-gallery-section">
+            <div class="main-image-container">
+                <img id="mainImage"
+                     src="https://api.builder.io/api/v1/image/assets/TEMP/0ddda98f2a66f1893de49da7d4794c60b9c3c57c?width=1808"
+                     alt="Main property image"
+                     class="main-image" />
+            </div>
+            <div class="thumbnails-container">
+                <img src="https://api.builder.io/api/v1/image/assets/TEMP/21bde610c2ab6d44d1a54ac9e739a58c1eb12f1b?width=327"
+                     alt="Property thumbnail 1"
+                     class="thumbnail"
+                     onclick="changeMainImage(this.src)" />
+                <img src="https://api.builder.io/api/v1/image/assets/TEMP/634c3ddc82505aedc31fba25ca65dd5b7fb1b471?width=327"
+                     alt="Property thumbnail 2"
+                     class="thumbnail"
+                     onclick="changeMainImage(this.src)" />
+                <img src="https://api.builder.io/api/v1/image/assets/TEMP/042223db7577e5612ca832bed9f76e694aa0492b?width=327"
+                     alt="Property thumbnail 3"
+                     class="thumbnail"
+                     onclick="changeMainImage(this.src)" />
+                <img src="https://api.builder.io/api/v1/image/assets/TEMP/d0dd87ecc0282914ef2d7d864f5923b8b9f7764d?width=327"
+                     alt="Property thumbnail 4"
+                     class="thumbnail"
+                     onclick="changeMainImage(this.src)" />
+                <img src="https://api.builder.io/api/v1/image/assets/TEMP/3d4b8c8f3f041a669e599e20ebd20b56299c91e0?width=327"
+                     alt="Property thumbnail 5"
+                     class="thumbnail"
+                     onclick="changeMainImage(this.src)" />
+            </div>
+        </section>
+
+        <section class="ad-info-section">
+            <div class="ad-id-container">
+                <p class="ad-id-label">Ad ID</p>
+                <p class="ad-id-value">#991122122</p>
+            </div>
+            <h1 class="ad-title">Entire Rental Unit In Riyadh, Saudi Arabia</h1>
+        </section>
+
+        <hr class="divider" />
+
+        <form class="form-section" id="reportForm">
+            <div class="form-content">
+                <div class="reporting-reasons">
+                    <h2 class="reasons-title">Reason For Reporting</h2>
+                    <div class="reasons-list">
+                        <label class="reason-item">
+                            <input type="checkbox"
+                                   name="reason"
+                                   value="1"
+                                   class="reason-checkbox" />
+                            <span class="reason-label">1-Misleading or false information</span>
+                        </label>
+                        <label class="reason-item">
+                            <input type="checkbox"
+                                   name="reason"
+                                   value="2"
+                                   class="reason-checkbox" />
+                            <span class="reason-label">2-Offensive or inappropriate content</span>
+                        </label>
+                        <label class="reason-item">
+                            <input type="checkbox"
+                                   name="reason"
+                                   value="3"
+                                   class="reason-checkbox" />
+                            <span class="reason-label">3-Scam or fraudulent behavior</span>
+                        </label>
+                        <label class="reason-item">
+                            <input type="checkbox"
+                                   name="reason"
+                                   value="4"
+                                   class="reason-checkbox" />
+                            <span class="reason-label">4-Sexually explicit or adult content</span>
+                        </label>
+                        <label class="reason-item">
+                            <input type="checkbox"
+                                   name="reason"
+                                   value="5"
+                                   class="reason-checkbox" />
+                            <span class="reason-label">5-Promotes illegal products or services</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="report-details">
+                    <label for="reportDetails" class="details-label">Report details</label>
+                    <textarea id="reportDetails"
+                              name="reportDetails"
+                              placeholder="Enter report description"
+                              class="details-textarea"></textarea>
+                </div>
+            </div>
+        </form>
+
+        <button type="button" class="submit-button" onclick="submitReport()">
+            <span class="submit-text">REPORT AD</span>
+        </button>
+    </main>
+
+    <script>
+        // Image gallery functionality
+        function changeMainImage(src) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = src;
+        }
+
+        // Form submission functionality
+        function submitReport() {
+            const form = document.getElementById('reportForm');
+            const formData = new FormData(form);
+
+            // Get selected reasons
+            const selectedReasons = [];
+            const reasonCheckboxes = document.querySelectorAll('input[name="reason"]:checked');
+            reasonCheckboxes.forEach(checkbox => {
+                selectedReasons.push(checkbox.value);
+            });
+
+            // Get report details
+            const reportDetails = document.getElementById('reportDetails').value;
+
+            // Validation
+            if (selectedReasons.length === 0) {
+                alert('Please select at least one reason for reporting.');
+                return;
+            }
+
+            if (reportDetails.trim() === '') {
+                alert('Please provide report details.');
+                return;
+            }
+
+            // Prepare report data
+            const reportData = {
+                adId: '#991122122',
+                reasons: selectedReasons,
+                details: reportDetails,
+                timestamp: new Date().toISOString()
+            };
+
+            // Log the report data (in a real application, this would be sent to a server)
+            console.log('Report submitted:', reportData);
+
+            // Show success message
+            alert('Report submitted successfully!');
+
+            // Reset form
+            form.reset();
+        }
+
+        // Add keyboard navigation for thumbnails
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        changeMainImage(this.src);
+                    }
+                });
+
+                // Make thumbnails focusable
+                thumbnail.setAttribute('tabindex', '0');
+            });
+        });
+
+        // Add form validation on input
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[name="reason"]');
+            const textarea = document.getElementById('reportDetails');
+            const submitButton = document.querySelector('.submit-button');
+
+            function validateForm() {
+                const hasSelectedReason = Array.from(checkboxes).some(cb => cb.checked);
+                const hasDetails = textarea.value.trim().length > 0;
+
+                // You could add visual feedback here
+                // For now, we'll just ensure the button remains clickable
+                submitButton.style.opacity = (hasSelectedReason && hasDetails) ? '1' : '0.7';
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', validateForm);
+            });
+
+            textarea.addEventListener('input', validateForm);
+
+            // Initial validation
+            validateForm();
+        });
+    </script>
+</body>
+</html>

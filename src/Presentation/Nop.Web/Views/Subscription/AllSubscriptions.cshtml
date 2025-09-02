@@ -1,0 +1,23 @@
+﻿@model List<Nop.Web.Models.Subscriptions.UserSubscription>
+
+@{
+    Layout = "_ColumnsTwo";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Wishlist").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-wishlist-page");
+
+
+}
+<style>
+    .html-wishlist-page .master-wrapper-content {
+        padding-top: 40px;
+    }
+</style>
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Subscriptions })
+}
+
+@await Html.PartialAsync("_customerSubscriptions_2", Model)
+

@@ -1,0 +1,129 @@
+﻿@using Nop.Core.Domain.Subscriptions;
+@using Nop.Services.Catalog;
+@model List<Nop.Core.Domain.Subscriptions.UserSubscription>
+
+@inject ICategoryService CategoryService;
+
+@if(Model != null && Model.Count > 0)
+{
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    <div class="card card-default">
+                        <div class="card-body">
+                            @*    @await Html.PartialAsync("Table", new DataTablesModel
+       {
+           Name = "products-grid",
+           Paging = false,
+           ColumnCollection = new List<ColumnProperty>
+            {
+            new ColumnProperty(nameof(UserSubscription.Package.Plan.Name))
+            {
+            Title = "Plan Name",
+            Width = "200"
+            },
+            new ColumnProperty(nameof(UserSubscription.Package.Name))
+            {
+            Title = "Package Name",
+            Width = "200"
+            },
+            new ColumnProperty(nameof(UserSubscription.StartDate))
+            {
+            Title = "Start Date",
+            Width = "100"
+            },
+            new ColumnProperty(nameof(UserSubscription.ExpirationDate))
+            {
+            Title = "Expiration Date",
+            Width = "100"
+            },
+            new ColumnProperty(nameof(UserSubscription.PaidPrice))
+            {
+            Title = "Paid Price",
+            Width = "100"
+            },
+            new ColumnProperty(nameof(UserSubscription.CategoryId))
+            {
+            Title = "Category",
+            Width = "100"
+            },
+            new ColumnProperty(nameof(UserSubscription.Package.NormalAds))
+            {
+            Title = "Package Normal Ads",
+            Width = "50"
+            },
+            new ColumnProperty(nameof(UserSubscription.NormalUsed))
+            {
+            Title = "Used Normal Ads",
+            Width = "50"
+            },
+            new ColumnProperty(nameof(UserSubscription.Package.HighlightedAds))
+            {
+            Title = "Package Highlighted Ads",
+            Width = "50"
+            },
+            new ColumnProperty(nameof(UserSubscription.HighlightedUsed))
+            {
+            Title = "Highlighted Ads",
+            Width = "50"
+            },
+            }
+       }); *@
+                            <table class="table table-bordered table-hover table-striped dataTable no-footer">
+                                <thead>
+                                    <tr>
+                                        <th class="sorting_disabled">
+                                            Plan Name
+                                        </th>
+                                        <th class="sorting_disabled">Package Name</th>
+                                        <th class="sorting_disabled">Start Date</th>
+                                        <th class="sorting_disabled">Expiration Date</th>
+                                        <th class="sorting_disabled">Paid Price</th>
+@*                                         <th>Category</th>
+ *@                                        <th>Package Normal Ads</th>
+                                        <th class="sorting_disabled">Used Normal Ads</th>
+                                        <th class="sorting_disabled">Package Highlighted Ads</th>
+                                        <th class="sorting_disabled">
+                                            Highlighted Ads
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Package.Plan.Name</td>
+                                            <td>@item.Package.Name</td>
+                                            <td>@item.StartDate.ToLocalTime().ToShortDateString()</td>
+                                            <td>@item.ExpirationDate.ToLocalTime().ToShortDateString()</td>
+                                            <td>@item.PaidPrice</td>
+                                          @*   <td>
+                                                @{
+                                                    var cat = await CategoryService.GetCategoryByIdAsync(@item.CategoryId);
+                                                }
+                                                @cat.Name
+
+                                            </td> *@
+                                            <td>@item.Package.NormalAds</td>
+                                            <td>@item.NormalUsed</td>
+                                            <td>@item.Package.HighlightedAds</td>
+                                            <td>@item.HighlightedUsed</td>
+
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+}
+

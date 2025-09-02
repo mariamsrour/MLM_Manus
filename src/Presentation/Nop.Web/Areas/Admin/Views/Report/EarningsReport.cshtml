@@ -1,0 +1,154 @@
+﻿@model EarningsReportModel
+
+<div class="content-header">
+    <h1>Earnings Report</h1>
+</div>
+
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                     
+
+                            <form method="get">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+<label> Start Date: </label>                                            
+</div>
+                                            <div class="col-md-8">
+                                                <input type="date" id="startDate" name="startDate" value="@ViewData["startDate"]" />
+
+                                                @*                                             <nop-editor asp-for="RegisteredCustomers.StartDate" id="startDate" />
+                                                *@
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                            <label> End Date: </label>
+
+                                        </div>
+                                            <div class="col-md-8">
+                                                <input type="date" id="endDate" name="endDate" value="@ViewData["endDate"]" />
+
+                                                @*                                             <nop-editor asp-for="RegisteredCustomers.EndDate" id="endDate" />
+                                                *@
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="text-center col-12">
+                                        <button type="submit" id="search-salesreport" class="btn btn-primary btn-search" onclick="applyFilters()">
+                                            <i class="fas fa-chart-line"></i>
+                                            @T("Admin.Reports.Sales.Bestsellers.RunReport")
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Orders</h5>
+                <p>@Model.TotalOrders</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Order Value</h5>
+                <p>@Model.TotalOrderValue.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Order Cost</h5>
+                <p>@Model.TotalOrderCost.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Products Price</h5>
+                <p>@Model.TotalProductsPrice.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Products Sold</h5>
+                <p>@Model.TotalProductsSold</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Shipping Fees</h5>
+                <p>@Model.TotalShippingFees.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Taxes</h5>
+                <p>@Model.TotalTaxes.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Coupons Used</h5>
+                <p>@Model.TotalCouponsUsed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Coupons Value</h5>
+                <p>@Model.TotalCouponsValue.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Returned Products</h5>
+                <p>@Model.TotalReturnedProducts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Returns Value</h5>
+                <p>@Model.TotalReturnsValue.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+</div>

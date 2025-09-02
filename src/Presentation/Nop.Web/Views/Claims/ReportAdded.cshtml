@@ -1,0 +1,90 @@
+﻿@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@using Nop.Services.Configuration
+@using Nop.Services.Catalog
+
+@inject CatalogSettings catalogSettings
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+@inject Nop.Services.Catalog.IProductService catalogService
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.AddClaim").Text);
+    //page class
+   // NopHtml.AppendPageCssClassParts("html-subscription-checkout-page");
+}
+<link rel="stylesheet" href="~/Themes/MLM_2/Content/css/checkoutcomplete.css" asp-append-version="true" />
+
+<style>
+    .submit-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.025em;
+        line-height: 1;
+        color: white;
+        text-transform: uppercase;
+        background-color: #383375;
+        min-height: 48px;
+        border-radius: 45px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        width: 546px;
+    }
+
+        .submit-btn:hover {
+            background-color: #1e1b4b;
+        }
+</style>
+
+
+<div class="page registration-result-page">
+    <div class="page-title">
+        <h1>@T("Reports.Add")</h1>
+    </div>
+<div class="main">
+   
+    <section class="confirmation">
+        <div class="success-message">
+            <div class="component-333">
+                <img class="check-icon"
+                     loading="lazy"
+                     alt=""
+                     src="images/check.png" />
+
+                <div class="success-shape"></div>
+            </div>
+        </div>
+        <div class="ad-placement">
+            <h2 class="your-ad-has">
+                Your claim has been sent successfully, we will review it and reply to you as soon as possible
+            </h2>
+            @*  @{
+                var prod = await catalogService.GetProductByIdAsync(ViewBag.adId);
+            } *@
+
+            @*   <a class="component-284" href="@(Url.RouteUrl<Product>(new {SeName = prod.SeName }))">
+                <img class="vuesaxlinearsearch-normal-icon"
+                     alt=""
+                     src="images/vuesaxlinearsearchnormal.svg" />
+
+                <b class="post-ad">View ad</b>
+            </a> *@
+                <a href="@(Url.RouteUrl("Homepage"))" class="submit-btn">
+                    Done
+                </a>
+        </div>
+    </section>
+</div>
+
+</div>

@@ -1,0 +1,105 @@
+<style>
+    #imagePreviewGrid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .image-box {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .component-263 img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .component-263 button.delete-image {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            color: white;
+            border: white 1px solid;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+</style>
+<div id="imagePreviewGrid" class="row mt-3"></div>
+
+
+
+<div class="form-group">
+    <input type="file" id="tempImageUpload" name="files" multiple multiple class="form-control select-image-container" />
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        function loadTempImages() {
+            $.get('/PostAd/GetTempProductImages', function (images) {
+                const container = $('#imagePreviewGrid');
+                container.empty();
+
+                images.forEach(image => {
+                    const imageHtml = `
+                        <div class="component-263" data-id="${image.id}">
+                            <img src="${image.url}" alt="Preview" />
+                            <button type="button" class="delete-image">&times;</button>
+                        </div>`;
+                    container.append(imageHtml);
+                });
+            });
+        }
+
+        $('#tempImageUpload').on('change', function () {
+
+            const files = this.files;
+            if (files.length === 0) return;
+
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append("files", files[i]); // "files" matches IFormFileCollection param name
+            }
+
+            $.ajax({
+                url: '/PostAd/UploadTempProductImage',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    loadTempImages(); // Refresh image gallery
+                },
+                error: function (xhr) {
+                    alert('Upload failed: ' + xhr.responseText);
+                }
+            });
+
+        });
+
+        $('#imagePreviewGrid').on('click', '.delete-image', function () {
+            const imageBox = $(this).closest('.component-263');
+            const imageId = imageBox.data('id');
+
+            $.post('/PostAd/DeleteTempProductImage', { id: imageId }, function () {
+                loadTempImages();
+            });
+        });
+
+        // Initial load
+        loadTempImages();
+    });
+</script>
+

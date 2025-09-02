@@ -1,0 +1,54 @@
+﻿@using Nop.Web.Areas.Admin.Models
+
+@model WalletViewModel
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-account-page");
+    NopHtml.AppendPageCssClassParts("html-reward-points-page");
+}
+@section left
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Wallet })
+}
+<div class="page account-page reward-points-page">
+    <div class="page-title">
+        <h1>@T("Account.MyAccount") - @T("Account.Wallet")</h1>
+    </div>
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerRewardPointsTop, additionalData = Model })
+        <div class="reward-points-overview">
+            <h2>@T("Customer.Wallet.Title")</h2>
+            <p>@T("Customer.Wallet.Balance"): @Model.Balance</p>
+        </div>
+       
+
+        <table>
+            <thead>
+                <tr>
+                    <th>@T("Customer.Wallet.Transaction.Date")</th>
+                    <th>@T("Customer.Wallet.Transaction.Description")</th>
+                    <th>@T("Customer.Wallet.Transaction.Amount")</th>
+                    <th>@T("Customer.Wallet.Transaction.TransactionType")</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model.Transactions)
+                {
+                    <tr>
+                        <td>@transaction.CreatedOnUtc</td>
+                        <td>@transaction.Description</td>
+                        <td>@transaction.Amount</td>
+                        <td>@transaction.TransactionType</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerRewardPointsBottom, additionalData = Model })
+</div>

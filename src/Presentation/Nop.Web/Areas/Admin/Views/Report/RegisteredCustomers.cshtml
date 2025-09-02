@@ -1,0 +1,560 @@
+﻿@model CustomerReportsSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Reports.Customers.RegisteredCustomers").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("Registered customers");
+}
+@{
+
+    const string hideSearchBlockAttributeName = "BestsellersPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
+}
+@Html.AntiForgeryToken()
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Reports.Customers.RegisteredCustomers")
+    </h1>
+</div>
+<section class="content">
+    <div class="container-fluid">    
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <nop-doc-reference asp-string-resource="@T("Admin.Documentation.Reference.Reports", Docs.Reports + Utm.OnAdmin)" />
+
+                        @await Html.PartialAsync("Table", new DataTablesModel
+                        {
+                            Name = "registered-customers-grid",
+                            UrlRead = new DataUrl("ReportRegisteredCustomersList", "Report", null),
+                            Length = Model.RegisteredCustomers.PageSize,
+                            LengthMenu = Model.RegisteredCustomers.AvailablePageSizes,
+                            ColumnCollection = new List<ColumnProperty>
+                            {
+                                new ColumnProperty(nameof(RegisteredCustomersReportModel.Period))
+                                {
+                                    Title = T("Admin.Reports.Customers.RegisteredCustomers.Fields.Period").Text
+                                },
+                                new ColumnProperty(nameof(RegisteredCustomersReportModel.Customers))
+                                {
+                                    Title = T("Admin.Reports.Customers.RegisteredCustomers.Fields.Customers").Text,
+                                    Width = "150"
+                                }
+                            }
+                        })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                            <div class="search-text">@T("Admin.Common.Search")</div>
+                            <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                            <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+                        </div>
+
+                        <div class="search-body @(hideSearchBlock ? "closed" : "")">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="RegisteredCustomers.StartDate" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="date" id="startDate">
+
+@*                                             <nop-editor asp-for="RegisteredCustomers.StartDate" id="startDate" />
+ *@                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="RegisteredCustomers.EndDate" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="date" id="endDate">
+
+@*                                             <nop-editor asp-for="RegisteredCustomers.EndDate" id="endDate" />
+ *@                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="text-center col-12">
+                                    <button type="button" id="search-salesreport" class="btn btn-primary btn-search" onclick="applyFilters()">
+                                        <i class="fas fa-chart-line"></i>
+                                        @T("Admin.Reports.Sales.Bestsellers.RunReport")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="content-header clearfix">
+                            <h3 class="float-left">
+                                Gender Report
+                            </h3>
+                        </div>
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                        <div class="chart-container" style="position: relative; width: 100%; height: auto; max-width: 600px; margin: 0 auto; padding:20px">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="content-header clearfix">
+                            <h3 class="float-left">
+                                Users 
+                            </h3>
+                        </div>
+                        <canvas id="newCustomerChart"></canvas>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="content-header clearfix">
+                            <h3 class="float-left">
+                                New Commers
+                            </h3>
+                        </div>
+                        <canvas id="newCommersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="content-header clearfix">
+                            <h3 class="float-left">
+                                Visitors
+                            </h3>
+                        </div>
+                            <canvas id="visitorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function resizeChart() {
+        const chartContainer = document.querySelector('.chart-container');
+        const chart = document.getElementById('genderChart');
+
+        if (window.innerWidth < 768) {
+            chart.style.height = '200px'; // Smaller height for small screens
+        } else {
+            chart.style.height = '400px'; // Larger height for larger screens
+        }
+    }
+    let genderChartInstance = null;
+    let newCustomerChartInstance = null;
+    let visitorChartInstance = null;
+    let newCommersChartInstance = null;
+
+
+    // Call resizeChart on window resize
+    window.addEventListener('resize', resizeChart);
+    resizeChart(); // Initial call
+    var modeljson = @Html.Raw(Json.Serialize(Model.RegisteredCustomers));
+    const centerTextPlugin = {
+        id: 'centerText',
+        beforeDraw(chart) {
+            const { width } = chart;
+            const { height } = chart;
+            const ctx = chart.ctx;
+
+            ctx.restore();
+
+            const fontSize = '20px';
+            ctx.font = `${fontSize}em sans-serif`;
+            ctx.textBaseline = 'middle';
+
+            const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0); // Calculate total users
+            const text1 = total.toString(); // First line (number)
+            const text2 = "Users"; // Second line (label)
+            const textX = Math.round((width - ctx.measureText(text1).width) / 2); // Center horizontally
+            const textX2 = Math.round((width - ctx.measureText(text2).width) / 2); // Center horizontally
+
+            const textY = (height / 2 ) + 10; // Center vertically
+
+            ctx.fillStyle = '#000'; // Text color
+
+            ctx.font = 'bold 20px sans-serif'; // Font for the count
+            ctx.fillText(text1, textX, textY - 10); // Adjust vertical offset for spacing
+
+            // Draw the second line
+            ctx.font = '16px sans-serif'; // Font for the label
+            ctx.fillText(text2, textX2, textY + 15); // Adjust vertical offset for spacing
+
+            ctx.save();
+        }
+    };
+
+    function loadGenderChart(searchModel) {
+        $.ajax({
+            url: '/Admin/Report/ReportGenderStatisticsList',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(searchModel), // Serialize the data object
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Include anti-forgery token if needed
+            },
+            success: function (data) {
+                const ctx = document.getElementById('genderChart').getContext('2d');
+                const labels = data.map(item => item.Gender);
+                const counts = data.map(item => item.Count);
+                if (genderChartInstance) {
+                    genderChartInstance.destroy();
+                }
+
+                // Create a new chart instance
+                genderChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: counts,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                        }]
+                    },
+                    options: {
+                        responsive: true, // Enable responsiveness
+                        maintainAspectRatio: false, // Allow custom height
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top', // Position the legend
+                                labels: {
+                                    boxWidth: 20, // Size of legend color boxes
+                                    font: {
+                                        size: 14 // Legend text size
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true, // Enable tooltips
+                                callbacks: {
+                                    label: function (context) {
+                                        const value = context.raw || 0;
+                                        return `${context.label}: ${value}`;
+                                    }
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            }
+                        }
+                    }
+                    ,plugins: [centerTextPlugin] // Add the plugin here
+
+                });
+               // genderChartInstance.register(centerTextPlugin);
+
+            },
+            error: function (xhr) {
+                console.error('Failed to load gender statistics:', xhr.responseText);
+            }
+        });
+    }
+    // Call the function with initial values (optional)
+    function applyFilters() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        modeljson = @Html.Raw(Json.Serialize(Model.RegisteredCustomers));
+        modeljson.StartDate = startDate;
+        modeljson.EndDate = endDate;
+        console.log(modeljson);
+        loadNewCustomerChart(modeljson);
+        loadVisitorChart(modeljson);
+        loadGenderChart(modeljson);
+        loadnewCommersChart(modeljson);
+
+    }
+    loadGenderChart(modeljson);
+    const months = [
+        "Jan", "Feb", "Mar", "Apr", "May",
+        "Jun", "Jul", "Aug", "Sep", "Oct",
+        "Nov", "Dec"
+    ];
+    // Load New Customers by Month
+    function loadNewCustomerChart(searchModel) {
+        $.ajax({
+            url: '/Admin/Report/ReportUsersinYearList',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(searchModel), // Serialize the data object
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Include anti-forgery token if needed
+            },
+            success: function (data) {
+                const ctx = document.getElementById('newCustomerChart').getContext('2d');
+                const labels = data.map(item => months[item.Month - 1]); // Months
+                const counts = data.map(item => item.Count); // User counts
+   
+
+                // Destroy existing chart instance
+                if (newCustomerChartInstance) {
+                    newCustomerChartInstance.destroy();
+                }
+
+                // Create a new chart instance
+                newCustomerChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'New Customers by Month',
+                            data: counts,
+                            borderColor: '#36A2EB',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.raw} users`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Month',
+                                },
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'User Count',
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (xhr) {
+                console.error('Failed to load new customers data:', xhr.responseText);
+            }
+        });
+    }
+
+    // Load Visitors by Day
+    function loadVisitorChart(searchModel) {
+        $.ajax({
+            url: '/Admin/Report/ReportUsersInMonthList',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(searchModel), // Serialize the data object
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Include anti-forgery token if needed
+            },
+            success: function (data) {
+                const ctx = document.getElementById('visitorChart').getContext('2d');
+                const labels = data.map(item => item.Day); // Days
+                const counts = data.map(item => item.Count); // Visitor counts
+
+                if (visitorChartInstance) {
+                    visitorChartInstance.destroy();
+                }
+
+                // Create a new chart instance
+                visitorChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Visitors by Day',
+                            data: counts,
+                            borderColor: '#FF6384',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.raw} visitors`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Day',
+                                },
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Visitor Count',
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (xhr) {
+                console.error('Failed to load visitors data:', xhr.responseText);
+            }
+        });
+    }
+
+    function loadnewCommersChart(searchModel) {
+        $.ajax({
+            url: '/Admin/Report/ReportUsersInMonthList',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(searchModel), // Serialize the data object
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Include anti-forgery token if needed
+            },
+            success: function (data) {
+                const ctx = document.getElementById('newCommersChart').getContext('2d');
+                const labels = data.map(item => item.Day); // Days
+                const counts = data.map(item => item.Count); // Visitor counts
+
+                if (newCommersChartInstance) {
+                    newCommersChartInstance.destroy();
+                }
+
+                // Create a new chart instance
+                newCommersChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'New Commers by Day',
+                            data: counts,
+                            borderColor: '#FF6384',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.raw} New Commers`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Day',
+                                },
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'New Commers Count',
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (xhr) {
+                console.error('Failed to load New Commers data:', xhr.responseText);
+            }
+        });
+    }
+
+    loadNewCustomerChart(modeljson);
+    loadVisitorChart(modeljson);
+    loadnewCommersChart(modeljson);
+
+</script>
